@@ -129,10 +129,10 @@ final class AgentFaceView: NSView {
         super.init(frame: NSRect(x: 0, y: 0, width: 20, height: 20))
         wantsLayer = true
         layer?.addSublayer(face)
-        _ = ArcTooltipAnchorView.attach(to: self, help: "An agent is working in this tab")
+        _ = ArcTooltipAnchorView.attach(to: self, help: BrowserLocalization.text("An agent is working in this tab"))
         setAccessibilityElement(true)
         setAccessibilityRole(.image)
-        setAccessibilityLabel("Agent working")
+        setAccessibilityLabel(BrowserLocalization.text("Agent working"))
     }
 
     required init?(coder: NSCoder) { fatalError() }

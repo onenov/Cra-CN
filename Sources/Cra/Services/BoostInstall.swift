@@ -24,26 +24,26 @@ enum BoostInstall {
         }
         guard let shared = SharedBoost.from(link: url) else {
             CraLog.note("boost link from \(page) doesn't read")
-            AppDialog(title: "This Boost Link Doesn’t Work",
-                      message: "It may have been cut short when it was copied.").present(over: window) { _ in }
+            AppDialog(title: BrowserLocalization.text("This Boost Link Doesn’t Work"),
+                      message: BrowserLocalization.text("It may have been cut short when it was copied.")).present(over: window) { _ in }
             return
         }
         let problems = shared.problems
         guard problems.isEmpty else {
             CraLog.note("boost link from \(page) refused: \(problems.joined(separator: " "))")
-            AppDialog(title: "Cra Can’t Add “\(shared.name)”",
+            AppDialog(title: BrowserLocalization.format("Cra Can’t Add “%1$@”", "\(shared.name)"),
                       message: problems.joined(separator: "\n")).present(over: window) { _ in }
             return
         }
         let store = app.store
         let existing = BoostStore.shared.boosts.first { $0.host == shared.host && $0.name == shared.name }
         var message = shared.about.map { $0 + "\n\n" } ?? ""
-        message += "It changes how \(shared.host) looks. No code runs."
-        if !store.settings.boostsEnabled { message += " Boosts are turned off; adding this turns them on." }
-        if existing != nil { message += "\n\nYou already have a Boost by this name for \(shared.host); this replaces it." }
+        message += BrowserLocalization.format("It changes how %1$@ looks. No code runs.", shared.host)
+        if !store.settings.boostsEnabled { message += BrowserLocalization.text(" Boosts are turned off; adding this turns them on.") }
+        if existing != nil { message += "\n\n" + BrowserLocalization.format("You already have a Boost by this name for %1$@; this replaces it.", shared.host) }
         CraLog.note("boost link from \(page) offers \(shared.host)")
-        let alert = AppDialog(title: "Add the “\(shared.name)” Boost to \(shared.host)?", message: message,
-                              actions: [DialogAction(existing == nil ? "Add Boost" : "Replace Boost"), .cancel])
+        let alert = AppDialog(title: BrowserLocalization.format("Add the “%1$@” Boost to %2$@?", "\(shared.name)", "\(shared.host)"), message: message,
+                              actions: [DialogAction(existing == nil ? BrowserLocalization.text("Add Boost") : BrowserLocalization.text("Replace Boost")), .cancel])
         alert.present(over: window) { response in
             guard response == .alertFirstButtonReturn else { return }
             var boost = shared.boost()
@@ -51,7 +51,7 @@ enum BoostInstall {
             BoostStore.shared.add(boost)
             store.settings.boostsEnabled = true
             CraLog.note("boost added for \(shared.host)")
-            (app.mainWindows.first { $0.window === window } ?? app.main)?.showToast("Boost Added")
+            (app.mainWindows.first { $0.window === window } ?? app.main)?.showToast(BrowserLocalization.text("Boost Added"))
         }
     }
 
@@ -60,12 +60,12 @@ enum BoostInstall {
     static func share(_ boost: Boost, toast: (String) -> Void) {
         let shared = SharedBoost(boost)
         guard let link = shared.link else {
-            toast(shared.isEmpty ? "This Boost Doesn’t Change Anything Yet" : "This Boost Can’t Be Shared")
+            toast(shared.isEmpty ? BrowserLocalization.text("This Boost Doesn’t Change Anything Yet") : BrowserLocalization.text("This Boost Can’t Be Shared"))
             return
         }
         NSPasteboard.general.clearContents()
         NSPasteboard.general.setString(link, forType: .string)
-        toast(boost.js.isEmpty ? "Copied Boost URL" : "Copied Boost URL, Without Its JavaScript")
+        toast(boost.js.isEmpty ? BrowserLocalization.text("Copied Boost URL") : BrowserLocalization.text("Copied Boost URL, Without Its JavaScript"))
     }
 
     /// Whether Share Boost… has anything to share.

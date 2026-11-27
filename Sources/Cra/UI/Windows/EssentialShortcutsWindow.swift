@@ -16,11 +16,11 @@ final class EssentialShortcutsWindow {
 
     /// The rows: Arc's five, with Cra's action for each.
     static let rows: [(action: String, title: String, detail: String)] = [
-        ("newTab", "Open a New Tab", "Open the Command Bar to create a new tab"),
-        ("recentTab", "Switch to a Recent Tab", "Hold this to quickly switch between recent tabs"),
-        ("copyURL", "Copy Page URL", "Copy the current tab's URL without trackers"),
-        ("addSplitView", "Add Split View", "View multiple websites side-by-side"),
-        ("newLittleWindow", "Open Little Window", "Use a smaller browser window for quick searches"),
+        ("newTab", BrowserLocalization.text("Open a New Tab"), BrowserLocalization.text("Open the Command Bar to create a new tab")),
+        ("recentTab", BrowserLocalization.text("Switch to a Recent Tab"), BrowserLocalization.text("Hold this to quickly switch between recent tabs")),
+        ("copyURL", BrowserLocalization.text("Copy Page URL"), BrowserLocalization.text("Copy the current tab's URL without trackers")),
+        ("addSplitView", BrowserLocalization.text("Add Split View"), BrowserLocalization.text("View multiple websites side-by-side")),
+        ("newLittleWindow", BrowserLocalization.text("Open Little Window"), BrowserLocalization.text("Use a smaller browser window for quick searches")),
     ]
 
     func show(bindings: KeyBindingRegistry, viewAll: @escaping () -> Void) {
@@ -33,7 +33,7 @@ final class EssentialShortcutsWindow {
                         styleMask: [.titled, .closable, .miniaturizable, .fullSizeContentView], backing: .buffered, defer: false)
         p.titlebarAppearsTransparent = true
         p.titleVisibility = .hidden
-        p.title = "Essential Keyboard Shortcuts"
+        p.title = BrowserLocalization.text("Essential Keyboard Shortcuts")
         p.isMovableByWindowBackground = true
         p.level = .floating
         p.isReleasedWhenClosed = false
@@ -64,7 +64,7 @@ private struct EssentialShortcutsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center) {
-                Text("Essential Keyboard Shortcuts")
+                Text(BrowserLocalization.text("Essential Keyboard Shortcuts"))
                     .font(.system(size: 20.5, weight: .heavy))
                     .kerning(-0.3)
                     .foregroundStyle(.white)
@@ -106,7 +106,7 @@ private struct ViewAllButton: View {
     var body: some View {
         Button(action: action) {
             HStack(spacing: 8) {
-                Text("View All").font(.system(size: 14))
+                Text(BrowserLocalization.text("View All")).font(.system(size: 14))
                 Image(systemName: "arrow.up.right").font(.system(size: 12, weight: .medium))
             }
             .foregroundStyle(.white.opacity(0.92))

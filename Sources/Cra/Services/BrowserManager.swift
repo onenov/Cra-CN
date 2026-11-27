@@ -2527,8 +2527,8 @@ final class BrowserManager: NSObject, @preconcurrency CraBrowserDelegate, WebKit
     /// Arc's permission card (#371) in the top left corner of the tab's page: it leaves the page
     /// and the window usable, where Cra's sheet blocked the whole window until it was answered.
     private func askPermission(_ request: PermissionRequest) {
-        let alert = PermissionPopover(title: PermissionPrompt.message(origin: request.origin, kinds: request.kinds),
-                                      actions: [DialogAction("Allow"), DialogAction("Not Now", role: .cancel)])
+        let alert = PermissionPopover(title: PermissionPrompt.message(origin: request.origin, kinds: request.kinds, localize: BrowserLocalization.text),
+                                      actions: [DialogAction(BrowserLocalization.text("Allow")), DialogAction(BrowserLocalization.text("Not Now"), role: .cancel)])
         guard container.window != nil else { request.completion(false); return }
         permissionSheet = (request, alert)
         let page = paneHost?(request.tabID) ?? container

@@ -115,16 +115,16 @@ private struct DefaultBrowserStep: View {
             VStack(alignment: .leading, spacing: 8) {
                 SelectableRow(c: c, checked: system.isDefaultBrowser || model.setAsDefault, disabled: system.isDefaultBrowser,
                               toggle: { model.setAsDefault.toggle() }) {
-                    RowTitle(title: "Set Cra as default browser",
-                             caption: system.isDefaultBrowser ? "Cra already opens your links" : "Open links and web pages in Cra by default", c: c)
+                    RowTitle(title: BrowserLocalization.text("Set Cra as default browser"),
+                             caption: system.isDefaultBrowser ? BrowserLocalization.text("Cra already opens your links") : BrowserLocalization.text("Open links and web pages in Cra by default"), c: c)
                 }
                 SelectableRow(c: c, checked: system.isInDock || model.addToDock, disabled: system.isInDock,
                               toggle: { model.addToDock.toggle() }) {
-                    RowTitle(title: "Add Cra to Dock",
-                             caption: system.isInDock ? "Cra is already in your Dock" : "Quick access to Cra whenever you need it", c: c)
+                    RowTitle(title: BrowserLocalization.text("Add Cra to Dock"),
+                             caption: system.isInDock ? BrowserLocalization.text("Cra is already in your Dock") : BrowserLocalization.text("Quick access to Cra whenever you need it"), c: c)
                 }
                 SelectableRow(c: c, checked: model.launchAtLogin, toggle: { model.launchAtLogin.toggle() }) {
-                    RowTitle(title: "Open Cra at login", caption: "Automatically open Cra when you sign in", c: c)
+                    RowTitle(title: BrowserLocalization.text("Open Cra at login"), caption: BrowserLocalization.text("Automatically open Cra when you sign in"), c: c)
                 }
             }
             .frame(width: ImportMetrics.columnWidth)
@@ -135,9 +135,9 @@ private struct DefaultBrowserStep: View {
                     .offset(y: ImportMetrics.buttonTop - 28)
             }
             HStack(spacing: 6) {
-                SecondaryButton(title: "Skip", c: c) { model.continueFromDefaultBrowser(applying: false) }
+                SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.continueFromDefaultBrowser(applying: false) }
                     .frame(width: 146)
-                PrimaryButton(title: system.isPromptingDefault ? "Confirm in the macOS dialog" : "Continue",
+                PrimaryButton(title: system.isPromptingDefault ? BrowserLocalization.text("Confirm in the macOS dialog") : BrowserLocalization.text("Continue"),
                               c: c, enabled: !model.applyingSystemOptions, width: 290) { model.continueFromDefaultBrowser() }
             }
             .frame(width: ImportMetrics.columnWidth + 2)
@@ -151,8 +151,8 @@ private struct SourceStep: View {
     let c: ImportColors
     var body: some View {
         ZStack(alignment: .topLeading) {
-            StepHeader(title: "Import now to get connected",
-                       subtitle: "Import once and stay in your flow. Your spaces, tabs, folders and extensions come with you.", c: c)
+            StepHeader(title: BrowserLocalization.text("Import now to get connected"),
+                       subtitle: BrowserLocalization.text("Import once and stay in your flow. Your spaces, tabs, folders and extensions come with you."), c: c)
             let cols = [GridItem(.fixed(ImportMetrics.card.width), spacing: ImportMetrics.gap),
                         GridItem(.fixed(ImportMetrics.card.width))]
             // Three rows of cards fit; more browsers scroll under a soft edge.
@@ -169,7 +169,7 @@ private struct SourceStep: View {
             .mask(ScrollFade())
             .offset(y: ImportMetrics.listTop - 8)
             if model.needsFullDiskAccess, let name = model.source?.rawValue {
-                Text("macOS keeps \(name)'s data from other apps. Turn on Cra in Full Disk Access, then come back here. If Cra is already on, quit and reopen Cra.")
+                Text(BrowserLocalization.format("macOS keeps %1$@'s data from other apps. Turn on Cra in Full Disk Access, then come back here. If Cra is already on, quit and reopen Cra.", "\(name)"))
                     .font(.system(size: 12)).foregroundStyle(c.body)
                     .frame(width: ImportMetrics.columnWidth, alignment: .leading)
                     .fixedSize(horizontal: false, vertical: true)
@@ -180,13 +180,13 @@ private struct SourceStep: View {
                     .offset(y: ImportMetrics.buttonTop - 28)
             }
             // A browser macOS keeps from Cra turns Continue into the way to Full Disk Access.
-            let title = model.needsFullDiskAccess ? "Open Full Disk Access" : "Continue"
+            let title = model.needsFullDiskAccess ? BrowserLocalization.text("Open Full Disk Access") : BrowserLocalization.text("Continue")
             let enabled = model.needsFullDiskAccess || model.canContinueFromSource
             let action = { model.needsFullDiskAccess ? model.openFullDiskAccessSettings() : model.continueFromSource() }
             if model.firstRun {
                 // Dia's onboarding offers "skip the importing process" beside Continue.
                 HStack(spacing: 6) {
-                    SecondaryButton(title: "Skip", c: c) { model.skipImport() }.frame(width: 146)
+                    SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.skipImport() }.frame(width: 146)
                     PrimaryButton(title: title, c: c, enabled: enabled, width: 290, action: action)
                 }
                 .frame(width: ImportMetrics.columnWidth + 2)
@@ -204,11 +204,11 @@ private struct SpacesStep: View {
     let c: ImportColors
     var body: some View {
         let plan = model.plan
-        let name = model.source?.rawValue ?? "Arc"
+        let name = model.source?.rawValue ?? BrowserLocalization.text("Arc")
         ZStack(alignment: .topLeading) {
             BackLink(c: c) { model.go(.source) }
-            StepHeader(title: "Select spaces to import",
-                       subtitle: "We'll import your \(name) spaces, tabs, and folders to Cra.", c: c)
+            StepHeader(title: BrowserLocalization.text("Select spaces to import"),
+                       subtitle: BrowserLocalization.format("We'll import your %1$@ spaces, tabs, and folders to Cra.", "\(name)"), c: c)
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(Array((plan?.spaces ?? []).enumerated()), id: \.offset) { i, sp in
@@ -221,7 +221,7 @@ private struct SpacesStep: View {
                                 else { Text(sp.emoji).font(.system(size: 18)) }
                             }
                             .frame(width: 24)
-                            RowTitle(title: sp.title, caption: "\(sp.itemCount) tab\(sp.itemCount == 1 ? "" : "s")", c: c)
+                            RowTitle(title: sp.title, caption: BrowserLocalization.format("%1$@ tab%2$@", "\(sp.itemCount)", "\(sp.itemCount == 1 ? "" : "s")"), c: c)
                         }
                     }
                     if let plan, !plan.favorites.isEmpty || !plan.archive.isEmpty || model.includeSettings {
@@ -231,19 +231,19 @@ private struct SpacesStep: View {
                         if !plan.favorites.isEmpty {
                             SelectableRow(c: c, checked: model.includeFavorites, toggle: { model.includeFavorites.toggle() }) {
                                 RowSymbol(name: "star.fill", c: c)
-                                RowTitle(title: "Favorites", caption: "\(plan.favorites.count) in your current space", c: c)
+                                RowTitle(title: BrowserLocalization.text("Favorites"), caption: BrowserLocalization.format("%1$@ in your current space", "\(plan.favorites.count)"), c: c)
                             }
                         }
                         if !plan.archive.isEmpty {
                             SelectableRow(c: c, checked: model.includeArchive, toggle: { model.includeArchive.toggle() }) {
                                 RowSymbol(name: "archivebox.fill", c: c)
-                                RowTitle(title: "Archived Tabs", caption: "\(plan.archive.count) tabs", c: c)
+                                RowTitle(title: BrowserLocalization.text("Archived Tabs"), caption: BrowserLocalization.format("%1$@ tabs", "\(plan.archive.count)"), c: c)
                             }
                         }
                         if !plan.settings.isEmpty {
                             SelectableRow(c: c, checked: model.includeSettings, toggle: { model.includeSettings.toggle() }) {
                                 RowSymbol(name: "gearshape.fill", c: c)
-                                RowTitle(title: "Settings", caption: plan.settings.linkRoutes.isEmpty ? "Auto-archive, sidebar width and toolbar" : "Auto-archive, toolbar and Air Traffic Control", c: c)
+                                RowTitle(title: BrowserLocalization.text("Settings"), caption: plan.settings.linkRoutes.isEmpty ? BrowserLocalization.text("Auto-archive, sidebar width and toolbar") : BrowserLocalization.text("Auto-archive, toolbar and Air Traffic Control"), c: c)
                             }
                         }
                     }
@@ -254,7 +254,7 @@ private struct SpacesStep: View {
             .frame(width: ImportMetrics.columnWidth, height: ImportMetrics.listHeight + 12)
             .mask(ScrollFade())
             .offset(y: ImportMetrics.listTop - 8)
-            PrimaryButton(title: "Continue", c: c, enabled: model.hasAnythingSelected) { model.continueFromSpaces() }
+            PrimaryButton(title: BrowserLocalization.text("Continue"), c: c, enabled: model.hasAnythingSelected) { model.continueFromSpaces() }
                 .offset(x: -1, y: ImportMetrics.buttonTop)
         }
     }
@@ -266,8 +266,8 @@ private struct ExtensionsStep: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             BackLink(c: c) { model.go(.spaces) }
-            StepHeader(title: "Import your extensions",
-                       subtitle: "Pick your essentials. You can always add more extensions later as you settle in with Cra.", c: c)
+            StepHeader(title: BrowserLocalization.text("Import your extensions"),
+                       subtitle: BrowserLocalization.text("Pick your essentials. You can always add more extensions later as you settle in with Cra."), c: c)
             ScrollView {
                 VStack(alignment: .leading, spacing: 8) {
                     ForEach(model.extensions) { e in
@@ -277,8 +277,8 @@ private struct ExtensionsStep: View {
                         SelectableRow(c: c, checked: model.selectedExtensions.contains(e.id), toggle: { model.toggleExtension(e.id) }) {
                             ExtensionIcon(image: e.icon, size: 24, c: c)
                             RowTitle(title: e.name,
-                                     caption: installed ? "Already in Cra · \(e.version)"
-                                        : (e.isEnabled ? e.version + profiles : "Turned off in \(model.source?.rawValue ?? "Arc")"),
+                                     caption: installed ? BrowserLocalization.format("Already in Cra · %1$@", "\(e.version)")
+                                        : (e.isEnabled ? e.version + profiles : BrowserLocalization.format("Turned off in %1$@", "\(model.source?.rawValue ?? "Arc")")),
                                      c: c)
                         }
                     }
@@ -290,9 +290,9 @@ private struct ExtensionsStep: View {
             .mask(ScrollFade())
             .offset(y: ImportMetrics.listTop - 8)
             HStack(spacing: 6) {
-                SecondaryButton(title: "Skip", c: c) { model.startImport(withExtensions: false) }
+                SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.startImport(withExtensions: false) }
                     .frame(width: 146)
-                PrimaryButton(title: model.selectedExtensions.isEmpty ? "Continue" : "Import \(model.selectedExtensions.count) Extension\(model.selectedExtensions.count == 1 ? "" : "s")",
+                PrimaryButton(title: model.selectedExtensions.isEmpty ? BrowserLocalization.text("Continue") : BrowserLocalization.format("Import %1$@ Extension%2$@", "\(model.selectedExtensions.count)", "\(model.selectedExtensions.count == 1 ? "" : "s")"),
                               c: c, enabled: true, width: 290) { model.startImport(withExtensions: true) }
             }
             .frame(width: ImportMetrics.columnWidth + 2)
@@ -306,7 +306,7 @@ private struct ProgressStep: View {
     let c: ImportColors
     var body: some View {
         ZStack(alignment: .topLeading) {
-            Text("\(model.finished ? "Imported" : "Importing") from \(model.source?.rawValue ?? "Arc")")
+            Text(BrowserLocalization.format("%1$@ from %2$@", "\(model.finished ? "Imported" : "Importing")", "\(model.source?.rawValue ?? "Arc")"))
                 .font(.system(size: 29, weight: .regular, design: .serif))
                 .tracking(-0.6)
                 .foregroundStyle(c.title)
@@ -314,7 +314,7 @@ private struct ProgressStep: View {
                 .offset(y: ImportMetrics.titleTop)
             HStack(spacing: 8) {
                 if !model.finished { ProgressView().controlSize(.small) }
-                Text(model.finished ? (model.failures.isEmpty ? "Everything is in place." : "Some import steps failed:") : "Hold on while we fetch your data")
+                Text(model.finished ? (model.failures.isEmpty ? BrowserLocalization.text("Everything is in place.") : BrowserLocalization.text("Some import steps failed:")) : BrowserLocalization.text("Hold on while we fetch your data"))
                     .font(.system(size: 15)).foregroundStyle(model.finished ? c.body : c.loading)
             }
             .frame(height: 22)
@@ -334,7 +334,7 @@ private struct ProgressStep: View {
                     VStack(alignment: .leading, spacing: 4) {
                         ForEach(model.failures, id: \.self) { Text($0).lineLimit(2) }
                         if model.importedExtensionCount > 0 {
-                            Text("Cra restarts once to load your extensions. Their settings and sign-ins stay in \(model.source?.rawValue ?? "Arc").")
+                            Text(BrowserLocalization.format("Cra restarts once to load your extensions. Their settings and sign-ins stay in %1$@.", "\(model.source?.rawValue ?? "Arc")"))
                         } else if model.credentialsStaged {
                             Text("Cra restarts once to bring in your passwords and sign-ins.")
                         }
@@ -345,7 +345,7 @@ private struct ProgressStep: View {
             }
             .frame(width: ImportMetrics.columnWidth, alignment: .topLeading)
             .offset(y: ImportMetrics.listTop - 8)
-            PrimaryButton(title: model.needsRelaunch && !model.firstRun && !model.credentialsAttempted ? "Restart Cra" : "Continue",
+            PrimaryButton(title: model.needsRelaunch && !model.firstRun && !model.credentialsAttempted ? BrowserLocalization.text("Restart Cra") : BrowserLocalization.text("Continue"),
                           c: c, enabled: model.finished) { model.continueFromProgress() }
                 .offset(x: -1, y: ImportMetrics.buttonTop)
         }
@@ -394,14 +394,14 @@ private struct BrowserCard: View {
                 Text(source.rawValue).font(.system(size: 16, weight: .medium)).foregroundStyle(c.title)
                     .opacity(available ? 1 : 0.45)
                 if !available {
-                    Text(source.isInstalled ? "Nothing to import" : "Not on this Mac")
+                    Text(source.isInstalled ? BrowserLocalization.text("Nothing to import") : BrowserLocalization.text("Not on this Mac"))
                         .font(.system(size: 11)).foregroundStyle(c.caption).lineLimit(1)
                 } else if blocked {
                     Text("Needs Full Disk Access").font(.system(size: 11)).foregroundStyle(c.body)
                         .lineLimit(2).fixedSize(horizontal: false, vertical: true)
                 } else if selected, let plan = model.plan, !plan.spaces.isEmpty {
                     Button { model.continueFromSource() } label: {
-                        Text("\(model.selectedSpaces.count) of \(plan.spaces.count) spaces")
+                        Text(BrowserLocalization.format("%1$@ of %2$@ spaces", "\(model.selectedSpaces.count)", "\(plan.spaces.count)"))
                             .font(.system(size: 11)).foregroundStyle(c.body).underline(hover)
                     }
                     .buttonStyle(.plain)

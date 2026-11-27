@@ -18,8 +18,8 @@ enum LiveFolderText {
 
     static func lastUpdate(_ live: LiveFolderData) -> String {
         if let error = live.lastError { return status(error, live: live) }
-        guard let last = live.lastFetch else { return "Not updated yet" }
-        if Date().timeIntervalSince(last) < 60 { return "Updated just now" }
+        guard let last = live.lastFetch else { return BrowserLocalization.text("Not updated yet") }
+        if Date().timeIntervalSince(last) < 60 { return BrowserLocalization.text("Updated just now") }
         return "Updated \(relative.localizedString(for: last, relativeTo: Date()))"
     }
 
@@ -33,12 +33,12 @@ enum LiveFolderText {
     static func warning(_ live: LiveFolderData) -> LiveFolderWarning? {
         guard let alert = live.alert else { return nil }
         if case .failed(let error) = alert {
-            return LiveFolderWarning(symbol: alert.symbol, help: "\(status(error, live: live)). Click to try again.", signInURL: nil)
+            return LiveFolderWarning(symbol: alert.symbol, help: BrowserLocalization.format("%1$@. Click to try again.", "\(status(error, live: live))"), signInURL: nil)
         }
         return LiveFolderWarning(symbol: alert.symbol, help: alert.help ?? "", signInURL: alert.url)
     }
 
     static func status(_ error: LiveFolderError, live: LiveFolderData) -> String {
-        LiveFolderPluginStore.shared.entry(for: live)?.presentation.statusMessages[error.rawValue] ?? "Failed to update"
+        LiveFolderPluginStore.shared.entry(for: live)?.presentation.statusMessages[error.rawValue] ?? BrowserLocalization.text("Failed to update")
     }
 }

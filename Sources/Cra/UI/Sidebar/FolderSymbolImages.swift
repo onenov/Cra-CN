@@ -4,30 +4,30 @@ import CoreText
 extension FolderSymbol {
     var title: String {
         switch self {
-        case .star: return "Star"
-        case .bookmark: return "Bookmark"
-        case .heart: return "Heart"
-        case .bolt: return "Lightning"
-        case .triangle: return "Triangle"
-        case .asterisk: return "Asterisk"
-        case .bell: return "Bell"
-        case .lightbulb: return "Lightbulb"
-        case .chat: return "Chat"
-        case .people: return "People"
-        case .tools: return "Tools"
-        case .egg: return "Egg"
-        case .circle: return "Circle"
-        case .moon: return "Moon"
-        case .planet: return "Planet"
-        case .leaf: return "Leaf"
-        case .cloud: return "Cloud"
-        case .paw: return "Paw"
-        case .cutlery: return "Cutlery"
-        case .airplane: return "Airplane"
-        case .music: return "Music"
-        case .video: return "Video"
-        case .code: return "Code"
-        case .skull: return "Skull"
+        case .star: return BrowserLocalization.text("Star")
+        case .bookmark: return BrowserLocalization.text("Bookmark")
+        case .heart: return BrowserLocalization.text("Heart")
+        case .bolt: return BrowserLocalization.text("Lightning")
+        case .triangle: return BrowserLocalization.text("Triangle")
+        case .asterisk: return BrowserLocalization.text("Asterisk")
+        case .bell: return BrowserLocalization.text("Bell")
+        case .lightbulb: return BrowserLocalization.text("Lightbulb")
+        case .chat: return BrowserLocalization.text("Chat")
+        case .people: return BrowserLocalization.text("People")
+        case .tools: return BrowserLocalization.text("Tools")
+        case .egg: return BrowserLocalization.text("Egg")
+        case .circle: return BrowserLocalization.text("Circle")
+        case .moon: return BrowserLocalization.text("Moon")
+        case .planet: return BrowserLocalization.text("Planet")
+        case .leaf: return BrowserLocalization.text("Leaf")
+        case .cloud: return BrowserLocalization.text("Cloud")
+        case .paw: return BrowserLocalization.text("Paw")
+        case .cutlery: return BrowserLocalization.text("Cutlery")
+        case .airplane: return BrowserLocalization.text("Airplane")
+        case .music: return BrowserLocalization.text("Music")
+        case .video: return BrowserLocalization.text("Video")
+        case .code: return BrowserLocalization.text("Code")
+        case .skull: return BrowserLocalization.text("Skull")
         }
     }
 

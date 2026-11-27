@@ -265,10 +265,10 @@ final class MCPServer {
 
     private func ask(id: String, name: String, via: String) {
         guard asking[id] == nil else { return }
-        let from = via.isEmpty ? "" : " It's asking from \(via)."
-        let dialog = AppDialog(title: "Let \u{201C}\(name)\u{201D} use Cra?",
-                               message: "While it runs, it can open tabs, read your pages and act in them, signed in as you.\(from) You can take this back in Settings ▸ Advanced.",
-                               actions: [DialogAction("Allow"), DialogAction("Don\u{2019}t Allow", role: .cancel)])
+        let from = via.isEmpty ? "" : BrowserLocalization.format(" It's asking from %1$@.", via)
+        let dialog = AppDialog(title: BrowserLocalization.format("Let “%1$@” use Cra?", name),
+                               message: BrowserLocalization.format("While it runs, it can open tabs, read your pages and act in them, signed in as you.%1$@ You can take this back in Settings ▸ Advanced.", from),
+                               actions: [DialogAction(BrowserLocalization.text("Allow")), DialogAction(BrowserLocalization.text("Don\u{2019}t Allow"), role: .cancel)])
         asking[id] = dialog
         let answer: (NSApplication.ModalResponse) -> Void = { [weak self] response in
             guard let self else { return }

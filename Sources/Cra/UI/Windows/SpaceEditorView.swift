@@ -63,7 +63,7 @@ struct SpaceEditorView: View {
 
     var body: some View {
         VStack(spacing: 16) {
-            Text(existing == nil ? "New Space" : "Edit Space").font(.system(size: 16, weight: .semibold))
+            Text(existing == nil ? BrowserLocalization.text("New Space") : BrowserLocalization.text("Edit Space")).font(.system(size: 16, weight: .semibold))
             HStack(alignment: .top, spacing: 16) {
                 VStack(alignment: .leading, spacing: 12) {
                     preview
@@ -93,7 +93,7 @@ struct SpaceEditorView: View {
             HStack {
                 Button("Cancel") { onCancel() }.keyboardShortcut(.cancelAction)
                 Spacer()
-                Button(existing == nil ? "Create Space" : "Save") {
+                Button(existing == nil ? BrowserLocalization.text("Create Space") : BrowserLocalization.text("Save")) {
                     onSave(title.isEmpty ? "Space" : title, icon, theme, profile, trimmedProfileName, searchEngine.isEmpty ? nil : searchEngine)
                 }
                 .keyboardShortcut(.defaultAction)
@@ -111,7 +111,7 @@ struct SpaceEditorView: View {
             VStack(spacing: 6) {
                 HStack(spacing: 6) {
                     glyph(size: 15, color: theme.palette.textPrimary)
-                    Text(title.isEmpty ? "Space" : title).font(.system(size: 13, weight: .semibold)).foregroundStyle(theme.palette.textPrimary)
+                    Text(title.isEmpty ? BrowserLocalization.text("Space") : title).font(.system(size: 13, weight: .semibold)).foregroundStyle(theme.palette.textPrimary)
                     Spacer(minLength: 0)
                 }
                 RoundedRectangle(cornerRadius: 6).fill(theme.palette.selectedFill).frame(height: 24)
@@ -139,8 +139,8 @@ struct SpaceEditorView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help("Change Icon")
-        .accessibilityLabel("Change Icon")
+        .help(BrowserLocalization.text("Change Icon"))
+        .accessibilityLabel(BrowserLocalization.text("Change Icon"))
         .popover(isPresented: $pickingIcon, arrowEdge: .bottom) {
             SpaceIconPicker(current: icon.emoji, currentSymbol: icon.symbol, currentImage: icon.image,
                             onPick: { icon = .emoji($0); pickingIcon = false },
@@ -173,10 +173,10 @@ struct SpaceEditorView: View {
                     Text(defaultProfileName).tag(SpaceProfileChoice.existing(nil))
                     ForEach(profiles) { p in Text(p.name).tag(SpaceProfileChoice.existing(p.id)) }
                     Divider()
-                    Text("New Profile…").tag(SpaceProfileChoice.new)
+                    Text(BrowserLocalization.text("New Profile…")).tag(SpaceProfileChoice.new)
                 }
                 if profile == .new {
-                    TextField("Profile name", text: $newProfileName).textFieldStyle(.roundedBorder)
+                    TextField(BrowserLocalization.text("Profile name"), text: $newProfileName).textFieldStyle(.roundedBorder)
                 }
             }
             Text(profileNote).font(.system(size: 11)).foregroundStyle(.secondary)
@@ -188,12 +188,12 @@ struct SpaceEditorView: View {
     /// GitHub #306, not in Arc: the engine the command bar searches in this space.
     private var searchEngineSection: some View {
         VStack(alignment: .leading, spacing: 6) {
-            Picker("Search Engine", selection: $searchEngine) {
-                Text("Default (\(defaultEngineName))").tag("")
+            Picker(BrowserLocalization.text("Search Engine"), selection: $searchEngine) {
+                Text(BrowserLocalization.format("Default (%1$@)", "\(defaultEngineName)")).tag("")
                 Divider()
                 ForEach(searchEngines, id: \.keyword) { e in Text(e.name).tag(e.keyword) }
             }
-            Text("Searches from the command bar in this space go here. Default follows Settings.")
+            Text(BrowserLocalization.text("Searches from the command bar in this space go here. Default follows Settings."))
                 .font(.system(size: 11)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
         }
@@ -202,12 +202,12 @@ struct SpaceEditorView: View {
 
     private var profileNote: String {
         if let existing, profile != .existing(existing.profileID) {
-            return "Each Profile has different browser data, so you might get logged out of some websites or need to re-install extensions. Open tabs in this space reload."
+            return BrowserLocalization.text("Each Profile has different browser data, so you might get logged out of some websites or need to re-install extensions. Open tabs in this space reload.")
         }
         if profile == .new {
-            return "This Space will start fresh in your brand new Profile, signed out of every website."
+            return BrowserLocalization.text("This Space will start fresh in your brand new Profile, signed out of every website.")
         }
-        return "Profiles make your Spaces truly separate with their own logins, cookies and site data. Spaces with the same Profile share them."
+        return BrowserLocalization.text("Profiles make your Spaces truly separate with their own logins, cookies and site data. Spaces with the same Profile share them.")
     }
 }
 

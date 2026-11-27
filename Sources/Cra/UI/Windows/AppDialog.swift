@@ -28,7 +28,7 @@ final class AppDialog {
     private var runningModal = false
     private var result = NSApplication.ModalResponse.abort
 
-    init(title: String, message: String = "", actions: [DialogAction] = [DialogAction("OK")],
+    init(title: String, message: String = "", actions: [DialogAction] = [DialogAction(BrowserLocalization.text("OK"))],
          input: String? = nil, placeholder: String = "", requiresInput: Bool = false, suppressionTitle: String? = nil,
          icon: Icon = .mark, width: CGFloat = 450, buttonSpacing: CGFloat = 38, buttonOutset: CGFloat = 10.5,
          older: Bool = false) {
@@ -52,9 +52,9 @@ final class AppDialog {
     }
 
     static func easelDeletion() -> AppDialog {
-        AppDialog(title: "Are you sure you want to delete this Easel?",
-                  message: "Doing so will delete the Easel permanently.",
-                  actions: [DialogAction("Delete", role: .destructive), .cancel])
+        AppDialog(title: BrowserLocalization.text("Are you sure you want to delete this Easel?"),
+                  message: BrowserLocalization.text("Doing so will delete the Easel permanently."),
+                  actions: [DialogAction(BrowserLocalization.text("Delete"), role: .destructive), .cancel])
     }
 
     /// Arc's privacy warning before a share link is made (Share Folder…, Share N Items…; #356,
@@ -62,9 +62,9 @@ final class AppDialog {
     /// card, the envelope 62 × 49.5 pt at 48.5, 44.5). Arc names the picked tabs a Folder too.
     /// Arc's warning before a share link, worded for what is shared: "Folder", or "Split View" (#600).
     static func shareLink(kind: String = "Folder") -> AppDialog {
-        AppDialog(title: "Send this \(kind) to anyone, on any browser.",
-                  message: "Anyone with this link can view your \(kind). Viewers won’t receive future updates and this permalink cannot be deleted.",
-                  actions: [DialogAction("Copy Link to \(kind)"), .cancel], suppressionTitle: "Never show me this again.",
+        AppDialog(title: BrowserLocalization.format("Send this %1$@ to anyone, on any browser.", BrowserLocalization.text(kind)),
+                  message: BrowserLocalization.format("Anyone with this link can view your %1$@. Viewers won’t receive future updates and this permalink cannot be deleted.", BrowserLocalization.text(kind)),
+                  actions: [DialogAction(BrowserLocalization.format("Copy Link to %1$@", BrowserLocalization.text(kind))), .cancel], suppressionTitle: BrowserLocalization.text("Never show me this again."),
                   icon: .envelope, width: 560, buttonSpacing: 32, buttonOutset: 21, older: true)
     }
 
@@ -251,7 +251,7 @@ private struct AppDialogView: View {
     private func buttons(_ order: [Int]) -> some View {
         ForEach(order, id: \.self) { index in
             let action = dialog.actions.buttons[index]
-            DialogButton(title: action.title, key: dialog.actions.key(at: index),
+            DialogButton(title: action == .cancel ? BrowserLocalization.text("Cancel") : action.title, key: dialog.actions.key(at: index),
                          enabled: dialog.actions.isEnabled(at: index, input: dialog.input, requiresInput: dialog.requiresInput),
                          style: style(action.role)) { dialog.select(index) }
         }

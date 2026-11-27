@@ -48,7 +48,7 @@ enum EaselCards {
         NSColor(white: 0x1B / 255.0, alpha: 1).setFill()
         NSBezierPath(roundedRect: chip, xRadius: 8, yRadius: 8).fill()
         let config = NSImage.SymbolConfiguration(pointSize: 17, weight: .semibold).applying(.init(paletteColors: [NSColor(white: 0.55, alpha: 1)]))
-        if let glyph = NSImage(systemSymbolName: "arrow.up.forward", accessibilityDescription: "Open")?.withSymbolConfiguration(config) {
+        if let glyph = NSImage(systemSymbolName: "arrow.up.forward", accessibilityDescription: BrowserLocalization.text("Open"))?.withSymbolConfiguration(config) {
             glyph.draw(in: NSRect(x: chip.midX - glyph.size.width / 2, y: chip.midY - glyph.size.height / 2, width: glyph.size.width, height: glyph.size.height))
         }
         let style = NSMutableParagraphStyle()
@@ -106,7 +106,7 @@ enum EaselCards {
         chipFill.setFill()
         NSBezierPath(roundedRect: chip, xRadius: 5, yRadius: 5).fill()
         let config = NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold).applying(.init(paletteColors: [NSColor(white: 1, alpha: 0.7)]))
-        if let glyph = NSImage(systemSymbolName: "arrow.up.right", accessibilityDescription: "Open")?.withSymbolConfiguration(config) {
+        if let glyph = NSImage(systemSymbolName: "arrow.up.right", accessibilityDescription: BrowserLocalization.text("Open"))?.withSymbolConfiguration(config) {
             glyph.draw(in: NSRect(x: chip.midX - glyph.size.width / 2, y: chip.midY - glyph.size.height / 2, width: glyph.size.width, height: glyph.size.height))
         }
         _ = live

@@ -181,10 +181,10 @@ final class SiteControlCenterView: NSView {
         var y: CGFloat = 9
         // The four raised action buttons.
         let share = actions.share
-        let second: (String, String, () -> Void) = actions.newBoost.map { (BoostGlyph.symbol, "New Boost", $0) } ?? ("link", "Copy URL", actions.copyURL)
+        let second: (String, String, () -> Void) = actions.newBoost.map { (BoostGlyph.symbol, BrowserLocalization.text("New Boost"), $0) } ?? ("link", BrowserLocalization.text("Copy URL"), actions.copyURL)
         for (i, (symbol, help, run)) in [("square.and.arrow.up", "Share", {}), second,
-                                         ("camera", "Capture this page", actions.capture),
-                                         ("text.viewfinder", "Capture the full page", actions.captureFullPage)].enumerated() {
+                                         ("camera", BrowserLocalization.text("Capture this page"), actions.capture),
+                                         ("text.viewfinder", BrowserLocalization.text("Capture the full page"), actions.captureFullPage)].enumerated() {
             let b = SiteActionButton(symbol: symbol, help: help, colors: colors, action: run)
             if i == 0 { b.onClick = { [weak b] in if let b { share(b) } } }
             b.frame = NSRect(x: x + CGFloat(i) * (M.tile.width + M.gap), y: y, width: M.tile.width, height: M.tile.height)
@@ -199,7 +199,7 @@ final class SiteControlCenterView: NSView {
             y += card.frame.height + 15
         } else {
             // Extensions: a 4-column grid of tiles, then "+".
-            let ext = SiteSectionView(title: "Extensions", hoverText: "Manage", colors: colors, onHeaderClick: actions.manageExtensions)
+            let ext = SiteSectionView(title: BrowserLocalization.text("Extensions"), hoverText: "Manage", colors: colors, onHeaderClick: actions.manageExtensions)
             extensionTiles = [:]
             var tiles: [NSView] = orderedExtensions.map { e in
                 let tile = SiteExtensionTile(entry: e, pinned: extensions.isPinned(e.extensionID, inProfile: profile), colors: colors,
@@ -211,7 +211,7 @@ final class SiteControlCenterView: NSView {
                 extensionTiles[e.extensionID] = tile
                 return tile
             }
-            let add = SiteTile(colors: colors, help: "Add Extension", action: actions.addExtension)
+            let add = SiteTile(colors: colors, help: BrowserLocalization.text("Add Extension"), action: actions.addExtension)
             add.setGlyph(SidebarSymbols.image("plus", size: 14, weight: .medium), tint: colors.text)
             tiles.append(add)
             for (i, t) in tiles.enumerated() {
@@ -230,9 +230,9 @@ final class SiteControlCenterView: NSView {
         // Boosts: the site's own, on or off.
         let boosts = Boost.onSite(of: url, from: BoostStore.shared.boosts)
         if !boosts.isEmpty, actions.newBoost != nil {
-            let section = SiteSectionView(title: "Boosts", hoverText: "Manage", colors: colors, onHeaderClick: actions.manageBoosts)
+            let section = SiteSectionView(title: BrowserLocalization.text("Boosts"), hoverText: "Manage", colors: colors, onHeaderClick: actions.manageBoosts)
             for (i, b) in boosts.enumerated() {
-                let row = SiteSettingRow(symbol: BoostGlyph.symbol, title: b.name, subtitle: b.enabled ? "Enabled" : "Disabled", active: b.enabled,
+                let row = SiteSettingRow(symbol: BoostGlyph.symbol, title: b.name, subtitle: b.enabled ? BrowserLocalization.text("Enabled") : BrowserLocalization.text("Disabled"), active: b.enabled,
                                          colors: colors, action: { [actions] in actions.toggleBoost(b.id) },
                                          accessory: { [actions] in actions.editBoost(b.id) })
                 row.frame = NSRect(x: 0, y: 27 + CGFloat(i) * 43, width: 208, height: 33)
@@ -244,20 +244,20 @@ final class SiteControlCenterView: NSView {
             y += CGFloat(h) + 15
         }
         // Settings: three switch rows.
-        let settings = SiteSectionView(title: "Settings", hoverText: nil, colors: colors, onHeaderClick: {})
+        let settings = SiteSectionView(title: BrowserLocalization.text("Settings"), hoverText: nil, colors: colors, onHeaderClick: {})
         let developer = store.settings.isDeveloperMode(url: url)
         // Per site like Arc (#326); Settings ▸ Tabs keeps the default for the others.
         let autoPiP = store.settings.allowsAutoPictureInPicture(url: url)
         let store = store, url = url
         var rowsSpec: [(String, String, String, Bool, () -> Void)] = [
-            ("hammer.fill", "Developer Mode", developer ? "On" : "Off", developer, { store.settings.toggleDeveloperMode(url: url) }),
-            ("gearshape.fill", "Automatic Picture-In-Picture", autoPiP ? "Allowed" : "Disabled",
+            ("hammer.fill", BrowserLocalization.text("Developer Mode"), developer ? "On" : "Off", developer, { store.settings.toggleDeveloperMode(url: url) }),
+            ("gearshape.fill", BrowserLocalization.text("Automatic Picture-In-Picture"), autoPiP ? "Allowed" : "Disabled",
              autoPiP, { store.settings.toggleAutoPictureInPicture(url: url) }),
         ]
         // Chromium's blocker doesn't see a WebKit page: no switch that does nothing there.
         if protectedMedia == nil, let host = AppSettings.filterHost(url) {
             let active = store.settings.pausedFilterHosts?.contains(host) != true
-            rowsSpec.insert(("shield.fill", "Ad Blocking", active ? "On" : "Off · Reload page",
+            rowsSpec.insert(("shield.fill", "Ad Blocking", active ? "On" : BrowserLocalization.text("Off · Reload page"),
                              active, { store.settings.toggleFilters(on: host) }), at: 1)
         }
         // A page that plays DRM, or one in WebKit: which engine plays this site, or for a mixed
@@ -464,10 +464,10 @@ private final class SiteExtensionTile: SiteTile {
         pinGlyph.imageScaling = .scaleNone
         pinGlyph.frame = NSRect(x: 0, y: 0, width: 14, height: 14)
         badge.addSubview(pinGlyph)
-        _ = ArcTooltipAnchorView.attach(to: badge, help: pinned ? "Unpin" : "Pin")
+        _ = ArcTooltipAnchorView.attach(to: badge, help: pinned ? BrowserLocalization.text("Unpin") : BrowserLocalization.text("Pin"))
         badge.setAccessibilityElement(true)
         badge.setAccessibilityRole(.button)
-        badge.setAccessibilityLabel(pinned ? "Unpin" : "Pin")
+        badge.setAccessibilityLabel(pinned ? BrowserLocalization.text("Unpin") : BrowserLocalization.text("Pin"))
         pinGlyph.setAccessibilityElement(false)
         refresh()
     }
@@ -703,12 +703,12 @@ private final class SiteProtectedMediaCard: NSView {
     init(service: String, width: CGFloat, colors: SiteControlCenterColors, learnMore: @escaping () -> Void) {
         super.init(frame: NSRect(x: 0, y: 0, width: width, height: 10))
         let header = NSTextField.sidebarLabel(size: 14, weight: .bold)
-        header.stringValue = "Protected Media"
+        header.stringValue = BrowserLocalization.text("Protected Media")
         header.textColor = colors.header
         header.frame = NSRect(x: -SidebarText.inset, y: 0, width: width + SidebarText.inset, height: 17)
         addSubview(header)
         var y: CGFloat = 25
-        let body = NSTextField(wrappingLabelWithString: "\(service) plays with Safari’s engine, which has the DRM it needs. Here, that means:")
+        let body = NSTextField(wrappingLabelWithString: BrowserLocalization.format("%1$@ plays with Safari’s engine, which has the DRM it needs. Here, that means:", "\(service)"))
         body.font = .systemFont(ofSize: 13)
         body.textColor = colors.text
         body.isSelectable = false
@@ -717,8 +717,8 @@ private final class SiteProtectedMediaCard: NSView {
         body.frame = NSRect(x: 0, y: y, width: width, height: bodyH)
         addSubview(body)
         y += bodyH + 9
-        for (symbol, text) in [("person.crop.circle", "You sign in here once"), ("puzzlepiece.extension", "Extensions don’t run here"),
-                               ("hammer", "Web Inspector instead of DevTools")] {
+        for (symbol, text) in [("person.crop.circle", BrowserLocalization.text("You sign in here once")), ("puzzlepiece.extension", BrowserLocalization.text("Extensions don’t run here")),
+                               ("hammer", BrowserLocalization.text("Web Inspector instead of DevTools"))] {
             let glyph = NSImageView(frame: NSRect(x: 0, y: y, width: 18, height: 18))
             glyph.image = SidebarSymbols.image(symbol, size: 13, weight: .medium)
             glyph.contentTintColor = colors.secondary
@@ -735,14 +735,14 @@ private final class SiteProtectedMediaCard: NSView {
             addSubview(label)
             y += max(24, h + 8)
         }
-        let link = SiteLinkLabel(text: "Learn more", colors: colors, action: learnMore)
+        let link = SiteLinkLabel(text: BrowserLocalization.text("Learn more"), colors: colors, action: learnMore)
         link.frame = NSRect(x: 0, y: y + 2, width: 90, height: 18)
         addSubview(link)
         y += 22
         setFrameSize(NSSize(width: width, height: y))
         setAccessibilityElement(true)
         setAccessibilityRole(.group)
-        setAccessibilityLabel("Protected Media. \(service) plays with Safari’s engine. You sign in here once, extensions don’t run here, Web Inspector instead of DevTools.")
+        setAccessibilityLabel(BrowserLocalization.format("Protected Media. %1$@ plays with Safari’s engine. You sign in here once, extensions don’t run here, Web Inspector instead of DevTools.", "\(service)"))
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -795,7 +795,7 @@ private final class SiteSecurityPill: SiteHoverView {
         lock.contentTintColor = colors.text
         lock.imageScaling = .scaleNone
         let label = NSTextField.sidebarLabel(size: 14, weight: .semibold)
-        label.stringValue = secure ? "Secure" : "Not Secure"
+        label.stringValue = secure ? "Secure" : BrowserLocalization.text("Not Secure")
         label.textColor = colors.text
         let lw = lock.image?.size.width ?? 10
         let tw = ceil(label.attributedStringValue.size().width)
@@ -804,9 +804,9 @@ private final class SiteSecurityPill: SiteHoverView {
         label.frame = NSRect(x: 10 + lw + 6 - SidebarText.inset, y: (32 - 17) / 2, width: tw + 2 * SidebarText.inset, height: 17)
         addSubview(lock)
         addSubview(label)
-        _ = ArcTooltipAnchorView.attach(to: self, help: secure ? "Your connection to this site is secure" : "Your connection to this site is not secure")
+        _ = ArcTooltipAnchorView.attach(to: self, help: secure ? BrowserLocalization.text("Your connection to this site is secure") : BrowserLocalization.text("Your connection to this site is not secure"))
         setAccessibilityElement(true)
-        setAccessibilityLabel(secure ? "Secure" : "Not Secure")
+        setAccessibilityLabel(secure ? BrowserLocalization.text("Secure") : BrowserLocalization.text("Not Secure"))
         setAccessibilityRole(clickable ? .button : .staticText)
     }
 
@@ -837,8 +837,8 @@ private final class SiteMoreButton: SiteHoverView {
         glyph.contentTintColor = colors.text
         glyph.imageScaling = .scaleNone
         addSubview(glyph)
-        _ = ArcTooltipAnchorView.attach(to: self, help: "More")
-        setAccessibilityLabel("More")
+        _ = ArcTooltipAnchorView.attach(to: self, help: BrowserLocalization.text("More"))
+        setAccessibilityLabel(BrowserLocalization.text("More"))
         setAccessibilityRole(.button)
         onClick = { [weak self] in
             guard let self else { return }
@@ -868,7 +868,7 @@ private final class SiteMoreButton: SiteHoverView {
                 case .addExtension: run = actions.addExtension
                 case .allSiteSettings: run = actions.siteSettings
                 }
-                let item = BlockMenuItem(title: row.title, action: run)
+                let item = BlockMenuItem(title: BrowserLocalization.text(row.title), action: run)
                 if row == .newBoost { item.isEnabled = actions.newBoost != nil }
                 menu.addItem(item)
             }
@@ -880,7 +880,7 @@ private final class SiteMoreButton: SiteHoverView {
     func debugPick(_ title: String) -> String {
         let menu = Self.menu(actions)
         let titles = menu.items.map { $0.isSeparatorItem ? "-" : $0.title }.joined(separator: "|")
-        guard let item = menu.items.first(where: { $0.title == title }) as? BlockMenuItem else { return "more menu: \(titles)" }
+        guard let item = menu.items.first(where: { $0.title == BrowserLocalization.text(title) }) as? BlockMenuItem else { return "more menu: \(titles)" }
         item.perform()
         return "more menu picked \(title): \(titles)"
     }
@@ -1150,7 +1150,7 @@ final class SharePicker: NSObject, @preconcurrency NSSharingServicePickerDelegat
             item.image?.size = NSSize(width: 16, height: 16)
         }
         guard !sub.items.isEmpty else { return }
-        let share = NSMenuItem(title: "Share", action: nil, keyEquivalent: "")
+        let share = NSMenuItem(title: BrowserLocalization.text("Share"), action: nil, keyEquivalent: "")
         share.submenu = sub
         menu.addItem(share)
     }

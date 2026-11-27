@@ -45,7 +45,7 @@ struct ZapShelfView: View {
                             if on { model.hoveredZap = i } else if model.hoveredZap == i { model.hoveredZap = nil }
                         }
                         .help(selector)
-                        .accessibilityLabel("Restore \(selector)")
+                        .accessibilityLabel(BrowserLocalization.format("Restore %1$@", "\(selector)"))
                 }
             }
             .padding(.leading, CGFloat(BoostZap.inset))

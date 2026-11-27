@@ -109,6 +109,7 @@ rm -rf "$ICON_OUT"
 /usr/libexec/PlistBuddy -c "Delete :CFBundleIconName" "$APP/Contents/Info.plist" 2>/dev/null || true
 /usr/libexec/PlistBuddy -c "Add :CFBundleIconName string AppIcon" "$APP/Contents/Info.plist"
 # The AppleScript dictionary (Arc's, same terms and codes: Info.plist OSAScriptingDefinition).
+cp -R resources/zh-Hans.lproj "$APP/Contents/Resources/"
 cp resources/Cra.sdef "$APP/Contents/Resources/Cra.sdef"
 [ -d resources/web ] && cp -R resources/web "$APP/Contents/Resources/web"
 [ -d resources/brand ] && cp -R resources/brand "$APP/Contents/Resources/brand"

@@ -154,7 +154,7 @@ final class MediaTile: NSView, NSDraggingSource {
         picture.shadowRadius = 3
         picture.shadowOffset = CGSize(width: 0, height: -1)
         layer?.addSublayer(picture)
-        play.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: "Video")?
+        play.image = NSImage(systemSymbolName: "play.fill", accessibilityDescription: BrowserLocalization.text("Video"))?
             .withSymbolConfiguration(.init(pointSize: 22, weight: .regular))
         play.contentTintColor = .white
         play.imageScaling = .scaleNone

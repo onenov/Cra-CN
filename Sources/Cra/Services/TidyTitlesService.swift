@@ -33,7 +33,7 @@ final class TidyTitlesService {
     }()
     static let sweep: TimeInterval = 0.55
     static let subtitleShown: TimeInterval = 3.65
-    static let subtitle = "Double-click to rename"
+    static let subtitle = BrowserLocalization.text("Double-click to rename")
 
     private struct Request {
         let token = UUID()

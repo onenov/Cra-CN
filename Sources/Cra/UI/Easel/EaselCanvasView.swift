@@ -286,7 +286,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         title.alignment = .center
         title.font = Self.font(document.titleStyle, size: document.titleSize ?? 34, title: true)
         title.textColor = .white
-        title.placeholderString = "Untitled Easel"
+        title.placeholderString = BrowserLocalization.text("Untitled Easel")
         title.delegate = self
         title.onFocus = { [weak self] in self?.selected = nil; self?.titlePicked = true }
         addSubview(title)
@@ -366,7 +366,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
                 addTextField(for: item)
             }
         }
-        if title.stringValue != easel.title, easel.title != "Untitled Easel" || !title.stringValue.isEmpty { title.stringValue = easel.title }
+        if title.stringValue != easel.title, easel.title != BrowserLocalization.text("Untitled Easel") || !title.stringValue.isEmpty { title.stringValue = easel.title }
         title.font = Self.font(easel.titleStyle, size: easel.titleSize ?? 34, title: true)
         picked = picked.filter(ids.contains)
         placeSizePill()
@@ -596,7 +596,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
             }
         case .text:
             let item = Easel.Item(kind: .text("", size: 18), frame: .init(x: p.x, y: p.y - 12, width: 240, height: 26))
-            commit("Add Text") { $0.items.append(item) }
+            commit(BrowserLocalization.text("Add Text")) { $0.items.append(item) }
             addTextField(for: item)
             selected = item.id
             window?.makeFirstResponder(texts[item.id])
@@ -680,11 +680,11 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
                 window?.invalidateCursorRects(for: self)
             }
         case .freehand:
-            if stroke.count > 1, let item = Easel.freehand(stroke) { commit("Draw") { $0.items.append(item) }; selected = nil }
+            if stroke.count > 1, let item = Easel.freehand(stroke) { commit(BrowserLocalization.text("Draw")) { $0.items.append(item) }; selected = nil }
         default:
             // A drag draws the box it spans; a click places Arc's 200 pt rectangle or ellipse.
             if let start = dragStart, let item = Easel.shape(tool, from: start, to: point(event)) {
-                commit("Draw") { $0.items.append(item) }
+                commit(BrowserLocalization.text("Draw")) { $0.items.append(item) }
                 selected = item.id
                 onToolDone()
             }
@@ -734,7 +734,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     /// A capture sent here from a page (the capture menu's row for this easel): on the canvas at
     /// once, picked, and in view.
     func insert(_ item: Easel.Item) {
-        commit("Add Capture") { $0.items.append(item) }
+        commit(BrowserLocalization.text("Add Capture")) { $0.items.append(item) }
         selected = item.id
         scrollToVisible(rect(item.frame).insetBy(dx: -40, dy: -40))
     }
@@ -744,7 +744,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         guard !ids.isEmpty else { return }
         for id in ids { texts.removeValue(forKey: id)?.removeFromSuperview() }
         picked = []
-        commit("Delete") { $0.items.removeAll { ids.contains($0.id) } }
+        commit(BrowserLocalization.text("Delete")) { $0.items.removeAll { ids.contains($0.id) } }
     }
 
     /// Edit ▸ Select All (⌘A) on the canvas: every item (#580).
@@ -783,42 +783,42 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         menu.autoenablesItems = false
         let id = item.id
         let group = picked.count > 1 && picked.contains(id) ? picked : [id]
-        add(menu, "Bring to Front", enabled: !document.isFront(group)) { [weak self] in self?.commit("Bring to Front") { $0.bringToFront(group) } }
-        add(menu, "Send to Back", enabled: !document.isBack(group)) { [weak self] in self?.commit("Send to Back") { $0.sendToBack(group) } }
-        add(menu, "Delete") { [weak self] in self?.deleteSelected() }
+        add(menu, BrowserLocalization.text("Bring to Front"), enabled: !document.isFront(group)) { [weak self] in self?.commit(BrowserLocalization.text("Bring to Front")) { $0.bringToFront(group) } }
+        add(menu, BrowserLocalization.text("Send to Back"), enabled: !document.isBack(group)) { [weak self] in self?.commit(BrowserLocalization.text("Send to Back")) { $0.sendToBack(group) } }
+        add(menu, BrowserLocalization.text("Delete")) { [weak self] in self?.deleteSelected() }
         menu.addItem(.separator())
-        add(menu, "Cut", key: "x") { [weak self] in self?.cut(nil) }
-        add(menu, "Copy", key: "c") { [weak self] in self?.copy(nil) }
-        add(menu, "Paste", key: "v", enabled: canPaste) { [weak self] in self?.paste(nil) }
+        add(menu, BrowserLocalization.text("Cut"), key: "x") { [weak self] in self?.cut(nil) }
+        add(menu, BrowserLocalization.text("Copy"), key: "c") { [weak self] in self?.copy(nil) }
+        add(menu, BrowserLocalization.text("Paste"), key: "v", enabled: canPaste) { [weak self] in self?.paste(nil) }
         menu.addItem(.separator())
-        add(menu, "Duplicate") { [weak self] in self?.duplicateSelected() }
+        add(menu, BrowserLocalization.text("Duplicate")) { [weak self] in self?.duplicateSelected() }
         var extra: [() -> Void] = []
         guard group.count == 1 else { return menu }
         switch item.kind {
         case .capture(let c):
             if c.canGoLive {
                 if c.live == true {
-                    extra.append { self.add(menu, "Show Screenshot") { [weak self] in self?.setLive(false, for: id) } }
+                    extra.append { self.add(menu, BrowserLocalization.text("Show Screenshot")) { [weak self] in self?.setLive(false, for: id) } }
                 } else {
-                    extra.append { self.add(menu, "Show Live Website") { [weak self] in self?.confirmLive(id) } }
+                    extra.append { self.add(menu, BrowserLocalization.text("Show Live Website")) { [weak self] in self?.confirmLive(id) } }
                 }
             }
             extra.append {
-                self.add(menu, "Copy Capture URL") {
+                self.add(menu, BrowserLocalization.text("Copy Capture URL")) {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(c.url, forType: .string)
                 }
             }
         case .image:
-            extra.append { self.add(menu, item.altText == nil ? "Add Alt Text…" : "Edit Alt Text…") { [weak self] in self?.editAltText(id) } }
+            extra.append { self.add(menu, item.altText == nil ? BrowserLocalization.text("Add Alt Text…") : BrowserLocalization.text("Edit Alt Text…")) { [weak self] in self?.editAltText(id) } }
         default:
             break
         }
         if Easel.canBeThumbnail(item.kind) {
             if document.thumbnail == id {
-                extra.append { self.add(menu, "Reset to Default Thumbnail") { [weak self] in self?.commit("Reset Thumbnail") { $0.thumbnail = nil } } }
+                extra.append { self.add(menu, BrowserLocalization.text("Reset to Default Thumbnail")) { [weak self] in self?.commit(BrowserLocalization.text("Reset Thumbnail")) { $0.thumbnail = nil } } }
             } else {
-                extra.append { self.add(menu, "Set as Easel Thumbnail") { [weak self] in self?.commit("Set Thumbnail") { $0.thumbnail = id } } }
+                extra.append { self.add(menu, BrowserLocalization.text("Set as Easel Thumbnail")) { [weak self] in self?.commit(BrowserLocalization.text("Set Thumbnail")) { $0.thumbnail = id } } }
             }
         }
         if !extra.isEmpty {
@@ -837,22 +837,22 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func canvasMenu(at p: NSPoint) -> NSMenu {
         let menu = NSMenu()
         menu.autoenablesItems = false
-        add(menu, "Paste", key: "v", enabled: canPaste) { [weak self] in self?.paste(nil) }
+        add(menu, BrowserLocalization.text("Paste"), key: "v", enabled: canPaste) { [weak self] in self?.paste(nil) }
         menu.addItem(.separator())
         let palettes = NSMenu()
         let current: Easel.Palette = document.palette == .chill ? .chill : .vibrant
         for palette in Easel.Palette.menu {
             let row = EaselMenuItem(title: palette.title) { [weak self] in
-                self?.commit("Change Palette") { $0.palette = palette == .vibrant ? nil : palette }
+                self?.commit(BrowserLocalization.text("Change Palette")) { $0.palette = palette == .vibrant ? nil : palette }
             }
             row.state = current == palette ? .on : .off
             palettes.addItem(row)
         }
-        let paletteRow = NSMenuItem(title: "Color Palette", action: nil, keyEquivalent: "")
+        let paletteRow = NSMenuItem(title: BrowserLocalization.text("Color Palette"), action: nil, keyEquivalent: "")
         paletteRow.submenu = palettes
         menu.addItem(paletteRow)
         menu.addItem(.separator())
-        let guidesRow = EaselMenuItem(title: "Use Alignment Guides") { Self.usesGuides.toggle() }
+        let guidesRow = EaselMenuItem(title: BrowserLocalization.text("Use Alignment Guides")) { Self.usesGuides.toggle() }
         guidesRow.state = Self.usesGuides ? .on : .off
         menu.addItem(guidesRow)
         return menu
@@ -866,10 +866,10 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         case .pink: "Pink"
         case .red: "Red"
         case .yellow: "Yellow"
-        case .lightGreen: "Light Green"
-        case .darkGreen: "Dark Green"
-        case .lightBlue: "Light Blue"
-        case .darkBlue: "Dark Blue"
+        case .lightGreen: BrowserLocalization.text("Light Green")
+        case .darkGreen: BrowserLocalization.text("Dark Green")
+        case .lightBlue: BrowserLocalization.text("Light Blue")
+        case .darkBlue: BrowserLocalization.text("Dark Blue")
         case .purple: "Purple"
         }
     }
@@ -889,10 +889,10 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func confirmLive(_ id: UUID) {
         guard !UserDefaults.standard.bool(forKey: Self.liveToldKey), let window else { setLive(true, for: id); return }
         let alert = NSAlert()
-        alert.messageText = "Replace this screenshot with the live website?"
-        alert.informativeText = "See an up-to-date, interactive view of whatever you've captured. This does not work on all sites. You can always flip back to the screenshot from this menu."
-        alert.addButton(withTitle: "Show Live Website")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = BrowserLocalization.text("Replace this screenshot with the live website?")
+        alert.informativeText = BrowserLocalization.text("See an up-to-date, interactive view of whatever you've captured. This does not work on all sites. You can always flip back to the screenshot from this menu.")
+        alert.addButton(withTitle: BrowserLocalization.text("Show Live Website"))
+        alert.addButton(withTitle: BrowserLocalization.text("Cancel"))
         alert.beginSheetModal(for: window) { [weak self] response in
             guard response == .alertFirstButtonReturn else { return }
             UserDefaults.standard.set(true, forKey: Self.liveToldKey)
@@ -904,18 +904,18 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func editAltText(_ id: UUID) {
         guard let window, let i = document.items.firstIndex(where: { $0.id == id }) else { return }
         let alert = NSAlert()
-        alert.messageText = "Alt Text"
-        alert.informativeText = "Describe this image for people who can't see it."
+        alert.messageText = BrowserLocalization.text("Alt Text")
+        alert.informativeText = BrowserLocalization.text("Describe this image for people who can't see it.")
         let field = NSTextField(frame: NSRect(x: 0, y: 0, width: 280, height: 24))
         field.stringValue = document.items[i].altText ?? ""
         alert.accessoryView = field
-        alert.addButton(withTitle: "Save")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: BrowserLocalization.text("Save"))
+        alert.addButton(withTitle: BrowserLocalization.text("Cancel"))
         alert.window.initialFirstResponder = field
         alert.beginSheetModal(for: window) { [weak self] response in
             guard response == .alertFirstButtonReturn, let self, let i = self.document.items.firstIndex(where: { $0.id == id }) else { return }
             let text = field.stringValue.trimmingCharacters(in: .whitespacesAndNewlines)
-            self.commit("Edit Alt Text") { $0.items[i].altText = text.isEmpty ? nil : text }
+            self.commit(BrowserLocalization.text("Edit Alt Text")) { $0.items[i].altText = text.isEmpty ? nil : text }
         }
     }
 
@@ -942,10 +942,10 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         let y = 220.0
         for (tool, a, b) in [(Easel.Tool.rectangle, Easel.Point(120, y), Easel.Point(300, y + 120)), (.ellipse, .init(340, y), .init(500, y + 120)),
                              (.arrow, .init(540, y + 120), .init(700, y))] {
-            if let item = Easel.Item.drawn(tool, from: a, to: b) { commit("Draw") { $0.items.append(item) } }
+            if let item = Easel.Item.drawn(tool, from: a, to: b) { commit(BrowserLocalization.text("Draw")) { $0.items.append(item) } }
         }
         let wave = (0...20).map { Easel.Point(740 + Double($0) * 8, y + 60 + sin(Double($0) / 2) * 40) }
-        if let item = Easel.freehand(wave) { commit("Draw") { $0.items.append(item) } }
+        if let item = Easel.freehand(wave) { commit(BrowserLocalization.text("Draw")) { $0.items.append(item) } }
     }
 
     // MARK: Live captures
@@ -995,7 +995,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func setLive(_ live: Bool, for id: UUID) {
         guard let i = document.items.firstIndex(where: { $0.id == id }), case .capture(var c) = document.items[i].kind else { return }
         c.live = live ? true : nil
-        commit(live ? "Show Live Website" : "Show Screenshot") { $0.items[i].kind = .capture(c) }
+        commit(live ? BrowserLocalization.text("Show Live Website") : BrowserLocalization.text("Show Screenshot")) { $0.items[i].kind = .capture(c) }
     }
 
     // MARK: Copy and paste (Arc's object menu: Cut, Copy, Paste, Duplicate)
@@ -1077,7 +1077,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
             }
             pasted.append(copy)
         }
-        commit("Paste") { $0.items.append(contentsOf: pasted) }
+        commit(BrowserLocalization.text("Paste")) { $0.items.append(contentsOf: pasted) }
         for item in pasted { if case .text = item.kind { addTextField(for: item) } }
         picked = pasted.map(\.id)
     }
@@ -1101,7 +1101,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
             }
             return copy
         }
-        commit("Duplicate") { $0.items.append(contentsOf: copies) }
+        commit(BrowserLocalization.text("Duplicate")) { $0.items.append(contentsOf: copies) }
         for copy in copies { if case .text = copy.kind { addTextField(for: copy) } }
         picked = copies.map(\.id)
     }
@@ -1128,7 +1128,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         let item = Easel.Item(kind: .image(file: name), frame: .init(x: center.x - size.width / 2, y: center.y - size.height / 2,
                                                                      width: size.width, height: size.height))
         images[name] = image
-        commit("Add Image") { $0.items.append(item) }
+        commit(BrowserLocalization.text("Add Image")) { $0.items.append(item) }
         selected = item.id
     }
 
@@ -1140,7 +1140,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         let center = point ?? NSPoint(x: visible.midX, y: visible.midY)
         let item = Easel.Item(kind: .link(Easel.Link(url: url, title: title)),
                               frame: .init(x: center.x - size.width / 2, y: center.y - size.height / 2, width: size.width, height: size.height))
-        commit("Add Link") { $0.items.append(item) }
+        commit(BrowserLocalization.text("Add Link")) { $0.items.append(item) }
         selected = item.id
         let easel = document.id
         EaselHooks.fetchLink?(url) { [weak self] meta, picture, icon in
@@ -1221,7 +1221,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func setShade(_ shade: Easel.Shade) {
         let ids = picked
         guard !ids.isEmpty else { return }
-        commit("Change Color") {
+        commit(BrowserLocalization.text("Change Color")) {
             for i in $0.items.indices where ids.contains($0.items[i].id) { $0.items[i].shade = shade; $0.items[i].color = nil }
         }
         for item in document.items where ids.contains(item.id) { texts[item.id]?.textColor = textColor(of: item) }
@@ -1238,8 +1238,8 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func debugTextColor(_ name: String) -> String {
         func firstText() -> Easel.Item? { document.items.first { if case .text = $0.kind { return true } else { return false } } }
         if firstText() == nil {
-            let text = Easel.Item(kind: .text("Colour me", size: 24), frame: .init(x: 120, y: 420, width: 240, height: 40))
-            commit("Text") { $0.items.append(text) }
+            let text = Easel.Item(kind: .text(BrowserLocalization.text("Colour me"), size: 24), frame: .init(x: 120, y: 420, width: 240, height: 40))
+            commit(BrowserLocalization.text("Text")) { $0.items.append(text) }
             addTextField(for: text)
         }
         guard let item = firstText() else { return "no text" }
@@ -1270,12 +1270,12 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
 
     private func cycleSelectedStyle() {
         if titlePicked {
-            commit("Change Font") { $0.titleStyle = ($0.titleStyle ?? .standard).next }
+            commit(BrowserLocalization.text("Change Font")) { $0.titleStyle = ($0.titleStyle ?? .standard).next }
             title.font = Self.font(document.titleStyle, size: document.titleSize ?? 34, title: true)
             return
         }
         guard let id = selected, let i = document.items.firstIndex(where: { $0.id == id }), case .text(_, let size) = document.items[i].kind else { return }
-        commit("Change Font") { $0.items[i].style = ($0.items[i].style ?? .standard).next }
+        commit(BrowserLocalization.text("Change Font")) { $0.items[i].style = ($0.items[i].style ?? .standard).next }
         texts[id]?.font = Self.font(document.items[i].style, size: size, title: false)
         refitText(id, record: false)
     }
@@ -1283,7 +1283,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     private func resizeSelectedText(by step: Double) {
         if titlePicked {
             let new = min(96, max(14, (document.titleSize ?? 34) + step))
-            commit("Change Text Size") { $0.titleSize = new }
+            commit(BrowserLocalization.text("Change Text Size")) { $0.titleSize = new }
             title.font = Self.font(document.titleStyle, size: new, title: true)
             return
         }
@@ -1291,7 +1291,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
               case .text(let string, let size) = document.items[i].kind else { return }
         let new = min(96, max(10, size + step))
         let frame = fittedTextFrame(document.items[i], string: string, size: new)
-        commit("Change Text Size") {
+        commit(BrowserLocalization.text("Change Text Size")) {
             $0.items[i].kind = .text(string, size: new)
             $0.items[i].frame = frame
         }
@@ -1310,7 +1310,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
         f.focusRingType = .none
         f.font = Self.font(item.style, size: size, title: false)
         f.textColor = textColor(of: item)
-        f.placeholderString = "Type something"
+        f.placeholderString = BrowserLocalization.text("Type something")
         // Several lines that wrap in the box, as Arc's (#580).
         f.usesSingleLineMode = false
         f.cell?.wraps = true
@@ -1354,7 +1354,7 @@ final class EaselSheetView: NSView, NSTextFieldDelegate, NSMenuItemValidation {
     func controlTextDidChange(_ obj: Notification) {
         guard let f = obj.object as? NSTextField else { return }
         if f === title {
-            commit(record: false) { $0.title = f.stringValue.isEmpty ? "Untitled Easel" : f.stringValue }
+            commit(record: false) { $0.title = f.stringValue.isEmpty ? BrowserLocalization.text("Untitled Easel") : f.stringValue }
             return
         }
         guard let id = f.identifier.flatMap({ UUID(uuidString: $0.rawValue) }),
@@ -1569,7 +1569,7 @@ final class EaselToolbar: NSView {
 
     override func isAccessibilityElement() -> Bool { true }
     override func accessibilityRole() -> NSAccessibility.Role? { .toolbar }
-    override func accessibilityLabel() -> String? { "Easel tools" }
+    override func accessibilityLabel() -> String? { BrowserLocalization.text("Easel tools") }
 }
 
 extension NSColor {

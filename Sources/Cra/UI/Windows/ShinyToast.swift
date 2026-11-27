@@ -27,7 +27,7 @@ final class ShinyToast {
         /// Arc's Share glyph on "Copied Current URL" (Arc 1.171, browser windows and Little Arc):
         /// the macOS share menu for the address, from the button.
         static func share(_ url: String) -> Action {
-            Action(title: "Share", symbol: "square.and.arrow.up", run: {}, anchored: { view, rect in
+            Action(title: BrowserLocalization.text("Share"), symbol: "square.and.arrow.up", run: {}, anchored: { view, rect in
                 guard let u = URL(string: url) else { return }
                 NSSharingServicePicker(items: [u]).show(relativeTo: rect, of: view, preferredEdge: .minY)
             })
@@ -304,7 +304,7 @@ final class ShinyToast {
             // Only the glyph at rest; the round fill shows under the pointer (moved(to:)).
             closeButton.backgroundColor = NSColor.clear.cgColor
             let config = NSImage.SymbolConfiguration(pointSize: 11, weight: .semibold).applying(.init(paletteColors: [colors.text]))
-            closeGlyph.contents = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close")?.withSymbolConfiguration(config)
+            closeGlyph.contents = NSImage(systemSymbolName: "xmark", accessibilityDescription: BrowserLocalization.text("Close"))?.withSymbolConfiguration(config)
             closeGlyph.contentsScale = scale
             closeGlyph.frame = CGRect(x: 0, y: 0, width: s, height: s)
             buttonTint = colors.text

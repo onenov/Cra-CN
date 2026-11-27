@@ -172,7 +172,7 @@ final class SpaceHeaderView: NSView, NSTextFieldDelegate {
         done.stringValue = "Done"
         done.isHidden = true
         symbol.imageScaling = .scaleNone
-        moveTo.stringValue = "Move to…"
+        moveTo.stringValue = BrowserLocalization.text("Move to…")
         moveTo.isHidden = true
         moveToPill.wantsLayer = true
         moveToPill.layer?.cornerRadius = 8
@@ -487,28 +487,28 @@ enum SpaceMenu {
         let id = space.id
         switch item {
         case .changeIcon:
-            MenuItems.add(m, "Change Space Icon…") { [weak anchor] in if let anchor { actions.changeSpaceIcon(space, anchor) } }
+            MenuItems.add(m, BrowserLocalization.text("Change Space Icon…")) { [weak anchor] in if let anchor { actions.changeSpaceIcon(space, anchor) } }
         case .rename:
-            MenuItems.add(m, "Rename Space…") { open(); rename() }
+            MenuItems.add(m, BrowserLocalization.text("Rename Space…")) { open(); rename() }
         case .editTheme:
-            MenuItems.add(m, "Edit Theme Color…") { open(); actions.editSpaceTheme(space) }
+            MenuItems.add(m, BrowserLocalization.text("Edit Theme Color…")) { open(); actions.editSpaceTheme(space) }
         case .setProfile:
-            let profiles = MenuItems.submenu(m, "Set Profile")
+            let profiles = MenuItems.submenu(m, BrowserLocalization.text("Set Profile"))
             MenuItems.add(profiles, store.profileName(nil), on: space.profileID == nil) { store.setProfile(nil, forSpace: id) }
             for p in store.profiles {
                 MenuItems.add(profiles, p.name, on: space.profileID == p.id) { store.setProfile(p.id, forSpace: id) }
             }
             profiles.addItem(.separator())
-            MenuItems.add(profiles, "New Profile…") { actions.newProfile(id) }
+            MenuItems.add(profiles, BrowserLocalization.text("New Profile…")) { actions.newProfile(id) }
         case .searchEngine:
-            addSearchEngines(to: MenuItems.submenu(m, "Search Engine"), space: space, store: store)
+            addSearchEngines(to: MenuItems.submenu(m, BrowserLocalization.text("Search Engine")), space: space, store: store)
         case .newFolder:
             MenuItems.add(m, action: "newFolder") {
                 open()
                 ui.renamingID = store.createFolder(named: "New Folder", in: space.pinnedContainerID, index: 0).id
             }
         case .liveFolders:
-            SidebarMenus.addLiveFolderPlugins(to: MenuItems.submenu(m, "Live Folders"), space: id, store: store, window: anchor.window)
+            SidebarMenus.addLiveFolderPlugins(to: MenuItems.submenu(m, BrowserLocalization.text("Live Folders")), space: id, store: store, window: anchor.window)
         case .export:
             let title = SpaceMenuTitle.named(space.title, prefix: "Export “", suffix: "” into Folder")
             let export = MenuItems.submenu(m, title)
@@ -520,9 +520,9 @@ enum SpaceMenu {
         case .manageSpaces:
             MenuItems.add(m, action: "manageSpaces") { actions.manageSpaces() }
         case .hideSpaceHeader:
-            MenuItems.add(m, "Hide Space Header") { store.settings.showSpaceHeaderOnSingleSpace = false }
+            MenuItems.add(m, BrowserLocalization.text("Hide Space Header")) { store.settings.showSpaceHeaderOnSingleSpace = false }
         case .delete:
-            MenuItems.add(m, action: "deleteSpace", title: "Delete Space") { actions.deleteSpace(space) }
+            MenuItems.add(m, action: "deleteSpace", title: BrowserLocalization.text("Delete Space")) { actions.deleteSpace(space) }
         }
     }
 }
@@ -535,7 +535,7 @@ extension SpaceMenu {
         let fallback = SearchEngines.shared.defaultEngine(profilePath: profile, legacy: store.settings.searchEngine)
         let choices = ChromiumSearchEngine.spaceChoices(among: SearchEngines.shared.keywords(profilePath: profile))
         let current = space.searchEngine?.lowercased()
-        MenuItems.add(menu, "Default (\(fallback.name))", on: current == nil) { store.setSearchEngine(nil, forSpace: space.id) }
+        MenuItems.add(menu, BrowserLocalization.format("Default (%1$@)", fallback.name), on: current == nil) { store.setSearchEngine(nil, forSpace: space.id) }
         menu.addItem(.separator())
         for e in choices {
             MenuItems.add(menu, e.name, on: current == e.keyword.lowercased()) { store.setSearchEngine(e.keyword, forSpace: space.id) }
@@ -1061,7 +1061,7 @@ final class FavoritesDropStrip: FavoritesDropTarget {
         border.lineWidth = 1
         border.lineDashPattern = [4, 3]
         layer?.addSublayer(border)
-        label.stringValue = "Add to Favorites"
+        label.stringValue = BrowserLocalization.text("Add to Favorites")
         label.alignment = .center
         addSubview(label)
         refresh()
@@ -1121,7 +1121,7 @@ final class FavoritesEmptyCard: FavoritesDropTarget {
         badge.imageScaling = .scaleNone
         badge.wantsLayer = true
         badge.shadow = NSShadow()
-        title.stringValue = "Drag to add Favorites"
+        title.stringValue = BrowserLocalization.text("Drag to add Favorites")
         title.alignment = .center
         subtitle.font = .systemFont(ofSize: 11)
         subtitle.maximumNumberOfLines = 2
@@ -1159,7 +1159,7 @@ final class FavoritesEmptyCard: FavoritesDropTarget {
         para.alignment = .center
         para.minimumLineHeight = 15
         para.maximumLineHeight = 15
-        subtitle.attributedStringValue = NSAttributedString(string: "Favorites keep your most used sites and apps close",
+        subtitle.attributedStringValue = NSAttributedString(string: BrowserLocalization.text("Favorites keep your most used sites and apps close"),
                                                             attributes: [.font: NSFont.systemFont(ofSize: 11), .paragraphStyle: para,
                                                                          .foregroundColor: text.withAlphaComponent(text.alphaComponent * 0.7)])
         close.color = text.withAlphaComponent(text.alphaComponent * 0.7)
@@ -1203,7 +1203,7 @@ final class FavoritesEmptyCardClose: NSView {
         addSubview(glyph)
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Dismiss")
+        setAccessibilityLabel(BrowserLocalization.text("Dismiss"))
         setAccessibilityIdentifier("sidebarFavoritesEmptyStateDismissButton")
     }
 
@@ -1832,59 +1832,59 @@ final class FavoriteTileView: NSView, ArcTooltipTarget, NSDraggingSource {
         // have no other way in, by Change Icon…, and lists Edit Pinned Page ▸ flat after Rename… (#76).
         guard let t = item.tab else { return m }
         let open = store.isSelected(id, window: ui.windowID)
-        MenuItems.add(m, action: "copyURL", title: "Copy Link") {
+        MenuItems.add(m, action: "copyURL", title: BrowserLocalization.text("Copy Link")) {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(CleanURL.withoutTrackers(t.url), forType: .string)
         }
         let web = URL(string: CleanURL.withoutTrackers(t.url)).flatMap { $0.scheme?.hasPrefix("http") == true ? $0 : nil }
         if let web { SharePicker.addMenu(to: m, url: web) }
         m.addItem(.separator())
-        MenuItems.add(m, "Change Icon…") { [weak self] in self?.pickIcon() }
+        MenuItems.add(m, BrowserLocalization.text("Change Icon…")) { [weak self] in self?.pickIcon() }
         if let key = t.customIconKey {
-            MenuItems.add(m, "Use Site Icon") {
+            MenuItems.add(m, BrowserLocalization.text("Use Site Icon")) {
                 store.setCustomIcon(nil, for: id)
                 favicons.removeCustomIcon(key)
             }
         }
-        let colors = MenuItems.submenu(m, "Tile Color")
-        MenuItems.add(colors, "Default", on: tileColor == nil, image: TileColor.swatch(nil)) { store.setTileColor(nil, for: [id]) }
+        let colors = MenuItems.submenu(m, BrowserLocalization.text("Tile Color"))
+        MenuItems.add(colors, BrowserLocalization.text("Default"), on: tileColor == nil, image: TileColor.swatch(nil)) { store.setTileColor(nil, for: [id]) }
         for p in TileColor.presets {
             MenuItems.add(colors, p.name, on: tileColor == p.hex, image: TileColor.swatch(p.hex)) { store.setTileColor(p.hex, for: [id]) }
         }
         if let tileColor, !TileColor.presets.contains(where: { $0.hex == tileColor }) {
-            MenuItems.add(colors, "Custom", on: true, image: TileColor.swatch(tileColor)) { store.setTileColor(tileColor, for: [id]) }
+            MenuItems.add(colors, BrowserLocalization.text("Custom"), on: true, image: TileColor.swatch(tileColor)) { store.setTileColor(tileColor, for: [id]) }
         }
-        MenuItems.add(colors, "Other Color…") {
+        MenuItems.add(colors, BrowserLocalization.text("Other Color…")) {
             TileColorPanel.shared.show(tileColor) { hex in store.setTileColor(hex, for: [id]) }
         }
         colors.addItem(.separator())
-        MenuItems.add(colors, "Use This Color for All Favorites") { [weak grid] in
+        MenuItems.add(colors, BrowserLocalization.text("Use This Color for All Favorites")) { [weak grid] in
             guard let grid else { return }
             store.setTileColor(tileColor, for: grid.spaceFavoriteIDs())
         }
-        MenuItems.add(m, action: "renameTab", title: "Rename…") { ui.renamingID = id }
+        MenuItems.add(m, action: "renameTab", title: BrowserLocalization.text("Rename…")) { ui.renamingID = id }
         // Edit Pinned URL… and Replace Pinned URL with Current beside Rename…, flat (#76).
         if t.liveItemURL == nil {
             SidebarMenus.pinnedURLItems(m, id, navigatedAway: t.url != t.savedURL, store: store, actions: actions)
         }
         SidebarMenus.muteItem(m, id, t, ui: ui, store: store, actions: actions)
-        if open, web?.host != nil { MenuItems.add(m, "Customize Page…") { actions.performAction("newBoost") } }
+        if open, web?.host != nil { MenuItems.add(m, BrowserLocalization.text("Customize Page…")) { actions.performAction("newBoost") } }
         m.addItem(.separator())
         if open {
-            MenuItems.add(m, action: "addSplitView", title: "Add Split View") { actions.performAction("addSplitView") }
+            MenuItems.add(m, action: "addSplitView", title: BrowserLocalization.text("Add Split View")) { actions.performAction("addSplitView") }
         } else if store.selectedTabID(window: ui.windowID) != nil {
-            MenuItems.add(m, "Open in Split View") { actions.performAction("openInSplit:\(id.uuidString)") }
+            MenuItems.add(m, BrowserLocalization.text("Open in Split View")) { actions.performAction("openInSplit:\(id.uuidString)") }
         }
         // The copy is a Today tab of the page, in the background, as in Arc.
-        MenuItems.add(m, action: "duplicateTab", title: "Duplicate") { store.duplicateTab(id, window: ui.windowID) }
+        MenuItems.add(m, action: "duplicateTab", title: BrowserLocalization.text("Duplicate")) { store.duplicateTab(id, window: ui.windowID) }
         Self.moveToProfile(m, id, store)
         m.addItem(.separator())
         if open || ui.loadedTabIDs.contains(id) {
-            MenuItems.add(m, action: "closeTab", title: "Close Tab") { actions.closeTabFromItsMenu(id) }
+            MenuItems.add(m, action: "closeTab", title: BrowserLocalization.text("Close Tab")) { actions.closeTabFromItsMenu(id) }
         }
         // Arc deletes the favorite. A shared one goes as before; a space's own goes to the archive,
         // where Library can bring it back. ⌘Z puts either back in its place (#806).
-        MenuItems.add(m, "Remove Favorite") { store.removeFavorite(id) }
+        MenuItems.add(m, BrowserLocalization.text("Remove Favorite")) { store.removeFavorite(id) }
         return m
     }
 
@@ -1892,23 +1892,23 @@ final class FavoriteTileView: NSView, ArcTooltipTarget, NSDraggingSource {
     /// Refresh, then ✓Show Hover Preview, ✓Show Time to Next Meeting and Show Next Meeting Link ▸
     /// (Never … Ten Minutes Before). With Live Calendar off it offers to turn it back on.
     private static func liveCalendarMenu(_ m: NSMenu, url: String, profilePath: String?, store: SidebarStore) {
-        let sub = MenuItems.submenu(m, "Live Calendar")
+        let sub = MenuItems.submenu(m, BrowserLocalization.text("Live Calendar"))
         m.items.last?.image = NSImage(systemSymbolName: "calendar", accessibilityDescription: nil)
         guard store.settings.liveCalendar else {
-            MenuItems.add(sub, "Enable Live Calendar") { store.settings.liveCalendar = true }
+            MenuItems.add(sub, BrowserLocalization.text("Enable Live Calendar")) { store.settings.liveCalendar = true }
             return
         }
         let state = LiveCalendarClient.shared.state(for: url, profilePath: profilePath)
-        let status = state?.failed == true ? "Failed to update" : state?.signedOut == true ? "Not signed in" : CalendarPreview.lastFetch(state?.fetched, now: Date())
+        let status = state?.failed == true ? BrowserLocalization.text("Failed to update") : state?.signedOut == true ? BrowserLocalization.text("Not signed in") : CalendarPreview.lastFetch(state?.fetched, now: Date())
         MenuItems.add(sub, status, enabled: false) {}
-        MenuItems.add(sub, "Refresh") { LiveCalendarClient.shared.refresh(favorite: url, profilePath: profilePath) }
+        MenuItems.add(sub, BrowserLocalization.text("Refresh")) { LiveCalendarClient.shared.refresh(favorite: url, profilePath: profilePath) }
         sub.addItem(.separator())
-        MenuItems.add(sub, "Show Hover Preview", on: store.settings.calendarHoverPreview) { store.settings.calendarHoverPreview.toggle() }
-        MenuItems.add(sub, "Show Time to Next Meeting", on: store.settings.calendarTimeToNextMeeting) {
+        MenuItems.add(sub, BrowserLocalization.text("Show Hover Preview"), on: store.settings.calendarHoverPreview) { store.settings.calendarHoverPreview.toggle() }
+        MenuItems.add(sub, BrowserLocalization.text("Show Time to Next Meeting"), on: store.settings.calendarTimeToNextMeeting) {
             store.settings.calendarTimeToNextMeeting.toggle()
             NotificationCenter.default.post(name: LiveCalendarClient.changed, object: nil)
         }
-        let link = MenuItems.submenu(sub, "Show Next Meeting Link")
+        let link = MenuItems.submenu(sub, BrowserLocalization.text("Show Next Meeting Link"))
         for t in CalendarPreview.LinkTiming.allCases {
             MenuItems.add(link, t.title, on: store.settings.calendarMeetingLink == t) {
                 store.settings.calendarMeetingLink = t
@@ -1919,13 +1919,13 @@ final class FavoriteTileView: NSView, ArcTooltipTarget, NSDraggingSource {
 
     /// Shared favorites (#154) take Arc's words: Remove Favorite deletes the favorite.
     private static func removeTitle(_ id: UUID, _ store: SidebarStore) -> String {
-        store.profileList(ofItem: id) == nil ? "Remove from Favorites" : "Remove Favorite"
+        store.profileList(ofItem: id) == nil ? BrowserLocalization.text("Remove from Favorites") : BrowserLocalization.text("Remove Favorite")
     }
 
     /// Arc 1.171's Move to ▸ Profile ▸ ✓Default / <profile>… on a shared favorite.
     private static func moveToProfile(_ menu: NSMenu, _ id: UUID, _ store: SidebarStore) {
         guard let list = store.profileList(ofItem: id) else { return }
-        let profiles = MenuItems.submenu(MenuItems.submenu(menu, "Move to"), "Profile")
+        let profiles = MenuItems.submenu(MenuItems.submenu(menu, BrowserLocalization.text("Move to")), "Profile")
         MenuItems.add(profiles, store.profileName(nil), on: list.profileID == nil) { store.moveFavorite(id, toProfile: nil) }
         for p in store.profiles {
             MenuItems.add(profiles, p.name, on: list.profileID == p.id) { store.moveFavorite(id, toProfile: p.id) }

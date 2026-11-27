@@ -45,10 +45,10 @@ enum PageCommands {
             MainActor.assumeIsolated {
                 let value = result.flatMap { try? JSONSerialization.jsonObject(with: Data($0.utf8)) as? [String: Any] }
                 let text = (value?["result"] as? [String: Any])?["value"] as? String ?? ""
-                guard let quote = CleanURL.quote(text, url: url) else { host?.showCommandToast("Select Text to Copy as a Quote", action: nil); return }
+                guard let quote = CleanURL.quote(text, url: url) else { host?.showCommandToast(BrowserLocalization.text("Select Text to Copy as a Quote"), action: nil); return }
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(quote, forType: .string)
-                host?.showCommandToast("Copied URL as Quote", action: nil)
+                host?.showCommandToast(BrowserLocalization.text("Copied URL as Quote"), action: nil)
             }
         }
     }
@@ -75,10 +75,10 @@ enum PageCommands {
                     let text = single ? o?["data"] as? String : (o?["result"] as? [String: Any])?["value"] as? String
                     guard let text, (try? Data(text.utf8).write(to: dest, options: .atomic)) != nil else {
                         NSLog("Cra: save page failed: %@", error ?? "no data")
-                        host?.showCommandToast("Couldn’t Save the Page", action: nil)
+                        host?.showCommandToast(BrowserLocalization.text("Couldn’t Save the Page"), action: nil)
                         return
                     }
-                    host?.showCommandToast("Page Saved", action: nil)
+                    host?.showCommandToast(BrowserLocalization.text("Page Saved"), action: nil)
                 }
             }
         }
@@ -87,7 +87,7 @@ enum PageCommands {
     /// Arc's "Capture the full page": the whole document, beyond the viewport, as a PNG.
     static func captureFullPage(_ host: PageCommandHost) {
         guard let b = host.commandBrowser else { return }
-        host.showCommandToast("Capture in Progress", action: nil)
+        host.showCommandToast(BrowserLocalization.text("Capture in Progress"), action: nil)
         // Both completions come on the main queue.
         b.sendDevToolsMethod("Page.getLayoutMetrics", params: "{}") { [weak host] result, error in
             guard let result, let m = try? JSONSerialization.jsonObject(with: Data(result.utf8)) as? [String: Any],
@@ -107,7 +107,7 @@ enum PageCommands {
     /// the layout a site gives an iPhone 15) and captured at 3x, then put back as it was.
     static func capturePortrait(_ host: PageCommandHost) {
         guard let b = host.commandBrowser else { return }
-        host.showCommandToast("Capture in Progress", action: nil)
+        host.showCommandToast(BrowserLocalization.text("Capture in Progress"), action: nil)
         let metrics = #"{"width":390,"height":844,"deviceScaleFactor":3,"mobile":true}"#
         b.sendDevToolsMethod("Emulation.setDeviceMetricsOverride", params: metrics) { [weak host] _, error in
             MainActor.assumeIsolated {
@@ -135,12 +135,12 @@ enum PageCommands {
         guard let shot, let o = try? JSONSerialization.jsonObject(with: Data(shot.utf8)) as? [String: Any],
               let b64 = o["data"] as? String, let png = Data(base64Encoded: b64), NSImage(data: png) != nil else {
             NSLog("Cra: capture failed: %@", error ?? "no data")
-            host.showCommandToast("Capture Failed", action: nil)
+            host.showCommandToast(BrowserLocalization.text("Capture Failed"), action: nil)
             return
         }
         copyCapture(png)
         CaptureSound.play()
-        host.showCommandToast("Screenshot Copied to Clipboard", action: ShinyToast.Action(title: "Save") { [weak host] in
+        host.showCommandToast(BrowserLocalization.text("Screenshot Copied to Clipboard"), action: ShinyToast.Action(title: BrowserLocalization.text("Save")) { [weak host] in
             guard let host, let window = host.commandWindow else { return }
             saveCapture(png, over: window, host: host)
         })
@@ -156,7 +156,7 @@ enum PageCommands {
     /// The toast's Save: Arc's "Save Capture Image" panel, in Downloads.
     static func saveCapture(_ png: Data, over window: NSWindow, host: PageCommandHost) {
         let panel = NSSavePanel()
-        panel.title = "Save Capture Image"
+        panel.title = BrowserLocalization.text("Save Capture Image")
         panel.nameFieldStringValue = captureFileName()
         panel.allowedContentTypes = [.png]
         panel.directoryURL = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first
@@ -166,7 +166,7 @@ enum PageCommands {
                 try png.write(to: url)
             } catch {
                 NSLog("Cra: saving a capture failed: %@", error.localizedDescription)
-                host?.showCommandToast("Failed to Save Capture", action: nil)
+                host?.showCommandToast(BrowserLocalization.text("Failed to Save Capture"), action: nil)
             }
         }
     }

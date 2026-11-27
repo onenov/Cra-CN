@@ -38,8 +38,8 @@ final class SpacesManagerView: NSView {
         b.layer?.cornerRadius = SpacesManagerMetrics.plus / 2
         b.layer?.backgroundColor = accent.fill.cgColor
         b.contentTintColor = accent.ink
-        b.toolTip = "New Space"
-        b.setAccessibilityLabel("New Space")
+        b.toolTip = BrowserLocalization.text("New Space")
+        b.setAccessibilityLabel(BrowserLocalization.text("New Space"))
         return b
     }()
 
@@ -146,7 +146,7 @@ private final class SpaceManagerCard: NSView {
     private let symbol = NSImageView()
     private let title = NSTextField.sidebarLabel(size: 13, weight: .semibold)
     private let list: SpaceListView
-    private lazy var brush = SidebarGlyphButton(symbol: "paintbrush.pointed.fill", size: 26, iconSize: 13, help: "Edit Theme Color",
+    private lazy var brush = SidebarGlyphButton(symbol: "paintbrush.pointed.fill", size: 26, iconSize: 13, help: BrowserLocalization.text("Edit Theme Color"),
                                                 colors: colors) { [weak self] in
         guard let self, let s = self.store.space(self.spaceID) else { return }
         self.actions.editSpaceThemeBeside(s, self)
@@ -248,7 +248,7 @@ private final class SpaceMoveHandle: NSView {
         glyph.imageScaling = .scaleNone
         glyph.autoresizingMask = [.width, .height]
         addSubview(glyph)
-        setAccessibilityLabel("Move Space")
+        setAccessibilityLabel(BrowserLocalization.text("Move Space"))
     }
 
     required init?(coder: NSCoder) { fatalError() }

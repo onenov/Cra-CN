@@ -149,7 +149,7 @@ final class FindBarView: NSView, NSTextFieldDelegate {
         field.drawsBackground = false
         field.focusRingType = .none
         field.font = .systemFont(ofSize: 13)
-        field.placeholderString = "Find in page"
+        field.placeholderString = BrowserLocalization.text("Find in page")
         field.usesSingleLineMode = true
         field.cell?.isScrollable = true
         field.delegate = self

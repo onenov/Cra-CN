@@ -25,7 +25,7 @@ struct GeneralPane: View {
                 SettingsCardDivider()
                 SettingsCardRow {
                     Text("Warn before quitting").font(.system(size: 13))
-                        .help(store.settings.keepInMenuBar ? "⌘Q doesn’t quit Cra while it stays in the menu bar (Advanced)." : "⌘Q asks “Quit Cra?” first.")
+                        .help(store.settings.keepInMenuBar ? BrowserLocalization.text("⌘Q doesn’t quit Cra while it stays in the menu bar (Advanced).") : BrowserLocalization.text("⌘Q asks “Quit Cra?” first."))
                 } trailing: {
                     Toggle("Warn before quitting", isOn: $store.settings.warnBeforeQuitting)
                         .toggleStyle(.arcSwitch).labelsHidden()
@@ -48,25 +48,25 @@ struct GeneralPane: View {
             }
             .padding(.top, 9)
 
-            SettingsHeader("System").padding(.top, 20)
+            SettingsHeader(BrowserLocalization.text("System")).padding(.top, 20)
             SettingsFeatureCard {
-                SettingsPlainRow("Default browser",
+                SettingsPlainRow(BrowserLocalization.text("Default browser"),
                                    detail: system.isDefaultBrowser
-                                       ? "Links you click in other apps open in Cra."
-                                       : "Links you click in other apps open in \(system.defaultBrowserName ?? "another browser"). Cra works best as your default browser.",
+                                       ? BrowserLocalization.text("Links you click in other apps open in Cra.")
+                                       : BrowserLocalization.format("Links you click in other apps open in %1$@. Cra works best as your default browser.", "\(system.defaultBrowserName ?? "another browser")"),
                                    trailing: {
                     if system.isDefaultBrowser {
                         Label("Default", systemImage: "checkmark.circle.fill").font(.system(size: 13)).foregroundStyle(.secondary)
                     } else {
-                        Button(system.isPromptingDefault ? "Confirm in the Dialog…" : "Make Default") {
+                        Button(system.isPromptingDefault ? BrowserLocalization.text("Confirm in the Dialog…") : BrowserLocalization.text("Make Default")) {
                             Task { await system.makeDefaultBrowser() }
                         }
                         .disabled(system.isPromptingDefault)
                     }
                 })
                 SettingsCardDivider()
-                SettingsPlainRow("Dock",
-                                   detail: system.isInDock ? "Cra is in the Dock." : "Keep Cra in the Dock to open it with one click.",
+                SettingsPlainRow(BrowserLocalization.text("Dock"),
+                                   detail: system.isInDock ? BrowserLocalization.text("Cra is in the Dock.") : BrowserLocalization.text("Keep Cra in the Dock to open it with one click."),
                                    trailing: {
                     if system.isInDock {
                         Label("In the Dock", systemImage: "checkmark.circle.fill").font(.system(size: 13)).foregroundStyle(.secondary)
@@ -75,8 +75,8 @@ struct GeneralPane: View {
                     }
                 })
                 SettingsCardDivider()
-                SettingsToggleRow("Open Cra at login",
-                                  detail: "Cra opens by itself when you log in to your Mac.",
+                SettingsToggleRow(BrowserLocalization.text("Open Cra at login"),
+                                  detail: BrowserLocalization.text("Cra opens by itself when you log in to your Mac."),
                                   isOn: Binding(get: { system.launchesAtLogin }, set: { error = system.setLaunchAtLogin($0) }))
             }
             if let error { SettingsFootnote(error).foregroundStyle(.red) }

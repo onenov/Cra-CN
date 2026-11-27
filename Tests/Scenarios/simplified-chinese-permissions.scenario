@@ -1,0 +1,18 @@
+arg -AppleLanguages
+arg (zh-Hans)
+budget rss=900 stalls50=30
+pace 0.5
+seed settings.json {"hasSeenImportPrompt": true, "toolbarDefaultMigrated": true}
+home
+cra://debug?windowSize=1200x800
+cra://open?url=${ORIGIN}/features.html?n=permissions
+expect-log GET /features.html\?n=permissions
+wait 2
+
+cra://debug?cdp=Runtime.evaluate&params={"expression":"settle('notify',Notification.requestPermission().then(r=>{if(r!='granted')throw {name:r}}))","userGesture":true}
+expect-log permission card: http://127\.0\.0\.1:[0-9]+/? 请求发送通知$
+cra://debug?permissionCard=%E6%9A%82%E4%B8%8D
+expect-log permission card: .*请求发送通知 \(232x[0-9]+ at 12,12 on the page; key window unchanged\); pressed 暂不
+wait 1
+cra://debug?cdp=Runtime.evaluate&params={"expression":"'notify '+state.notify"}
+expect-log "value":"notify denied"

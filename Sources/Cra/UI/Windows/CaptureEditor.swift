@@ -45,7 +45,7 @@ final class CaptureEditorView: NSView, CaptureEditing {
         }
         toolbar.onPick = pick
         sheet.onToolKey = pick
-        setAccessibilityLabel("Edit Capture")
+        setAccessibilityLabel(BrowserLocalization.text("Edit Capture"))
     }
 
     required init?(coder: NSCoder) { fatalError() }

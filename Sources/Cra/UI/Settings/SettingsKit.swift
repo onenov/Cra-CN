@@ -131,7 +131,7 @@ struct SettingsHeader: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View {
-        Text(text).font(.system(size: 11)).foregroundStyle(.secondary)
+        Text(BrowserLocalization.text(text)).font(.system(size: 11)).foregroundStyle(.secondary)
             .padding(.leading, SettingsMetrics.cardRowInset)
             .padding(.bottom, 6)
     }
@@ -142,7 +142,7 @@ struct SettingsFootnote: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View {
-        Text(text).font(.system(size: 11)).foregroundStyle(.secondary)
+        Text(BrowserLocalization.text(text)).font(.system(size: 11)).foregroundStyle(.secondary)
             .padding(.leading, SettingsMetrics.cardRowInset)
             .padding(.top, 6)
             .fixedSize(horizontal: false, vertical: true)
@@ -190,7 +190,7 @@ struct SettingsFeatureRow<Picture: View, Trailing: View, Below: View>: View {
 
     init(_ title: String, detail: String, @ViewBuilder picture: () -> Picture,
          @ViewBuilder trailing: () -> Trailing, @ViewBuilder below: () -> Below = { EmptyView() }) {
-        self.init(title, detail: Text(detail), picture: picture, trailing: trailing, below: below)
+        self.init(title, detail: Text(BrowserLocalization.text(detail)), picture: picture, trailing: trailing, below: below)
     }
 
     private var hasPicture: Bool { Picture.self != EmptyView.self }
@@ -199,7 +199,7 @@ struct SettingsFeatureRow<Picture: View, Trailing: View, Below: View>: View {
         HStack(alignment: .center, spacing: 14) {
             if hasPicture { SettingsPictureFrame { picture } }
             VStack(alignment: .leading, spacing: hasPicture ? 4 : 2) {
-                Text(title).font(.system(size: 13))
+                Text(BrowserLocalization.text(title)).font(.system(size: 13))
                 detail
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -280,7 +280,7 @@ struct SettingsSwitchRow<Picture: View, Below: View>: View {
 
     init(_ title: String, detail: String, isOn: Binding<Bool>, enabled: Bool = true,
          @ViewBuilder picture: () -> Picture, @ViewBuilder below: () -> Below = { EmptyView() }) {
-        self.init(title, detail: Text(detail), isOn: isOn, enabled: enabled, picture: picture, below: below)
+        self.init(title, detail: Text(BrowserLocalization.text(detail)), isOn: isOn, enabled: enabled, picture: picture, below: below)
     }
 
     var body: some View {
@@ -306,7 +306,7 @@ struct SettingsInlinePicker<Value: Hashable, Options: View>: View {
     @ViewBuilder let options: Options
     var body: some View {
         HStack(spacing: 6) {
-            Text(label).foregroundStyle(enabled ? .primary : .secondary)
+            Text(BrowserLocalization.text(label)).foregroundStyle(enabled ? .primary : .secondary)
             Picker(label, selection: $selection) { options }
                 .labelsHidden()
                 .fixedSize()
@@ -370,7 +370,7 @@ struct SettingsSwitchLine<Note: View>: View {
     var body: some View {
         SettingsCardRow {
             VStack(alignment: .leading, spacing: 2) {
-                Text(title).font(.system(size: 13))
+                Text(BrowserLocalization.text(title)).font(.system(size: 13))
                 note
             }
         } trailing: {
@@ -391,7 +391,7 @@ struct SettingsBlurb: View {
     let text: String
     init(_ text: String) { self.text = text }
     var body: some View {
-        Text(text).font(.system(size: 13))
+        Text(BrowserLocalization.text(text)).font(.system(size: 13))
             .fixedSize(horizontal: false, vertical: true)
             .padding(.horizontal, SettingsMetrics.cardRowInset)
     }
@@ -450,7 +450,7 @@ struct SettingsTileRow: View {
                 Image(systemName: symbol).font(.system(size: 10, weight: .semibold)).foregroundStyle(.white)
                     .frame(width: 20, height: 20)
                     .background(RoundedRectangle(cornerRadius: 5, style: .continuous).fill(tile.color))
-                Text(title).font(.system(size: 13))
+                Text(BrowserLocalization.text(title)).font(.system(size: 13))
             }
         } trailing: {
             Toggle(title, isOn: $isOn).toggleStyle(.arcSwitch).labelsHidden()
@@ -471,7 +471,7 @@ struct SettingsMarginSlider: View {
                 .labelsHidden()
                 .controlSize(.small)
                 .frame(width: 120)
-            Text(enabled ? "\(Int(PageMargin.clamped(margin))) pt" : "0 pt")
+            Text(enabled ? BrowserLocalization.format("%1$@ pt", "\(Int(PageMargin.clamped(margin)))") : BrowserLocalization.text("0 pt"))
                 .font(.system(size: 11).monospacedDigit())
                 .foregroundStyle(.secondary)
                 .frame(width: 32, alignment: .trailing)

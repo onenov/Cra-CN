@@ -71,7 +71,7 @@ enum SidebarMenus {
     /// Arc's Tab Group Context Menu: one item, "Remove header" (the tabs stay, loose).
     static func tabGroup(_ id: UUID, list: SpaceListView) -> NSMenu {
         let menu = menu()
-        add(menu, "Remove header") { list.store.removeGroupHeader(id) }
+        add(menu, BrowserLocalization.text("Remove header")) { list.store.removeGroupHeader(id) }
         return menu
     }
 
@@ -91,43 +91,43 @@ enum SidebarMenus {
         if list.closeGroup(for: id).count > 1 { return picked(ui.group(for: id, in: store), clicked: id, list: list) }
         guard let item = store.item(id), let tab = item.tab else { return menu }
         let open = store.isSelected(id, window: ui.windowID)
-        add(menu, action: "copyURL", "Copy Link") { copy(CleanURL.withoutTrackers(tab.url)) }
+        add(menu, action: "copyURL", BrowserLocalization.text("Copy Link")) { copy(CleanURL.withoutTrackers(tab.url)) }
         let web = URL(string: CleanURL.withoutTrackers(tab.url)).flatMap { $0.scheme?.hasPrefix("http") == true ? $0 : nil }
         if let web { SharePicker.addMenu(to: menu, url: web) }
         // Arc's Share on an easel copied an arc.net link; Cra's carries the easel after its # (EaselShare).
         if let easel = Easel.id(fromURL: tab.url) {
             let toast = list.actions.showToast
-            add(menu, "Share Easel…") { EaselShare.share(easel, over: list.window, toast: toast) }
+            add(menu, BrowserLocalization.text("Share Easel…")) { EaselShare.share(easel, over: list.window, toast: toast) }
         }
         menu.addItem(.separator())
         changeIconItems(menu, id, custom: tab.customIconKey, list: list)
-        add(menu, action: "renameTab", "Rename…") { ui.renamingID = id }
-        if item.title != nil { add(menu, "Use Page Title") { store.rename(id, to: nil) } }
+        add(menu, action: "renameTab", BrowserLocalization.text("Rename…")) { ui.renamingID = id }
+        if item.title != nil { add(menu, BrowserLocalization.text("Use Page Title")) { store.rename(id, to: nil) } }
         if m.pinned, tab.liveItemURL == nil { pinnedURLItems(menu, id, navigatedAway: m.navigatedAway, store: store, actions: actions) }
         muteItem(menu, id, tab, ui: ui, store: store, actions: actions)
         // Not in Arc's tab menu (View ▸ Cast there): Cra's, on Victor's call after an X DM (22 Nov 2026).
-        if web != nil { add(menu, action: "cast", "Cast…") { actions.performAction("castTab:\(id.uuidString)") } }
-        if open, web?.host != nil { add(menu, "Customize Page…") { actions.performAction("newBoost") } }
+        if web != nil { add(menu, action: "cast", BrowserLocalization.text("Cast…")) { actions.performAction("castTab:\(id.uuidString)") } }
+        if open, web?.host != nil { add(menu, BrowserLocalization.text("Customize Page…")) { actions.performAction("newBoost") } }
         menu.addItem(.separator())
         // Arc: "Add Split View" on the open tab, "Open in Split View" on any other.
         if open {
-            add(menu, action: "addSplitView", "Add Split View") { actions.performAction("addSplitView") }
+            add(menu, action: "addSplitView", BrowserLocalization.text("Add Split View")) { actions.performAction("addSplitView") }
         } else if store.selectedTabID(window: ui.windowID) != nil, store.spaceID(ofItem: id) == store.focusedSpaceID(window: ui.windowID) {
-            add(menu, "Open in Split View") { actions.performAction("openInSplit:\(id.uuidString)") }
+            add(menu, BrowserLocalization.text("Open in Split View")) { actions.performAction("openInSplit:\(id.uuidString)") }
         }
-        add(menu, action: "duplicateTab", "Duplicate") { store.duplicateTab(id, window: ui.windowID) }
+        add(menu, action: "duplicateTab", BrowserLocalization.text("Duplicate")) { store.duplicateTab(id, window: ui.windowID) }
         moveToItems(menu, [id], list: list)
         menu.addItem(.separator())
         if m.pinned {
             // Arc's Remove Pin archives the tab (StorableArchiveItems, reason manual).
-            add(menu, "Remove Pin") { store.archiveTab(id, reason: .manual) }
+            add(menu, BrowserLocalization.text("Remove Pin")) { store.archiveTab(id, reason: .manual) }
         } else {
-            let archive = add(menu, action: "closeTab", "Archive Tab") { actions.closeTab(id) }
-            alternate(add(menu, "Archive Other Tabs", enabled: store.hasTodayTabs(above: id) || store.hasTodayTabs(below: id)) {
+            let archive = add(menu, action: "closeTab", BrowserLocalization.text("Archive Tab")) { actions.closeTab(id) }
+            alternate(add(menu, BrowserLocalization.text("Archive Other Tabs"), enabled: store.hasTodayTabs(above: id) || store.hasTodayTabs(below: id)) {
                 store.archiveOtherTabs(id)
             }, of: archive)
-            let below = add(menu, "Archive Tabs Below", enabled: store.hasTodayTabs(below: id)) { store.archiveTabsBelow(id) }
-            alternate(add(menu, "Archive Tabs Above", enabled: store.hasTodayTabs(above: id)) { store.archiveTabsAbove(id) }, of: below)
+            let below = add(menu, BrowserLocalization.text("Archive Tabs Below"), enabled: store.hasTodayTabs(below: id)) { store.archiveTabsBelow(id) }
+            alternate(add(menu, BrowserLocalization.text("Archive Tabs Above"), enabled: store.hasTodayTabs(above: id)) { store.archiveTabsAbove(id) }, of: below)
         }
         return menu
     }
@@ -135,10 +135,10 @@ enum SidebarMenus {
     /// Change Icon… (Arc's Emoji | Icon picker, with a picture too; #640), and Use Site Icon while it has
     /// one: Cra's way back from it beside the picker's Remove.
     static func changeIconItems(_ menu: NSMenu, _ id: UUID, custom: String?, list: SpaceListView) {
-        add(menu, "Change Icon…") { [weak list] in list?.showTabIconPicker(id) }
+        add(menu, BrowserLocalization.text("Change Icon…")) { [weak list] in list?.showTabIconPicker(id) }
         if let custom {
             let store = list.store, favicons = list.favicons
-            add(menu, "Use Site Icon") {
+            add(menu, BrowserLocalization.text("Use Site Icon")) {
                 store.setCustomIcon(nil, for: id)
                 favicons.removeCustomIcon(custom)
             }
@@ -148,7 +148,7 @@ enum SidebarMenus {
     /// Mute / Unmute. Arc dims Mute while the tab makes no sound (#600): it is on while the page
     /// plays, and Unmute while the tab is muted.
     static func muteItem(_ menu: NSMenu, _ id: UUID, _ tab: TabData, ui: SidebarUIState, store: SidebarStore, actions: SidebarActions) {
-        add(menu, action: "muteTab", tab.muted ? "Unmute" : "Mute", enabled: tab.muted || ui.audibleTabIDs.contains(id)) {
+        add(menu, action: "muteTab", BrowserLocalization.text(tab.muted ? "Unmute" : "Mute"), enabled: tab.muted || ui.audibleTabIDs.contains(id)) {
             store.setMuted(id, !tab.muted)
             actions.performAction("muteTab:\(id)")
         }
@@ -164,7 +164,7 @@ enum SidebarMenus {
     /// Arc's Move to ▸: every space, ✓ on the tab's own, ──, New Space… (which takes the tabs along).
     private static func moveToItems(_ menu: NSMenu, _ ids: [UUID], list: SpaceListView) {
         let store = list.store, ui = list.ui, actions = list.actions
-        let sub = submenu(menu, "Move to")
+        let sub = submenu(menu, BrowserLocalization.text("Move to"))
         let own = ids.first.flatMap { store.spaceID(ofItem: $0) }
         for s in store.orderedSpaces {
             add(sub, SpaceMenuTitle.plain(s.labeled), on: s.id == own) {
@@ -173,7 +173,7 @@ enum SidebarMenus {
             }
         }
         sub.addItem(.separator())
-        add(sub, "New Space…") { actions.newSpaceWith(ids) }
+        add(sub, BrowserLocalization.text("New Space…")) { actions.newSpaceWith(ids) }
     }
 
     /// The menu on a tab that is one of several picked with ⌘/⇧-click (#356): Arc's rows for every
@@ -197,7 +197,7 @@ enum SidebarMenus {
                     // What ⇧⌘C copies with tabs picked (#322): each link without trackers, one per line.
                     add(menu, title) {
                         copy(CleanURL.links(tabs.map { $0.1.url }))
-                        actions.showToast("Copied item links")
+                        actions.showToast(BrowserLocalization.text("Copied item links"))
                     }
                 case "share":
                     // Arc's Share N Items… copied an arc.net folder link ("Copied Folder URL"); Cra's link
@@ -207,7 +207,7 @@ enum SidebarMenus {
                         guard let link else { return }
                         confirmShare(over: list.window) {
                             copy(link)
-                            actions.showToast("Copied Folder URL")
+                            actions.showToast(BrowserLocalization.text("Copied Folder URL"))
                         }
                     }
                 case "mute":
@@ -237,7 +237,7 @@ enum SidebarMenus {
                         }
                     }
                     sub.addItem(.separator())
-                    add(sub, "New Space…") { actions.newSpaceWith(ids) }
+                    add(sub, BrowserLocalization.text("New Space…")) { actions.newSpaceWith(ids) }
                 case "newFolder":
                     add(menu, title) {
                         store.withPinningWindow(ui.windowID) {
@@ -268,14 +268,14 @@ enum SidebarMenus {
     /// the submenu back; Victor's call, 22 Nov 2026). Replace is dimmed while the tab is on its
     /// pinned page, as in Arc. Locked by the pinned-url-rows scenario.
     static func pinnedURLItems(_ menu: NSMenu, _ id: UUID, navigatedAway: Bool, store: SidebarStore, actions: SidebarActions) {
-        add(menu, "Edit Pinned URL…") { actions.editPinnedURL(id) }
-        add(menu, "Replace Pinned URL with Current", enabled: navigatedAway) { store.setPinnedHomeToCurrent(id) }
+        add(menu, BrowserLocalization.text("Edit Pinned URL…")) { actions.editPinnedURL(id) }
+        add(menu, BrowserLocalization.text("Replace Pinned URL with Current"), enabled: navigatedAway) { store.setPinnedHomeToCurrent(id) }
     }
 
     // MARK: Folders
 
     private static func iconColor(_ menu: NSMenu, _ item: SidebarItem, list: SpaceListView) {
-        let sub = submenu(menu, "Icon Color")
+        let sub = submenu(menu, BrowserLocalization.text("Icon Color"))
         let id = item.id
         for (title, style) in [("Auto", FolderIconStyle?.none), ("White", .white), ("Black", .black)] {
             add(sub, title, on: item.folderIcon == style) { list.store.setFolderIcon(style, for: id) }
@@ -286,9 +286,9 @@ enum SidebarMenus {
         let store = list.store, ui = list.ui
         let id = item.id
         let menu = menu()
-        add(menu, "Change Icon…") { list.showFolderIconPicker(id) }
-        add(menu, "Rename…") { ui.renamingID = id }
-        add(menu, "New Folder Inside") {
+        add(menu, BrowserLocalization.text("Change Icon…")) { list.showFolderIconPicker(id) }
+        add(menu, BrowserLocalization.text("Rename…")) { ui.renamingID = id }
+        add(menu, BrowserLocalization.text("New Folder Inside")) {
             let f = store.createFolder(named: "New Folder", in: id, index: 0)
             store.setExpanded(id, true)
             ui.renamingID = f.id
@@ -299,16 +299,16 @@ enum SidebarMenus {
         // folder after its #, so nothing is stored anywhere (FolderShareLink, #357).
         let link = FolderShareLink.url(for: FolderShareLink.folder(item) { store.children(of: $0) })
         let toast = list.actions.showToast
-        add(menu, "Share Folder…", enabled: link != nil) {
+        add(menu, BrowserLocalization.text("Share Folder…"), enabled: link != nil) {
             guard let link else { return }
             confirmShare(over: list.window) {
                 copy(link)
-                toast("Copied Folder URL")
+                toast(BrowserLocalization.text("Copied Folder URL"))
             }
         }
         moveToItems(menu, [id], list: list)
         menu.addItem(.separator())
-        add(menu, "Delete Folder (archives tabs)") { store.deleteFolder(id) }
+        add(menu, BrowserLocalization.text("Delete Folder (archives tabs)")) { store.deleteFolder(id) }
         return menu
     }
 
@@ -320,10 +320,10 @@ enum SidebarMenus {
         let live = item.liveFolder ?? LiveFolderData()
         let menu = menu()
         let entry = LiveFolderPluginStore.shared.entry(for: live)
-        let requests = submenu(menu, entry?.presentation.menuTitle ?? item.title ?? "Live Folder", image: entry?.icon)
+        let requests = submenu(menu, entry?.presentation.menuTitle ?? item.title ?? BrowserLocalization.text("Live Folder"), image: entry?.icon)
         note(requests, manager.refreshing.contains(id) ? "Updating…" : LiveFolderText.lastUpdate(live))
         if let detail = live.plugin?.detailLabel { note(requests, detail) }
-        add(requests, "Refresh") { manager.refresh(id) }
+        add(requests, BrowserLocalization.text("Refresh")) { manager.refresh(id) }
         requests.addItem(.separator())
         for filter in entry?.presentation.filters ?? [] {
             let on = live.plugin?.filters.contains(filter.id) == true
@@ -360,7 +360,7 @@ enum SidebarMenus {
             for action in snapshot.actions { add(requests, action.title) { actions.openURL(action.url) } }
         }
         menu.addItem(.separator())
-        let spaces = submenu(menu, "Move to")
+        let spaces = submenu(menu, BrowserLocalization.text("Move to"))
         for space in store.orderedSpaces {
             let current = store.isInSpace(id, space.id)
             add(spaces, SpaceMenuTitle.plain(space.labeled), on: current) {
@@ -369,22 +369,22 @@ enum SidebarMenus {
         }
         menu.addItem(.separator())
         iconColor(menu, item, list: list)
-        add(menu, "Rename…") { ui.renamingID = id }
-        add(menu, "Copy All Links as Markdown", enabled: !item.children.isEmpty) {
+        add(menu, BrowserLocalization.text("Rename…")) { ui.renamingID = id }
+        add(menu, BrowserLocalization.text("Copy All Links as Markdown"), enabled: !item.children.isEmpty) {
             let lines = store.tabs(under: id).compactMap { c in c.tab.map { "- [\(c.displayTitle)](\($0.liveItemURL ?? $0.url))" } }
             copy(lines.joined(separator: "\n"))
         }
         menu.addItem(.separator())
         let window = list.window
-        add(menu, "Delete Live Folder") { confirmDeleteLiveFolder(item, store: store, in: window) }
+        add(menu, BrowserLocalization.text("Delete Live Folder")) { confirmDeleteLiveFolder(item, store: store, in: window) }
         return menu
     }
 
     /// Arc asks first ("Delete your %@ Live Folder?") and says how to get it back, in its own words.
     static func confirmDeleteLiveFolder(_ item: SidebarItem, store: SidebarStore, in window: NSWindow? = nil) {
-        let alert = AppDialog(title: "Delete your \(item.title ?? "Pull Requests") Live Folder?",
-                              message: "You can restore this folder at any time by right-clicking the sidebar.",
-                              actions: [DialogAction("Delete Folder", role: .destructive), .cancel])
+        let alert = AppDialog(title: BrowserLocalization.format("Delete your %1$@ Live Folder?", "\(item.title ?? "Pull Requests")"),
+                              message: BrowserLocalization.text("You can restore this folder at any time by right-clicking the sidebar."),
+                              actions: [DialogAction(BrowserLocalization.text("Delete Folder"), role: .destructive), .cancel])
         let id = item.id
         if let window = window ?? AppDialog.parentWindow {
             alert.present(over: window) { if $0 == .alertFirstButtonReturn { store.deleteFolder(id) } }
@@ -430,13 +430,13 @@ enum SidebarMenus {
                         legacySource: entry.package.manifest.legacySource) else { return }
                     store.setExpanded(folder.id, true)
                     LiveFolderManager.shared.refresh(folder.id, force: true)
-                } catch { AppDialog(title: "Could not add live folder", message: error.localizedDescription).runModal(over: window) }
+                } catch { AppDialog(title: BrowserLocalization.text("Could not add live folder"), message: error.localizedDescription).runModal(over: window) }
             }
         }
         guard let setup = entry.presentation.setup else { create([:]); return }
         guard let window else { return }
         let dialog = AppDialog(title: setup.title, message: setup.message,
-            actions: [DialogAction("Add Folder"), .cancel], input: "", placeholder: setup.placeholder,
+            actions: [DialogAction(BrowserLocalization.text("Add Folder")), .cancel], input: "", placeholder: setup.placeholder,
             icon: .none, width: 496, buttonSpacing: 30, buttonOutset: 0)
         dialog.present(over: window) { response in
             guard response == .alertFirstButtonReturn else { return }
@@ -469,41 +469,41 @@ enum SidebarMenus {
         let children = panes.map(\.id)
         // Arc stores the split on arc.net; Cra's link carries the panes after its #, as Share Folder… does.
         let link = FolderShareLink.url(for: FolderShareLink.picked(children.compactMap(store.item)))
-        add(menu, "Share Split View…", enabled: link != nil) {
+        add(menu, BrowserLocalization.text("Share Split View…"), enabled: link != nil) {
             guard let link else { return }
             confirmShare(over: window, kind: "Split View") {
                 copy(link)
-                actions.showToast("Copied Folder URL")
+                actions.showToast(BrowserLocalization.text("Copied Folder URL"))
             }
         }
         menu.addItem(.separator())
-        add(menu, "Separate All Tabs") { store.separateAll(id) }
+        add(menu, BrowserLocalization.text("Separate All Tabs")) { store.separateAll(id) }
         // Arc greys it out while the split is closed (no pane to add next to).
-        add(menu, action: "addSplitView", "Add Tab…", enabled: open && children.count < store.splitPaneLimit) {
+        add(menu, action: "addSplitView", BrowserLocalization.text("Add Tab…"), enabled: open && children.count < store.splitPaneLimit) {
             if let first = children.first {
                 actions.focusPane(first)
                 actions.performAction("addSplitView")
             }
         }
         add(menu, action: "flipSplitOrientation",
-            store.item(id)?.split?.orientation == .vertical ? "Convert to Horizontal Split View" : "Convert to Vertical Split View") {
+            store.item(id)?.split?.orientation == .vertical ? BrowserLocalization.text("Convert to Horizontal Split View") : BrowserLocalization.text("Convert to Vertical Split View")) {
             store.flipSplitOrientation(id)
         }
         menu.addItem(.separator())
-        note(menu, "Tab Options")
+        note(menu, BrowserLocalization.text("Tab Options"))
         for c in panes {
             paneItems(submenu(menu, c.title), c.id, store: store, ui: ui, actions: actions)
         }
         menu.addItem(.separator())
         // Arc's way back to the panes from a renamed split or one with an icon.
         if store.item(id)?.title != nil || store.item(id)?.split?.icon != SpaceIcon.none {
-            add(menu, "Reset Name and Icon") { store.resetSplitNameAndIcon(id) }
+            add(menu, BrowserLocalization.text("Reset Name and Icon")) { store.resetSplitNameAndIcon(id) }
         }
-        if let changeIcon { add(menu, "Change Icon…") { changeIcon() } }
-        add(menu, "Rename…") { ui.renamingID = id }
+        if let changeIcon { add(menu, BrowserLocalization.text("Change Icon…")) { changeIcon() } }
+        add(menu, BrowserLocalization.text("Rename…")) { ui.renamingID = id }
         menu.addItem(.separator())
-        add(menu, "Duplicate") { store.duplicateSplit(id, window: ui.windowID) }
-        let spaces = submenu(menu, "Move to")
+        add(menu, BrowserLocalization.text("Duplicate")) { store.duplicateSplit(id, window: ui.windowID) }
+        let spaces = submenu(menu, BrowserLocalization.text("Move to"))
         for s in store.orderedSpaces {
             let current = store.isInSpace(id, s.id)
             add(spaces, SpaceMenuTitle.plain(s.labeled), on: current) {
@@ -511,17 +511,17 @@ enum SidebarMenus {
             }
         }
         spaces.addItem(.separator())
-        add(spaces, "New Space…") { actions.newSpaceWith([id]) }
+        add(spaces, BrowserLocalization.text("New Space…")) { actions.newSpaceWith([id]) }
         menu.addItem(.separator())
-        let archive = add(menu, "Archive Item") { for c in children { store.archiveTab(c, reason: .manual) } }
+        let archive = add(menu, BrowserLocalization.text("Archive Item")) { for c in children { store.archiveTab(c, reason: .manual) } }
         if store.isPinned(id) {
-            if open, let pane = children.first { add(menu, "Close") { actions.closeTab(pane) } }
+            if open, let pane = children.first { add(menu, BrowserLocalization.text("Close")) { actions.closeTab(pane) } }
         } else if let pane = children.first {
-            alternate(add(menu, "Archive Other Tabs", enabled: store.hasTodayTabs(above: pane) || store.hasTodayTabs(below: pane)) {
+            alternate(add(menu, BrowserLocalization.text("Archive Other Tabs"), enabled: store.hasTodayTabs(above: pane) || store.hasTodayTabs(below: pane)) {
                 store.archiveOtherTabs(pane)
             }, of: archive)
-            let below = add(menu, "Archive Tabs Below", enabled: store.hasTodayTabs(below: pane)) { store.archiveTabsBelow(pane) }
-            alternate(add(menu, "Archive Tabs Above", enabled: store.hasTodayTabs(above: pane)) { store.archiveTabsAbove(pane) }, of: below)
+            let below = add(menu, BrowserLocalization.text("Archive Tabs Below"), enabled: store.hasTodayTabs(below: pane)) { store.archiveTabsBelow(pane) }
+            alternate(add(menu, BrowserLocalization.text("Archive Tabs Above"), enabled: store.hasTodayTabs(above: pane)) { store.archiveTabsAbove(pane) }, of: below)
         }
         return menu
     }
@@ -531,19 +531,19 @@ enum SidebarMenus {
     private static func paneItems(_ menu: NSMenu, _ id: UUID, store: SidebarStore, ui: SidebarUIState, actions: SidebarActions) {
         guard let tab = store.item(id)?.tab else { return }
         // No shortcut glyphs: every pane has this submenu, and the keys act on the focused one.
-        add(menu, "Separate from Split View") { store.separateFromSplit(id) }
+        add(menu, BrowserLocalization.text("Separate from Split View")) { store.separateFromSplit(id) }
         menu.addItem(.separator())
         if let url = URL(string: CleanURL.withoutTrackers(tab.url)), url.scheme?.hasPrefix("http") == true {
             SharePicker.addMenu(to: menu, url: url)
         }
-        add(menu, tab.muted ? "Unmute" : "Mute", enabled: tab.muted || ui.audibleTabIDs.contains(id)) {
+        add(menu, BrowserLocalization.text(tab.muted ? "Unmute" : "Mute"), enabled: tab.muted || ui.audibleTabIDs.contains(id)) {
             store.setMuted(id, !tab.muted)
             actions.performAction("muteTab:\(id)")
         }
-        add(menu, "Copy Link") { copy(tab.url) }
-        add(menu, "Copy link as Markdown") { copy("[\(store.item(id)?.displayTitle ?? tab.savedTitle)](\(tab.url))") }
+        add(menu, BrowserLocalization.text("Copy Link")) { copy(tab.url) }
+        add(menu, BrowserLocalization.text("Copy link as Markdown")) { copy("[\(store.item(id)?.displayTitle ?? tab.savedTitle)](\(tab.url))") }
         menu.addItem(.separator())
-        add(menu, "Archive Item") { store.archiveTab(id, reason: .manual) }
+        add(menu, BrowserLocalization.text("Archive Item")) { store.archiveTab(id, reason: .manual) }
     }
 
     // MARK: The list
@@ -555,15 +555,15 @@ enum SidebarMenus {
         // Arc's sidebar menu starts with the space's look, as the header's does (#170).
         if let s = store.space(space) {
             if let header = list.header, !store.hidesSpaceHeader(space) {
-                add(menu, "Change Space Icon…") { [weak header] in if let header { actions.changeSpaceIcon(s, header) } }
-                add(menu, "Rename Space…") { [weak header] in header?.beginRename() }
+                add(menu, BrowserLocalization.text("Change Space Icon…")) { [weak header] in if let header { actions.changeSpaceIcon(s, header) } }
+                add(menu, BrowserLocalization.text("Rename Space…")) { [weak header] in header?.beginRename() }
             }
-            add(menu, "Edit Theme Color…") { actions.editSpaceTheme(s) }
+            add(menu, BrowserLocalization.text("Edit Theme Color…")) { actions.editSpaceTheme(s) }
             menu.addItem(.separator())
         }
-        add(menu, action: "newTab", "New Tab") { actions.openCommandBar(.newTab) }
+        add(menu, action: "newTab", BrowserLocalization.text("New Tab")) { actions.openCommandBar(.newTab) }
         add(menu, action: "newFolder") { actions.performAction("newFolder") }
-        let liveFolders = submenu(menu, "Live Folders")
+        let liveFolders = submenu(menu, BrowserLocalization.text("Live Folders"))
         addLiveFolderPlugins(to: liveFolders, space: space, store: store, window: list.window)
         menu.addItem(.separator())
         if let s = store.space(space), !store.children(of: s.todayContainerID).isEmpty {
@@ -574,7 +574,7 @@ enum SidebarMenus {
         }
         // With the header hidden (one space), its menu items live here.
         if store.hidesSpaceHeader(space) {
-            add(menu, "Show Space Header") { store.settings.showSpaceHeaderOnSingleSpace = true }
+            add(menu, BrowserLocalization.text("Show Space Header")) { store.settings.showSpaceHeaderOnSingleSpace = true }
         }
         return menu
     }

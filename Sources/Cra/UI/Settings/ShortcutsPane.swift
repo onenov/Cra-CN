@@ -44,9 +44,9 @@ struct ShortcutsPane: View {
 
     private var basics: some View {
         HStack(spacing: 8) {
-            Text("Start with the basics").font(.system(size: 13)).foregroundStyle(.secondary)
+            Text(BrowserLocalization.text("Start with the basics")).font(.system(size: 13)).foregroundStyle(.secondary)
             Button { actions.essentialShortcuts() } label: {
-                Label("Learn the Essential Shortcuts", systemImage: "command.circle.fill")
+                Label(BrowserLocalization.text("Learn the Essential Shortcuts"), systemImage: "command.circle.fill")
                     .font(.system(size: 13, weight: .medium)).foregroundStyle(.white)
                     .padding(.horizontal, 10).frame(height: 24)
                     .background(RoundedRectangle(cornerRadius: 5.5, style: .continuous).fill(Color.settingsBlue))
@@ -66,7 +66,7 @@ struct ShortcutsPane: View {
             .sorted { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
         let customized = all.filter { bindings.isOverridden($0.id) }
         let rest = all.filter { !bindings.isOverridden($0.id) }
-        return [("Customized Shortcuts", customized), ("Default Shortcuts", rest)].filter { !$0.1.isEmpty }
+        return [(BrowserLocalization.text("Customized Shortcuts"), customized), (BrowserLocalization.text("Default Shortcuts"), rest)].filter { !$0.1.isEmpty }
     }
 
     private func conflicts(of a: KeyAction) -> [KeyAction] {
@@ -78,7 +78,7 @@ struct ShortcutsPane: View {
         VStack(spacing: 0) {
             HStack(spacing: 8) {
                 Image(systemName: "magnifyingglass").font(.system(size: 13)).foregroundStyle(.secondary)
-                TextField("", text: $query, prompt: Text("Type a feature name or shortcut (like “Command E”)").foregroundStyle(.secondary))
+                TextField("", text: $query, prompt: Text(BrowserLocalization.text("Type a feature name or shortcut (like “Command E”)")).foregroundStyle(.secondary))
                     .textFieldStyle(.plain).font(.system(size: 13))
                 if !query.isEmpty {
                     Button { query = "" } label: { Image(systemName: "xmark.circle.fill").foregroundStyle(.secondary) }.buttonStyle(.plain)
@@ -140,9 +140,9 @@ struct ShortcutsPane: View {
                     BigKeyCap(glyph: cap, dim: a != nil && caps.isEmpty)
                 }
             }
-            Text(a?.name ?? "Custom Shortcuts").font(.system(size: 14, weight: .semibold))
+            Text(a?.name ?? BrowserLocalization.text("Custom Shortcuts")).font(.system(size: 14, weight: .semibold))
                 .padding(.top, 22)
-            Text(a.map { ShortcutDescriptions.text(for: $0) } ?? "Change shortcuts for your favorite actions, and even choose whether Cra or a website takes priority.")
+            Text(a.map { ShortcutDescriptions.text(for: $0) } ?? BrowserLocalization.text("Change shortcuts for your favorite actions, and even choose whether Cra or a website takes priority."))
                 .font(.system(size: 12)).foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
                 .padding(.top, 6)
@@ -150,7 +150,7 @@ struct ShortcutsPane: View {
                 ShortcutRecorder(action: a).padding(.top, 14)
                 let c = conflicts(of: a)
                 if !c.isEmpty {
-                    Text((c.count == 1 ? "This shortcut conflicts with another shortcut: " : "This shortcut conflicts with other shortcuts: ")
+                    Text((c.count == 1 ? BrowserLocalization.text("This shortcut conflicts with another shortcut: ") : BrowserLocalization.text("This shortcut conflicts with other shortcuts: "))
                          + c.map(\.name).joined(separator: ", "))
                         .font(.system(size: 11)).foregroundStyle(.orange)
                         .fixedSize(horizontal: false, vertical: true)
@@ -161,18 +161,18 @@ struct ShortcutsPane: View {
             Spacer(minLength: 8)
             HStack(spacing: 6) {
                 if let a {
-                    Button("Reset Shortcut to Default") { bindings.resetShortcuts(for: a.id) }
+                    Button(BrowserLocalization.text("Reset Shortcut to Default")) { bindings.resetShortcuts(for: a.id) }
                         .disabled(!bindings.isOverridden(a.id))
                 } else {
-                    Button("Reset All Shortcuts") { bindings.resetOverrides() }
+                    Button(BrowserLocalization.text("Reset All Shortcuts")) { bindings.resetOverrides() }
                         .disabled(!bindings.actions.contains { bindings.isOverridden($0.id) })
                 }
                 Menu {
-                    Button("Remove Shortcut") { if let a { bindings.setShortcuts([], for: a.id) } }
+                    Button(BrowserLocalization.text("Remove Shortcut")) { if let a { bindings.setShortcuts([], for: a.id) } }
                         .disabled(a == nil || a?.shortcuts.isEmpty == true)
                     Divider()
-                    Button("Reset All Shortcuts") { bindings.resetOverrides() }
-                    Button("Extension Shortcuts…") { actions.openURL("chrome://extensions/shortcuts") }
+                    Button(BrowserLocalization.text("Reset All Shortcuts")) { bindings.resetOverrides() }
+                    Button(BrowserLocalization.text("Extension Shortcuts…")) { actions.openURL("chrome://extensions/shortcuts") }
                 } label: {
                     Image(systemName: "ellipsis").font(.system(size: 12, weight: .bold))
                         .frame(width: 24, height: 24)
@@ -240,7 +240,7 @@ struct ShortcutRecorder: View {
         Button {
             recording ? stop() : start()
         } label: {
-            Text(recording ? "Press keys…" : (action.shortcuts.isEmpty ? "Record Shortcut" : "Change Shortcut"))
+            Text(recording ? BrowserLocalization.text("Press keys…") : (action.shortcuts.isEmpty ? BrowserLocalization.text("Record Shortcut") : BrowserLocalization.text("Change Shortcut")))
                 .font(.system(size: 13, weight: .medium))
                 .foregroundStyle(recording ? Color.settingsBlue : Color.primary)
                 .frame(maxWidth: .infinity)
@@ -250,7 +250,7 @@ struct ShortcutRecorder: View {
                 .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .help("Click, then press the new shortcut. Esc cancels, ⌫ removes it.")
+        .help(BrowserLocalization.text("Click, then press the new shortcut. Esc cancels, ⌫ removes it."))
         .onChange(of: action.id) { _, _ in stop() }
         .onDisappear { stop() }
     }
@@ -287,9 +287,9 @@ enum ShortcutDescriptions {
     static func text(for a: KeyAction) -> String {
         if let description = LiveFolderPluginStore.shared.entry(forCommand: a.id)?.package.manifest.command?.description { return description }
         if let t = table[a.id] { return t }
-        if a.id.hasPrefix("item"), let n = a.id.dropFirst(4).first { return "Switch to the \(n). item in the sidebar. A split counts as one." }
-        if a.id.hasPrefix("space"), let n = a.id.dropFirst(5).first { return "Switch to the \(n). space." }
-        if a.id.hasPrefix("moveTabToSpace"), let n = a.id.dropFirst(14).first { return "Move the current tab, or a Little Window's page, to the \(n). space and switch to it." }
+        if a.id.hasPrefix("item"), let n = a.id.dropFirst(4).first { return BrowserLocalization.format("Switch to the %1$@. item in the sidebar. A split counts as one.", "\(n)") }
+        if a.id.hasPrefix("space"), let n = a.id.dropFirst(5).first { return BrowserLocalization.format("Switch to the %1$@. space.", "\(n)") }
+        if a.id.hasPrefix("moveTabToSpace"), let n = a.id.dropFirst(14).first { return BrowserLocalization.format("Move the current tab, or a Little Window's page, to the %1$@. space and switch to it.", "\(n)") }
         return a.name + "."
     }
 

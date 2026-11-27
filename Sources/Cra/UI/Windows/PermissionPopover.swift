@@ -186,15 +186,15 @@ final class PermissionCardView: NSView {
 
         // Arc's words, the lock drawn inline as the toolbar's and the Site Control Center's.
         let font = NSFont.systemFont(ofSize: 11, weight: .medium)
-        let text = NSMutableAttributedString(string: "Click the ", attributes: [.font: font, .foregroundColor: NSColor.white])
-        if let lock = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: "lock")?
+        let text = NSMutableAttributedString(string: BrowserLocalization.text("Click the "), attributes: [.font: font, .foregroundColor: NSColor.white])
+        if let lock = NSImage(systemSymbolName: "lock.fill", accessibilityDescription: BrowserLocalization.text("lock"))?
             .withSymbolConfiguration(.init(pointSize: 9, weight: .semibold)) {
             let attachment = NSTextAttachment()
             attachment.image = lock
             attachment.bounds = NSRect(x: 0, y: -0.5, width: lock.size.width, height: lock.size.height)
             text.append(NSAttributedString(attachment: attachment))
         }
-        text.append(NSAttributedString(string: " to change this any time", attributes: [.font: font, .foregroundColor: NSColor.white]))
+        text.append(NSAttributedString(string: BrowserLocalization.text(" to change this any time"), attributes: [.font: font, .foregroundColor: NSColor.white]))
         hint.attributedStringValue = text
 
         // Arc: the cancel button first, then the one that allows.

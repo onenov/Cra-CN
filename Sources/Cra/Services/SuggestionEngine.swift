@@ -165,7 +165,7 @@ final class SuggestionEngine {
         let query = rawQuery.trimmingCharacters(in: .whitespaces)
         var result = SuggestionResult(query: query)
         guard !query.isEmpty else { return result }
-        result.items = [Suggestion(id: "typed", kind: .search, title: query, subtitle: "Search \(site.name)", url: site.searchURL(query),
+        result.items = [Suggestion(id: "typed", kind: .search, title: query, subtitle: BrowserLocalization.format("Search %1$@", "\(site.name)"), url: site.searchURL(query),
                                    faviconKey: nil, symbol: "magnifyingglass", trailing: nil, score: 1000)]
         return result
     }
@@ -237,7 +237,7 @@ final class SuggestionEngine {
         func collect(in parent: UUID) {
             for folder in store.children(of: parent) where folder.isFolder && !folder.isTabGroup {
                 rows.append(Suggestion(id: "reveal:\(folder.id)", kind: .revealFolder(folder.id),
-                                       title: folder.displayTitle, subtitle: "Folder", url: nil, symbol: "folder",
+                                       title: folder.displayTitle, subtitle: BrowserLocalization.text("Folder"), url: nil, symbol: "folder",
                                        trailing: "Show in Sidebar", score: 0))
                 collect(in: folder.id)
             }
@@ -447,11 +447,11 @@ final class SuggestionEngine {
     private func typedRow(query: String) -> Suggestion {
         if Self.looksLikeURL(query) {
             let url = Self.urlFromInput(query)
-            return Suggestion(id: "typed", kind: .navigate, title: query, subtitle: "Open URL", url: url,
+            return Suggestion(id: "typed", kind: .navigate, title: query, subtitle: BrowserLocalization.text("Open URL"), url: url,
                               faviconKey: FaviconKey.key(for: url), symbol: "globe", trailing: nil, score: 1000)
         }
         let engine = searchEngine
-        return Suggestion(id: "typed", kind: .search, title: query, subtitle: "Search \(engine.name)",
+        return Suggestion(id: "typed", kind: .search, title: query, subtitle: BrowserLocalization.format("Search %1$@", "\(engine.name)"),
                           url: engine.searchURL(query), faviconKey: nil, symbol: "magnifyingglass", trailing: nil, score: 1000)
     }
 
@@ -535,7 +535,7 @@ final class SuggestionEngine {
             let bare = d.hasPrefix("www.") ? String(d.dropFirst(4)) : d
             guard bare.hasPrefix(q) || d.hasPrefix(q) else { continue }
             let url = "https://\(d)/"
-            out.append(Suggestion(id: "top:\(d)", kind: .topDomain, title: bare, subtitle: "Open URL", url: url,
+            out.append(Suggestion(id: "top:\(d)", kind: .topDomain, title: bare, subtitle: BrowserLocalization.text("Open URL"), url: url,
                                   faviconKey: FaviconKey.key(for: url), symbol: "globe", trailing: nil,
                                   score: 72 - Double(i) * 0.1))
         }
@@ -566,7 +566,7 @@ final class SuggestionEngine {
         for a in bindings.actions where a.inCommandBar {
             let s = nameScore(a.name, triggers: a.triggers)
             guard s > 0 else { continue }
-            out.append((Suggestion(id: "cmd:\(a.id)", kind: .command(a.id), title: a.name, subtitle: "Command",
+            out.append((Suggestion(id: "cmd:\(a.id)", kind: .command(a.id), title: a.name, subtitle: BrowserLocalization.text("Command"),
                                    url: nil, faviconKey: nil, symbol: a.symbol ?? "command", trailing: a.primary?.display, score: s),
                         store.ranking.commandUsage[a.id] ?? 0))
         }
@@ -575,7 +575,7 @@ final class SuggestionEngine {
             let s = nameScore(doc.commandName, triggers: doc.triggers)
             if s > 0 {
                 let id = NewDocumentApp.commandID
-                out.append((Suggestion(id: "cmd:\(id)", kind: .command(id), title: doc.commandName, subtitle: "Command",
+                out.append((Suggestion(id: "cmd:\(id)", kind: .command(id), title: doc.commandName, subtitle: BrowserLocalization.text("Command"),
                                        url: nil, faviconKey: nil, symbol: "doc.badge.plus", trailing: nil, score: s),
                             store.ranking.commandUsage[id] ?? 0))
             }
@@ -583,14 +583,14 @@ final class SuggestionEngine {
         for space in incognito ? [] : store.orderedSpaces {
             let s = nameScore("Switch to \(space.title)", triggers: [space.title.lowercased()])
             if s > 0 && space.id != (spaceShown ?? store.focusedSpaceID) {
-                out.append((Suggestion(id: "space:\(space.id)", kind: .switchSpace(space.id), title: "Switch to \(space.title)",
-                                       subtitle: "Space", url: nil, faviconKey: nil, symbol: nil, trailing: space.emoji, score: s), 0))
+                out.append((Suggestion(id: "space:\(space.id)", kind: .switchSpace(space.id), title: BrowserLocalization.format("Switch to %1$@", "\(space.title)"),
+                                       subtitle: BrowserLocalization.text("Space"), url: nil, faviconKey: nil, symbol: nil, trailing: space.emoji, score: s), 0))
             }
             if currentTabID != nil, space.id != store.focusedSpaceID {
                 let m = nameScore("Move Tab to \(space.title)", triggers: ["move"])
                 if m > 0 {
-                    out.append((Suggestion(id: "move:\(space.id)", kind: .moveToSpace(space.id), title: "Move Tab to \(space.title)",
-                                           subtitle: "Space", url: nil, faviconKey: nil, symbol: "arrow.right.square", trailing: space.emoji, score: m - 5), 0))
+                    out.append((Suggestion(id: "move:\(space.id)", kind: .moveToSpace(space.id), title: BrowserLocalization.format("Move Tab to %1$@", "\(space.title)"),
+                                           subtitle: BrowserLocalization.text("Space"), url: nil, faviconKey: nil, symbol: "arrow.right.square", trailing: space.emoji, score: m - 5), 0))
                 }
             }
         }
@@ -599,8 +599,8 @@ final class SuggestionEngine {
                 let name = f.title ?? "Folder"
                 let m = nameScore("Move Tab to Folder \(name)", triggers: [name.lowercased()])
                 if m > 0 {
-                    out.append((Suggestion(id: "folder:\(f.id)", kind: .moveToFolder(f.id), title: "Move Tab to \(name)",
-                                           subtitle: "Folder", url: nil, faviconKey: nil, symbol: "folder", trailing: nil, score: m - 5), 0))
+                    out.append((Suggestion(id: "folder:\(f.id)", kind: .moveToFolder(f.id), title: BrowserLocalization.format("Move Tab to %1$@", "\(name)"),
+                                           subtitle: BrowserLocalization.text("Folder"), url: nil, faviconKey: nil, symbol: "folder", trailing: nil, score: m - 5), 0))
                 }
             }
         }
@@ -629,7 +629,7 @@ final class SuggestionEngine {
         for entry in store.archive.lazy.filter({ self.suggests($0, on: self.barProfile) }).prefix(incognito ? 0 : 2) {
             guard let t = entry.item.tab else { continue }
             out.append(Suggestion(id: "arch:\(entry.id)", kind: .archived(entry.id), title: entry.item.displayTitle,
-                                  subtitle: "Archived \(Self.relative(entry.archivedAt))", url: t.url, faviconKey: t.faviconKey,
+                                  subtitle: BrowserLocalization.format("Archived %1$@", "\(Self.relative(entry.archivedAt))"), url: t.url, faviconKey: t.faviconKey,
                                   symbol: nil, trailing: "Restore", score: 0))
         }
         return out

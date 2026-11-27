@@ -55,8 +55,8 @@ enum SidebarExport {
     @MainActor
     static func run(_ store: SidebarStore, in window: NSWindow?) {
         let panel = NSSavePanel()
-        panel.title = "Export Spaces"
-        panel.message = "Spaces, favorites and pinned tabs, as a bookmarks file any browser can import."
+        panel.title = BrowserLocalization.text("Export Spaces")
+        panel.message = BrowserLocalization.text("Spaces, favorites and pinned tabs, as a bookmarks file any browser can import.")
         panel.nameFieldStringValue = "Cra Spaces \(Date().formatted(.iso8601.year().month().day())).html"
         panel.allowedContentTypes = [.html]
         panel.canCreateDirectories = true

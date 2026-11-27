@@ -16,9 +16,9 @@ enum SafariExportError: LocalizedError {
     // Dia's SafariExportedDataValidator messages.
     var errorDescription: String? {
         switch self {
-        case .unsupported: return "Please select a folder or zip file."
-        case .missingFiles: return "The folder is missing required files. Please try again."
-        case .invalid: return "The selected file is invalid. Please try again."
+        case .unsupported: return BrowserLocalization.text("Please select a folder or zip file.")
+        case .missingFiles: return BrowserLocalization.text("The folder is missing required files. Please try again.")
+        case .invalid: return BrowserLocalization.text("The selected file is invalid. Please try again.")
         }
     }
 }

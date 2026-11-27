@@ -841,8 +841,8 @@ final class CaptureBubble: NSView {
     static let size = CGSize(width: 354, height: 65)
     static let bottomInset: CGFloat = 36.5
     static let cornerRadius: CGFloat = 17
-    static let clickText = "Click or drag to capture a portion of this page"
-    static let dragText = "Drag to capture a portion of this page"
+    static let clickText = BrowserLocalization.text("Click or drag to capture a portion of this page")
+    static let dragText = BrowserLocalization.text("Drag to capture a portion of this page")
 
     private let glowPink = CAGradientLayer()
     private let glowBlue = CAGradientLayer()
@@ -981,11 +981,11 @@ final class CaptureMenu: NSView, NSTextFieldDelegate {
         field.focusRingType = .none
         field.font = font
         field.textColor = CaptureStyle.menuText
-        field.placeholderAttributedString = NSAttributedString(string: "Send To…", attributes: [.font: font, .foregroundColor: CaptureStyle.menuPrompt])
+        field.placeholderAttributedString = NSAttributedString(string: BrowserLocalization.text("Send To…"), attributes: [.font: font, .foregroundColor: CaptureStyle.menuPrompt])
         field.cell?.usesSingleLineMode = true
         field.cell?.lineBreakMode = .byTruncatingTail
         field.delegate = self
-        field.setAccessibilityLabel("Send To")
+        field.setAccessibilityLabel(BrowserLocalization.text("Send To"))
         let fh = ceil(field.intrinsicContentSize.height)
         field.frame = NSRect(x: 8, y: ((m.fieldHeight - fh) / 2).rounded(), width: fieldBox.frame.width - 16, height: fh)
         fieldBox.addSubview(field)

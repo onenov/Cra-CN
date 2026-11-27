@@ -201,11 +201,11 @@ struct SpaceImageTab: View {
                 }
                 return true
             }
-            Button(current == nil ? "Choose Image…" : "Choose Another…") {
+            Button(current == nil ? BrowserLocalization.text("Choose Image…") : BrowserLocalization.text("Choose Another…")) {
                 failed = false
                 SpaceIconImage.choose(completion: onPick)
             }
-            Text(failed ? "That file isn't a picture Cra can read." : "Shown in full colour when the space is open, faded when it isn't.")
+            Text(failed ? BrowserLocalization.text("That file isn't a picture Cra can read.") : BrowserLocalization.text("Shown in full colour when the space is open, faded when it isn't."))
                 .font(.system(size: 11))
                 .foregroundStyle(failed ? Color.red : Color.secondary)
                 .multilineTextAlignment(.center)

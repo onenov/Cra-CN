@@ -12,7 +12,7 @@ struct SkippedList: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("\(report.skipped.count) not imported").font(.system(size: 14, weight: .medium)).foregroundStyle(c.title)
+                Text(BrowserLocalization.format("%1$@ not imported", "\(report.skipped.count)")).font(.system(size: 14, weight: .medium)).foregroundStyle(c.title)
                 Spacer(minLength: 8)
                 Button {
                     NSPasteboard.general.clearContents()

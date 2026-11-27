@@ -52,7 +52,7 @@ final class SidebarJumpPill: NSView {
         arrow.contentTintColor = NSColor(srgbRed: 0xAD / 255, green: 0xAC / 255, blue: 0xAC / 255, alpha: 1)
         body.addSubview(arrow)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Scroll to the open tab")
+        setAccessibilityLabel(BrowserLocalization.text("Scroll to the open tab"))
         refreshFill()
     }
 

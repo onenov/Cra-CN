@@ -10,6 +10,7 @@
 	<array>
 		<string>en</string>
 		<string>en-GB</string>
+		<string>zh-Hans</string>
 	</array>
 	<key>CFBundleExecutable</key>
 	<string>Cra</string>

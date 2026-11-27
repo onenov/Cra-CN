@@ -50,14 +50,14 @@ final class DownloadRenameCard: NSView {
         layer?.addSublayer(strike)
         layer?.addSublayer(sparkles)
         revert = SidebarGlyphButton(symbol: "arrow.uturn.backward", size: 26, iconSize: 13, weight: .medium,
-                                    help: "Revert to original name", colors: colors) { [weak self] in self?.onRevert() }
+                                    help: BrowserLocalization.text("Revert to original name"), colors: colors) { [weak self] in self?.onRevert() }
         close = SidebarGlyphButton(symbol: "xmark", size: 26, iconSize: 13, help: "", colors: colors) { [weak self] in self?.onClose() }
-        close.setCloseMark(minus: false, help: "Close")
+        close.setCloseMark(minus: false, help: BrowserLocalization.text("Close"))
         addSubview(revert)
         addSubview(close)
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Download renamed to:, \(rename.newName), \(rename.oldName)")
+        setAccessibilityLabel(BrowserLocalization.format("Download renamed to:, %1$@, %2$@", "\(rename.newName)", "\(rename.oldName)"))
         style()
     }
 

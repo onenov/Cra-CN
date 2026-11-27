@@ -79,13 +79,13 @@ final class TranslatePopoverView: NSView {
     init(state: PageTranslation, actions: TranslateActions) {
         self.state = state
         self.actions = actions
-        options = TranslatePopoverButton(title: "Options", prominent: false)
-        primary = TranslatePopoverButton(title: state.translated ? "Show Original" : "Translate", prominent: true)
+        options = TranslatePopoverButton(title: BrowserLocalization.text("Options"), prominent: false)
+        primary = TranslatePopoverButton(title: state.translated ? BrowserLocalization.text("Show Original") : BrowserLocalization.text("Translate"), prominent: true)
         super.init(frame: NSRect(origin: .zero, size: Self.size))
         wantsLayer = true
         badge.wantsLayer = true
         badge.layer?.cornerRadius = 16
-        glyph.image = NSImage(systemSymbolName: "textformat.alt", accessibilityDescription: "Text Formatting")?
+        glyph.image = NSImage(systemSymbolName: "textformat.alt", accessibilityDescription: BrowserLocalization.text("Text Formatting"))?
             .withSymbolConfiguration(.init(pointSize: 13, weight: .medium))
         badge.addSubview(glyph)
         label.stringValue = state.prompt
@@ -145,7 +145,7 @@ final class TranslatePopoverView: NSView {
     func optionsMenu() -> NSMenu {
         let m = NSMenu()
         m.autoenablesItems = false
-        let choose = NSMenuItem(title: "Choose Another Language", action: nil, keyEquivalent: "")
+        let choose = NSMenuItem(title: BrowserLocalization.text("Choose Another Language"), action: nil, keyEquivalent: "")
         let sub = NSMenu()
         for code in state.otherLanguages {
             let item = BlockMenuItem(title: PageTranslation.name(of: code)) { [actions] in actions.translate(code) }
@@ -154,9 +154,9 @@ final class TranslatePopoverView: NSView {
         choose.submenu = sub
         choose.isEnabled = !sub.items.isEmpty
         m.addItem(choose)
-        m.addItem(BlockMenuItem(title: "Never Translate This Site") { [actions] in actions.neverTranslateSite() })
+        m.addItem(BlockMenuItem(title: BrowserLocalization.text("Never Translate This Site")) { [actions] in actions.neverTranslateSite() })
         m.addItem(.separator())
-        m.addItem(BlockMenuItem(title: "Language Settings") { [actions] in actions.languageSettings() })
+        m.addItem(BlockMenuItem(title: BrowserLocalization.text("Language Settings")) { [actions] in actions.languageSettings() })
         return m
     }
 

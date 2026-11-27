@@ -157,7 +157,7 @@ final class SidebarView: NSView {
                         ui.recentDownload = recent
                     }
                 }
-                if ok { toast("Download name reverted!") }
+                if ok { toast(BrowserLocalization.text("Download name reverted!")) }
             }
         }
         tabs.addSubview(v)
@@ -647,7 +647,7 @@ final class SidebarTopBarView: NSView {
         fullscreen = ui.windowFullscreen
         // Arc 1.171: the header always carries the sidebar toggle; the toolbar has one only while the
         // sidebar is hidden (PaneToolbarView), so a floating sidebar shows both.
-        let help = store.window(ui.windowID).sidebarVisible ? "Hide Sidebar (⌘S)" : "Show Sidebar (⌘S)"
+        let help = store.window(ui.windowID).sidebarVisible ? BrowserLocalization.text("Hide Sidebar (⌘S)") : BrowserLocalization.text("Show Sidebar (⌘S)")
         // Below 212 pt Arc's header goes narrow (#287): where it carries ← → ↻ (toolbar hidden, or
         // a Developer Mode page) the toggle goes and ← → ••• take its place, Reload and Toggle
         // Sidebar under the •••; with only the toggle, the toggle shrinks to 28 pt.
@@ -663,18 +663,18 @@ final class SidebarTopBarView: NSView {
             : button("toggle", symbol: store.settings.sidebarSide.toggleSymbol, help: help, size: 32, height: 32, iconSize: 15.5, active: active) { [weak self] in self?.actions.toggleSidebar() }
         var shown = narrow ? [] : [toggle]
         if narrow {
-            shown.append(button("nback", symbol: "arrow.left", help: "Go Back (⌘[)", size: 28, height: 28, iconSize: 15, active: active, enabled: canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
-            shown.append(button("nforward", symbol: "arrow.right", help: "Go Forward (⌘])", size: 28, height: 28, iconSize: 15, active: active, enabled: canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
-            shown.append(button("more", symbol: morePanel == nil ? "ellipsis" : "xmark", help: "More options", size: 28, height: 28, iconSize: 15,
+            shown.append(button("nback", symbol: "arrow.left", help: BrowserLocalization.text("Go Back (⌘[)"), size: 28, height: 28, iconSize: 15, active: active, enabled: canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
+            shown.append(button("nforward", symbol: "arrow.right", help: BrowserLocalization.text("Go Forward (⌘])"), size: 28, height: 28, iconSize: 15, active: active, enabled: canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
+            shown.append(button("more", symbol: morePanel == nil ? "ellipsis" : "xmark", help: BrowserLocalization.text("More options"), size: 28, height: 28, iconSize: 15,
                                 weight: .semibold, active: active) { [weak self] in self?.toggleMorePanel() })
         } else if compact {
-            shown.append(button("back", symbol: "arrow.left", help: "Go Back (⌘[)", size: 32, height: 32, iconSize: 15, active: active, enabled: canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
-            shown.append(button("forward", symbol: "arrow.right", help: "Go Forward (⌘])", size: 32, height: 32, iconSize: 15, active: active, enabled: canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
-            shown.append(button("reload", symbol: reloadSymbol, help: "Refresh (⌘R)", size: 32, height: 32, iconSize: 15, active: active, animated: true) { [weak self] in self?.actions.reload() })
+            shown.append(button("back", symbol: "arrow.left", help: BrowserLocalization.text("Go Back (⌘[)"), size: 32, height: 32, iconSize: 15, active: active, enabled: canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
+            shown.append(button("forward", symbol: "arrow.right", help: BrowserLocalization.text("Go Forward (⌘])"), size: 32, height: 32, iconSize: 15, active: active, enabled: canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
+            shown.append(button("reload", symbol: reloadSymbol, help: BrowserLocalization.text("Refresh (⌘R)"), size: 32, height: 32, iconSize: 15, active: active, animated: true) { [weak self] in self?.actions.reload() })
         } else if devNav {
-            shown.append(button("dback", symbol: "arrow.left", help: "Go Back (⌘[)", size: 34, height: 28, iconSize: 15, active: nil, enabled: ui.canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
-            shown.append(button("dforward", symbol: "arrow.right", help: "Go Forward (⌘])", size: 34, height: 28, iconSize: 15, active: nil, enabled: ui.canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
-            shown.append(button("dreload", symbol: reloadSymbol, help: "Refresh (⌘R)", size: 24, height: 24, iconSize: 15, active: nil, animated: true) { [weak self] in self?.actions.reload() })
+            shown.append(button("dback", symbol: "arrow.left", help: BrowserLocalization.text("Go Back (⌘[)"), size: 34, height: 28, iconSize: 15, active: nil, enabled: ui.canGoBack, history: .back) { [weak self] in self?.actions.goBack() })
+            shown.append(button("dforward", symbol: "arrow.right", help: BrowserLocalization.text("Go Forward (⌘])"), size: 34, height: 28, iconSize: 15, active: nil, enabled: ui.canGoForward, history: .forward) { [weak self] in self?.actions.goForward() })
+            shown.append(button("dreload", symbol: reloadSymbol, help: BrowserLocalization.text("Refresh (⌘R)"), size: 24, height: 24, iconSize: 15, active: nil, animated: true) { [weak self] in self?.actions.reload() })
         }
         for (k, b) in buttons where !shown.contains(where: { $0 === b }) {
             b.removeFromSuperview()
@@ -699,7 +699,7 @@ final class SidebarTopBarView: NSView {
         if compact, let peek {
             // The Peek's page, with Copy Link only: the pins and the Site Control Center are the tab's (PeekAddress).
             let host = URL(string: peek.url)?.host ?? ""
-            let text = peek.url.isEmpty ? "Search or Enter URL…"
+            let text = peek.url.isEmpty ? BrowserLocalization.text("Search or Enter URL…")
                 : host.isEmpty ? SuggestionEngine.humanURL(peek.url) : host.replacingOccurrences(of: "www.", with: "")
             pill.show(text: text, url: peek.url, hasTab: !peek.url.isEmpty, colors: colors, active: active, pinned: [], tabID: peek.id,
                       editInPlace: store.settings.editAddressInPlace, peek: true)
@@ -707,7 +707,7 @@ final class SidebarTopBarView: NSView {
         } else if compact {
             let url = tab?.tab?.url ?? ""
             let host = URL(string: url)?.host ?? ""
-            let text = tab == nil ? "Search or Enter URL…" : (host.isEmpty ? SuggestionEngine.humanURL(url) : host.replacingOccurrences(of: "www.", with: ""))
+            let text = tab == nil ? BrowserLocalization.text("Search or Enter URL…") : (host.isEmpty ? SuggestionEngine.humanURL(url) : host.replacingOccurrences(of: "www.", with: ""))
             let ext = ExtensionStore.shared
             let profile = tab.map { store.profileDirectoryName(item: $0.id) }
                 ?? store.profileDirectoryName(space: store.focusedSpaceID(window: ui.windowID))
@@ -724,7 +724,7 @@ final class SidebarTopBarView: NSView {
             // page's next navigation.
             let popups = tab.map { ui.navState(for: $0.id).blockedPopups } ?? 0
             let line = popups > 0 ? BlockedPopups.buttonTitle(count: popups)
-                : translation?.offersTranslation == true ? (narrowWidth ? "Translate" : "Translation Available") : nil
+                : translation?.offersTranslation == true ? (narrowWidth ? "Translate" : BrowserLocalization.text("Translation Available")) : nil
             pill.pinsProfile = profile
             pill.show(text: text, url: url, hasTab: tab != nil, colors: colors, active: active,
                       pinned: pinned, protectedMedia: tab.flatMap { ui.navState(for: $0.id).protectedMedia },
@@ -800,8 +800,8 @@ final class SidebarTopBarView: NSView {
         let keys = { (id: String) in KeyBindingRegistry.shared.action(id)?.primary?.caps ?? [] }
         let hasTab = store.selectedTab(window: ui.windowID) != nil
         let panel = SidebarMorePanel(items: [
-            .init(symbol: "arrow.clockwise", title: "Reload", keys: keys("reload"), enabled: hasTab) { [weak self] in self?.actions.reload() },
-            .init(symbol: store.settings.sidebarSide.toggleSymbol, title: "Toggle Sidebar", keys: keys("toggleSidebar"), enabled: true) { [weak self] in self?.actions.toggleSidebar() },
+            .init(symbol: "arrow.clockwise", title: BrowserLocalization.text("Reload"), keys: keys("reload"), enabled: hasTab) { [weak self] in self?.actions.reload() },
+            .init(symbol: store.settings.sidebarSide.toggleSymbol, title: BrowserLocalization.text("Toggle Sidebar"), keys: keys("toggleSidebar"), enabled: true) { [weak self] in self?.actions.toggleSidebar() },
         ], ink: store.focusedSpace(window: ui.windowID).theme.shadedDark)
         panel.onClose = { [weak self] in
             self?.morePanel = nil
@@ -1007,7 +1007,7 @@ final class SidebarURLPill: NSView, NSTextFieldDelegate {
                 }
                 accessories.append(b)
             case .copyURL:
-                let copy = SidebarGlyphButton(symbol: "link", size: 28, height: 28, iconSize: 14, weight: .regular, help: "Copy URL (⇧⌘C)", colors: colors) {}
+                let copy = SidebarGlyphButton(symbol: "link", size: 28, height: 28, iconSize: 14, weight: .regular, help: BrowserLocalization.text("Copy URL (⇧⌘C)"), colors: colors) {}
                 // Arc confirms a click here in place as well as with the toast; ⇧⌘C only toasts (#361).
                 copy.action = { [weak copy] in
                     actions.performAction("copyURL")
@@ -1016,7 +1016,7 @@ final class SidebarURLPill: NSView, NSTextFieldDelegate {
                 copy.active = m.active
                 accessories.append(copy)
             case .extensions:
-                let e = SidebarGlyphButton(symbol: "slider.horizontal.2.square", size: 28, height: 28, iconSize: 15, weight: .regular, help: "Extensions", colors: colors) { actions.showExtensionsMenu() }
+                let e = SidebarGlyphButton(symbol: "slider.horizontal.2.square", size: 28, height: 28, iconSize: 15, weight: .regular, help: BrowserLocalization.text("Extensions"), colors: colors) { actions.showExtensionsMenu() }
                 e.active = m.active
                 accessories.append(e)
             default:
@@ -1100,7 +1100,7 @@ final class SidebarURLPill: NSView, NSTextFieldDelegate {
         f.cell?.isScrollable = true
         f.cell?.wraps = false
         f.delegate = self
-        f.setAccessibilityLabel("Address")
+        f.setAccessibilityLabel(BrowserLocalization.text("Address"))
         field = f
         editingTab = tabID
         label.isHidden = true
@@ -1312,15 +1312,15 @@ final class SpaceDockView: NSView {
         let canBoost = ["http", "https"].contains(url?.scheme?.lowercased() ?? "") && url?.host != nil
         let canSplit = selected.map { store.paneTabIDs(for: $0).count < store.splitPaneLimit } ?? false
         let entries: [(String, String, String, Bool)] = [
-            ("newSpace", "New Space", "plus.rectangle.on.rectangle", true),
-            ("newFolder", "New Folder", "folder", true),
-            ("newEasel", "New Easel", "scribble", true),
-            ("newBoost", "New Boost", "paintbrush.pointed", canBoost),
-            ("addSplitView", "New Split", "rectangle.split.2x1", canSplit),
-            ("newTab", "New Tab", "plus.rectangle", true),
+            ("newSpace", BrowserLocalization.text("New Space"), "plus.rectangle.on.rectangle", true),
+            ("newFolder", BrowserLocalization.text("New Folder"), "folder", true),
+            ("newEasel", BrowserLocalization.text("New Easel"), "scribble", true),
+            ("newBoost", BrowserLocalization.text("New Boost"), "paintbrush.pointed", canBoost),
+            ("addSplitView", BrowserLocalization.text("New Split"), "rectangle.split.2x1", canSplit),
+            ("newTab", BrowserLocalization.text("New Tab"), "plus.rectangle", true),
         ]
         let items = entries.map { id, title, symbol, enabled in
-            SidebarCreationMenuItem(title: title, symbol: symbol, shortcut: KeyBindingRegistry.shared.action(id)?.primary?.display ?? "",
+            SidebarCreationMenuItem(title: BrowserLocalization.text(title), symbol: symbol, shortcut: KeyBindingRegistry.shared.action(id)?.primary?.display ?? "",
                                     enabled: enabled) { [actions] in actions.performAction(id) }
         }
         creationMenu.toggle(from: plus, items: items, colors: creationMenuColors()) { [weak plus] open in
@@ -1374,7 +1374,7 @@ final class SpaceDockView: NSView {
                 return c
             }()
             // A dot until a theme is chosen, then the picked icon (SpaceCreationDraft.dockMark).
-            c.show(icon: pending.themeChosen ? pending.icon : .none, title: "Create Space")
+            c.show(icon: pending.themeChosen ? pending.icon : .none, title: BrowserLocalization.text("Create Space"))
         }
         for s in spaces {
             let c = cells[s.id] ?? {
@@ -1858,7 +1858,7 @@ final class LibraryButtonView: NSView {
         glyph.layer?.cornerRadius = 7
         glyph.layer?.cornerCurve = .continuous
         addSubview(glyph)
-        (tip.text, tip.keys) = ArcTooltipLabel.split("View Library (⇧⌘L)")
+        (tip.text, tip.keys) = ArcTooltipLabel.split(BrowserLocalization.text("View Library (⇧⌘L)"))
         tip.placement = .trailing
         addSubview(tip)
         bin.wantsLayer = true

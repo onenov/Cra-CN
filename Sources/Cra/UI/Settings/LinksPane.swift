@@ -13,30 +13,30 @@ struct LinksPane: View {
             VStack(alignment: .leading, spacing: 0) {
                 LinksHero()
                 VStack(alignment: .leading, spacing: 0) {
-                    SettingsBlurb("Little Window is a smaller, simpler window. It’s perfect for quick lookups and reading funny tweets your friends send you.")
+                    SettingsBlurb(BrowserLocalization.text("Little Window is a smaller, simpler window. It’s perfect for quick lookups and reading funny tweets your friends send you."))
                         .padding(.top, 20)
                     SettingsCard {
                         // Arc: "Open Little Arc when I press ⌥⌘N in any app" (#195).
-                        SettingsSwitchLine("Open Little Window when I press \(shortcut) in any app", isOn: $store.settings.littleWindowShortcutEverywhere)
+                        SettingsSwitchLine(BrowserLocalization.format("Open Little Window when I press %1$@ in any app", "\(shortcut)"), isOn: $store.settings.littleWindowShortcutEverywhere)
                         SettingsCardDivider()
                         // Arc: "Open Little Arc when clicking on links with ⌥⌘ held" (#373). Off in Cra: a ⌘⌥-click opens
                         // Split View otherwise (#298).
-                        SettingsSwitchLine("Open Little Window when clicking on links with ⌥⌘ held", isOn: $store.settings.littleWindowOnOptionCommandClick) {
-                            Text("Off, a ⌥⌘-click opens the link in Split View.").font(.system(size: 11)).foregroundStyle(.secondary)
+                        SettingsSwitchLine(BrowserLocalization.text("Open Little Window when clicking on links with ⌥⌘ held"), isOn: $store.settings.littleWindowOnOptionCommandClick) {
+                            Text(BrowserLocalization.text("Off, a ⌥⌘-click opens the link in Split View.")).font(.system(size: 11)).foregroundStyle(.secondary)
                         }
                         SettingsCardDivider()
-                        SettingsSwitchLine("Links from other apps open in Little Window", isOn: $store.settings.openExternalLinksInLittleWindow)
+                        SettingsSwitchLine(BrowserLocalization.text("Links from other apps open in Little Window"), isOn: $store.settings.openExternalLinksInLittleWindow)
                         SettingsCardDivider()
                         // Not in Arc (GitHub #435): the toolbar floats over the page (ToolbarAutoHide.littleWindowFloats).
-                        SettingsSwitchLine("Hide the Little Window toolbar until you need it", isOn: $store.settings.autoHideLittleWindowToolbar) {
-                            Text("The page takes the toolbar’s room. Move the pointer to the top of the window and the toolbar slides in over the page. ⌘L still edits the address.")
+                        SettingsSwitchLine(BrowserLocalization.text("Hide the Little Window toolbar until you need it"), isOn: $store.settings.autoHideLittleWindowToolbar) {
+                            Text(BrowserLocalization.text("The page takes the toolbar’s room. Move the pointer to the top of the window and the toolbar slides in over the page. ⌘L still edits the address."))
                                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         SettingsCardDivider()
                         // Arc: "Archive Little Arcs after:" 1 hour, 6 hours (default), 12 hours.
-                        SettingsCardRow { Text("Archive Little Windows after:").font(.system(size: 13)) } trailing: {
-                            Picker("Archive Little Windows after", selection: $store.settings.littleWindowArchiveAfter) {
-                                ForEach(LittleWindowArchive.allCases, id: \.self) { Text($0.label).tag($0) }
+                        SettingsCardRow { Text(BrowserLocalization.text("Archive Little Windows after:")).font(.system(size: 13)) } trailing: {
+                            Picker(BrowserLocalization.text("Archive Little Windows after"), selection: $store.settings.littleWindowArchiveAfter) {
+                                ForEach(LittleWindowArchive.allCases, id: \.self) { Text(BrowserLocalization.text($0.label)).tag($0) }
                             }
                             .labelsHidden().fixedSize()
                         }
@@ -45,28 +45,28 @@ struct LinksPane: View {
 
                     SettingsRule().padding(.top, 24)
 
-                    SettingsBlurb("Peek is a way to preview a link without opening a new tab. It’s perfect for quickly looking at a link from an email, news article, or tweet.")
+                    SettingsBlurb(BrowserLocalization.text("Peek is a way to preview a link without opening a new tab. It’s perfect for quickly looking at a link from an email, news article, or tweet."))
                         .padding(.top, 24)
                     SettingsCard {
-                        SettingsSwitchLine("Open a Peek window when clicking on links with Shift held", isOn: $store.settings.peekOnShiftClick)
+                        SettingsSwitchLine(BrowserLocalization.text("Open a Peek window when clicking on links with Shift held"), isOn: $store.settings.peekOnShiftClick)
                         SettingsCardDivider()
-                        SettingsSwitchLine("Open a Peek window when clicking on links to other sites", isOn: $store.settings.peekLinksToOtherSites) {
-                            Text("Note: This only affects Favorites and Pinned tabs").font(.system(size: 13).italic()).foregroundStyle(.secondary)
+                        SettingsSwitchLine(BrowserLocalization.text("Open a Peek window when clicking on links to other sites"), isOn: $store.settings.peekLinksToOtherSites) {
+                            Text(BrowserLocalization.text("Note: This only affects Favorites and Pinned tabs")).font(.system(size: 13).italic()).foregroundStyle(.secondary)
                         }
                         SettingsCardDivider()
                         // Cra's addition (#12).
-                        SettingsSwitchLine("Peek at links to other sites in every tab", isOn: $store.settings.peekInEveryTab,
+                        SettingsSwitchLine(BrowserLocalization.text("Peek at links to other sites in every tab"), isOn: $store.settings.peekInEveryTab,
                                            enabled: store.settings.peekLinksToOtherSites)
                         SettingsCardDivider()
                         // Not in Arc (GitHub #380): off by default, Expand makes a new tab as in Arc.
-                        SettingsSwitchLine("⌘-click Expand opens in the tab", isOn: $store.settings.peekExpandInSourceTab) {
-                            Text("Hold ⌘ while you click a Peek’s Expand to open the page in the tab you were peeking from. Back takes that tab to where it was.")
+                        SettingsSwitchLine(BrowserLocalization.text("⌘-click Expand opens in the tab"), isOn: $store.settings.peekExpandInSourceTab) {
+                            Text(BrowserLocalization.text("Hold ⌘ while you click a Peek’s Expand to open the page in the tab you were peeking from. Back takes that tab to where it was."))
                                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                         SettingsCardDivider()
                         // Not in Arc (GitHub #493): the Peek's bar floats over its page (ToolbarAutoHide.peekFloats).
-                        SettingsSwitchLine("Hide the Peek toolbar until you need it", isOn: $store.settings.autoHidePeekToolbar) {
-                            Text("The page takes the toolbar’s room. Move the pointer to the top of the Peek and the toolbar slides in over the page. ⌘L still edits the address. With the address in the sidebar a Peek has no toolbar of its own, as in Arc, and the sidebar’s address shows the Peek; this keeps one that slides in.")
+                        SettingsSwitchLine(BrowserLocalization.text("Hide the Peek toolbar until you need it"), isOn: $store.settings.autoHidePeekToolbar) {
+                            Text(BrowserLocalization.text("The page takes the toolbar’s room. Move the pointer to the top of the Peek and the toolbar slides in over the page. ⌘L still edits the address. With the address in the sidebar a Peek has no toolbar of its own, as in Arc, and the sidebar’s address shows the Peek; this keeps one that slides in."))
                                 .font(.system(size: 11)).foregroundStyle(.secondary).fixedSize(horizontal: false, vertical: true)
                         }
                     }
@@ -76,37 +76,37 @@ struct LinksPane: View {
 
                     SettingsCard {
                         SettingsCardRow {
-                            Text("Choose where links open inside Cra.").font(.system(size: 13))
+                            Text(BrowserLocalization.text("Choose where links open inside Cra.")).font(.system(size: 13))
                                 .help(routesDetail)
                         } trailing: {
-                            Button("Air Traffic Control…") { showsAirTrafficControl = true }
+                            Button(BrowserLocalization.text("Air Traffic Control…")) { showsAirTrafficControl = true }
                         }
                     }
                     .padding(.top, 20)
 
                     // Not in Arc's tab: what "Open Link in New Tab" does (#276).
-                    SettingsHeader("New tabs").padding(.top, 20)
+                    SettingsHeader(BrowserLocalization.text("New tabs")).padding(.top, 20)
                     SettingsFeatureCard {
-                        SettingsToggleRow("Switch to links opened in new tabs",
-                                          detail: "“Open Link in New Tab” brings the new tab to the front. Off, the page you’re reading stays in front, as in Arc. ⌘-click opens a link behind the page and ⇧⌘-click switches to it either way.",
+                        SettingsToggleRow(BrowserLocalization.text("Switch to links opened in new tabs"),
+                                          detail: BrowserLocalization.text("“Open Link in New Tab” brings the new tab to the front. Off, the page you’re reading stays in front, as in Arc. ⌘-click opens a link behind the page and ⇧⌘-click switches to it either way."),
                                           isOn: $store.settings.openLinksInForeground)
                         SettingsCardDivider()
                         // Not in Arc's settings (GitHub #532), off by default: Arc puts a link's tab below its source.
-                        SettingsToggleRow("Open background tabs below the current tab",
-                                          detail: "A link you ⌘-click or middle-click opens right below the tab you’re reading, in the order you open them, instead of with your other new tabs. Links from pinned tabs and favorites still open with your new tabs.",
+                        SettingsToggleRow(BrowserLocalization.text("Open background tabs below the current tab"),
+                                          detail: BrowserLocalization.text("A link you ⌘-click or middle-click opens right below the tab you’re reading, in the order you open them, instead of with your other new tabs. Links from pinned tabs and favorites still open with your new tabs."),
                                           isOn: $store.settings.backgroundTabsBelowCurrent)
                     }
 
                     // Not in Arc (GitHub #498): both off by default, a split holds Arc's four panes and a middle
                     // click opens a tab behind the page.
-                    SettingsHeader("Split View").padding(.top, 20)
+                    SettingsHeader(BrowserLocalization.text("Split View")).padding(.top, 20)
                     SettingsFeatureCard {
-                        SettingsToggleRow("Middle-click a link in a split to add a pane",
-                                          detail: "In a split view, a link you click with the middle mouse button opens as a new pane beside the page. Outside a split it still opens a tab behind the page.",
+                        SettingsToggleRow(BrowserLocalization.text("Middle-click a link in a split to add a pane"),
+                                          detail: BrowserLocalization.text("In a split view, a link you click with the middle mouse button opens as a new pane beside the page. Outside a split it still opens a tab behind the page."),
                                           isOn: $store.settings.splitMiddleClickAddsPane)
                         SettingsCardDivider()
-                        SettingsToggleRow("More than four panes in a split",
-                                          detail: "A split view holds up to \(SplitPaneLimit.more) panes instead of Arc’s four.",
+                        SettingsToggleRow(BrowserLocalization.text("More than four panes in a split"),
+                                          detail: BrowserLocalization.format("A split view holds up to %1$@ panes instead of Arc’s four.", "\(SplitPaneLimit.more)"),
                                           isOn: $store.settings.splitMorePanes)
                     }
                 }
@@ -123,7 +123,7 @@ struct LinksPane: View {
     private var shortcut: String { KeyBindingRegistry.shared.action("newLittleWindow")?.primary?.display ?? "⌥⌘N" }
 
     private var routesDetail: String {
-        let lead = "Send links from other apps to the space you choose, by what their address contains."
+        let lead = BrowserLocalization.text("Send links from other apps to the space you choose, by what their address contains.")
         switch store.settings.linkRoutes.count {
         case 0: return lead
         case 1: return lead + " 1 route set."
@@ -149,7 +149,7 @@ private struct LinksHero: View {
                     Spacer(minLength: 0)
                     HStack(spacing: 3) { Image(systemName: "lock.fill").font(.system(size: 5)); Text("crabrowser.app").font(.system(size: 7.5)) }
                     Spacer(minLength: 0)
-                    Text("Open in Work ⌘O").font(.system(size: 6.5)).padding(.horizontal, 6).padding(.vertical, 3)
+                    Text(BrowserLocalization.text("Open in Work ⌘O")).font(.system(size: 6.5)).padding(.horizontal, 6).padding(.vertical, 3)
                         .background(RoundedRectangle(cornerRadius: 3).fill(Color.white.opacity(0.75)))
                 }
                 .padding(.horizontal, 8)

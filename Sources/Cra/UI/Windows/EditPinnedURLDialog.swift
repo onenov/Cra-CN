@@ -48,9 +48,9 @@ struct EditPinnedURLDialog: View {
                 .padding(.leading, 37.5)
             HStack(spacing: 7) {
                 Spacer()
-                DialogButton(title: "Cancel", key: "ESC", enabled: true, style: .secondary, badge: CGSize(width: 35, height: 20), action: onCancel)
+                DialogButton(title: BrowserLocalization.text("Cancel"), key: "ESC", enabled: true, style: .secondary, badge: CGSize(width: 35, height: 20), action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                DialogButton(title: "Save", key: "↩", enabled: destination != nil, style: .accent, badge: CGSize(width: 27, height: 20)) {
+                DialogButton(title: BrowserLocalization.text("Save"), key: "↩", enabled: destination != nil, style: .accent, badge: CGSize(width: 27, height: 20)) {
                     if let destination { onSave(destination) }
                 }
             }

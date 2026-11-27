@@ -366,7 +366,7 @@ final class LinkSummaryCardView: NSView {
     private typealias L = LinkSummaryCardLayout
     private let banner = CALayer()
     private let summary = NSTextField(wrappingLabelWithString: "")
-    private let empty = NSTextField(labelWithString: "No preview available")
+    private let empty = NSTextField(labelWithString: BrowserLocalization.text("No preview available"))
     private let title = NSTextField(wrappingLabelWithString: "")
     private let address = NSTextField(labelWithString: "")
     private var rows: [(icon: NSImageView, text: NSTextField)] = []
@@ -583,14 +583,14 @@ final class LinkSummaryCardView: NSView {
         guard let link else { return }
         let menu = NSMenu()
         menu.appearance = NSAppearance(named: .darkAqua)
-        for (title, symbol, action) in [("Copy as Text", "doc.on.doc", #selector(copyAsText)), ("Copy as Image", "photo.on.rectangle", #selector(copyAsImage))] {
+        for (title, symbol, action) in [(BrowserLocalization.text("Copy as Text"), "doc.on.doc", #selector(copyAsText)), (BrowserLocalization.text("Copy as Image"), "photo.on.rectangle", #selector(copyAsImage))] {
             let item = NSMenuItem(title: title, action: action, keyEquivalent: "")
             item.target = self
             item.image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil)
             menu.addItem(item)
         }
         // Arc's Share is a submenu of the share services, not the share sheet.
-        let shareItem = NSMenuItem(title: "Share", action: nil, keyEquivalent: "")
+        let shareItem = NSMenuItem(title: BrowserLocalization.text("Share"), action: nil, keyEquivalent: "")
         shareItem.image = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: nil)
         let services = NSMenu()
         for service in Self.shareServices(for: [link]) {
@@ -620,7 +620,7 @@ final class LinkSummaryCardView: NSView {
     /// Plain text and rich text (bold labels), as Arc puts both on the pasteboard.
     @objc private func copyAsText() {
         guard let r = shown?.result else { return }
-        let text = LinkSummaryShare.text(r, attribution: "AI Summary by \(LinkSummaryShareImage.brand)")
+        let text = LinkSummaryShare.text(r, attribution: BrowserLocalization.format("AI Summary by %1$@", "\(LinkSummaryShareImage.brand)"))
         let rich = NSMutableAttributedString(string: text, attributes: [.font: NSFont.systemFont(ofSize: 13)])
         for d in r.details where !d.label.isEmpty {
             let range = (text as NSString).range(of: d.label + ":")
@@ -673,7 +673,7 @@ final class LinkSummaryShareButton: NSView {
         glyph.contentsScale = scale
         // Drawn at the symbol's own size (13 pt, as Arc's measures), centred by the layer.
         let ink = NSImage.SymbolConfiguration(pointSize: 13, weight: .regular).applying(.init(paletteColors: [NSColor(white: 0.9, alpha: 1)]))
-        let symbol = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: "Share")?.withSymbolConfiguration(ink)
+        let symbol = NSImage(systemSymbolName: "square.and.arrow.up", accessibilityDescription: BrowserLocalization.text("Share"))?.withSymbolConfiguration(ink)
         var rect = NSRect(origin: .zero, size: symbol?.size ?? .zero)
         glyph.contents = symbol?.cgImage(forProposedRect: &rect, context: nil, hints: [.ctm: AffineTransform(scale: scale)])
         CATransaction.commit()

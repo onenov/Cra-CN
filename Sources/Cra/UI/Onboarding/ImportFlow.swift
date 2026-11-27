@@ -179,7 +179,7 @@ final class ImportFlowModel {
                 applyingSystemOptions = true
                 systemError = nil
                 if setAsDefault && !system.isDefaultBrowser { await system.makeDefaultBrowser() }
-                if addToDock && !system.isInDock && !system.addToDock() { systemError = "Cra could not be added to the Dock." }
+                if addToDock && !system.isInDock && !system.addToDock() { systemError = BrowserLocalization.text("Cra could not be added to the Dock.") }
                 if launchAtLogin != system.launchesAtLogin, let err = system.setLaunchAtLogin(launchAtLogin) { systemError = err }
                 applyingSystemOptions = false
                 // A refusal is worth reading before the step goes away.
@@ -366,8 +366,8 @@ final class ImportFlowModel {
             case .failure(let error)?:
                 // Dia's older files no longer match its sidebar: stay here rather than import them.
                 unlockError = error is CredentialImportError
-                    ? "macOS didn't unlock Dia's data. Dia encrypts your spaces and tabs, so Cra needs your computer password to bring them over."
-                    : "Cra couldn't read your Dia spaces and tabs. This version of Dia may store them differently."
+                    ? BrowserLocalization.text("macOS didn't unlock Dia's data. Dia encrypts your spaces and tabs, so Cra needs your computer password to bring them over.")
+                    : BrowserLocalization.text("Cra couldn't read your Dia spaces and tabs. This version of Dia may store them differently.")
                 return
             case nil: break
             }
@@ -481,29 +481,29 @@ final class ImportFlowModel {
         let expected = selection.report(includeArchive: includeArchive)
         var cats: [ImportCategory] = []
         if !selection.spaces.isEmpty {
-            cats.append(ImportCategory(id: "spaces", title: "Spaces", symbol: "square.stack.fill",
+            cats.append(ImportCategory(id: "spaces", title: BrowserLocalization.text("Spaces"), symbol: "square.stack.fill",
                                        detail: count(selection.spaces.count, "space")))
         }
         if expected[.tabs].isShown {
-            cats.append(ImportCategory(id: "tabs", title: "Tabs & Folders", symbol: "pin.fill", detail: count(expected[.tabs].copied, "tab")))
+            cats.append(ImportCategory(id: "tabs", title: BrowserLocalization.text("Tabs & Folders"), symbol: "pin.fill", detail: count(expected[.tabs].copied, "tab")))
         }
         if expected[.favorites].isShown {
-            cats.append(ImportCategory(id: "favorites", title: "Favorites", symbol: "star.fill", detail: count(expected[.favorites].copied, "favorite")))
+            cats.append(ImportCategory(id: "favorites", title: BrowserLocalization.text("Favorites"), symbol: "star.fill", detail: count(expected[.favorites].copied, "favorite")))
         }
         if expected[.archive].isShown {
-            cats.append(ImportCategory(id: "archive", title: "Archive", symbol: "archivebox.fill", detail: count(expected[.archive].copied, "tab")))
+            cats.append(ImportCategory(id: "archive", title: BrowserLocalization.text("Archive"), symbol: "archivebox.fill", detail: count(expected[.archive].copied, "tab")))
         }
         if !credentials.logins.isEmpty {
-            cats.append(ImportCategory(id: "passwords", title: "Passwords", symbol: "key.fill", detail: count(credentials.logins.count, "password")))
+            cats.append(ImportCategory(id: "passwords", title: BrowserLocalization.text("Passwords"), symbol: "key.fill", detail: count(credentials.logins.count, "password")))
         }
         if !credentials.cookies.isEmpty {
-            cats.append(ImportCategory(id: "cookies", title: "Sign-ins", symbol: "person.badge.key.fill", detail: count(credentials.cookies.count, "cookie")))
+            cats.append(ImportCategory(id: "cookies", title: BrowserLocalization.text("Sign-ins"), symbol: "person.badge.key.fill", detail: count(credentials.cookies.count, "cookie")))
         }
         if !chosen.isEmpty {
-            cats.append(ImportCategory(id: "extensions", title: "Extensions", symbol: "puzzlepiece.extension.fill", detail: count(chosen.count, "extension")))
+            cats.append(ImportCategory(id: "extensions", title: BrowserLocalization.text("Extensions"), symbol: "puzzlepiece.extension.fill", detail: count(chosen.count, "extension")))
         }
         if includeSettings && !plan.settings.isEmpty {
-            cats.append(ImportCategory(id: "settings", title: "Settings", symbol: "gearshape.fill", detail: "Auto-archive"))
+            cats.append(ImportCategory(id: "settings", title: BrowserLocalization.text("Settings"), symbol: "gearshape.fill", detail: BrowserLocalization.text("Auto-archive")))
         }
         categories = cats
         failures = []
@@ -536,7 +536,7 @@ final class ImportFlowModel {
                     if !credentialsStaged && credentialError == nil {
                         let ok = await Task.detached(priority: .userInitiated) { CredentialImport.stage(creds, profiles: profiles) }.value
                         credentialsStaged = ok
-                        if !ok { credentialError = "Cra could not save the imported passwords and cookies." }
+                        if !ok { credentialError = BrowserLocalization.text("Cra could not save the imported passwords and cookies.") }
                     }
                     try? await Task.sleep(nanoseconds: 420_000_000)
                     categories[i].state = credentialsStaged ? .done : .failed
@@ -587,7 +587,7 @@ final class ImportFlowModel {
         if !failed.isEmpty { failures.append("Extensions import failed for \(failed.joined(separator: ", "))") }
     }
 
-    private func count(_ n: Int, _ noun: String) -> String { "\(n) \(noun)\(n == 1 ? "" : "s")" }
+    private func count(_ n: Int, _ noun: String) -> String { BrowserLocalization.format("%1$@ %2$@%3$@", "\(n)", "\(noun)", "\(n == 1 ? "" : "s")") }
 
     /// Restarting is needed for extensions and for staged passwords and cookies.
     var needsRelaunch: Bool { importedExtensionCount > 0 || credentialsStaged }
@@ -698,7 +698,7 @@ final class ImportWindowController: NSWindowController, NSWindowDelegate {
                               backing: .buffered, defer: false)
         window.titlebarAppearsTransparent = true
         window.titleVisibility = .hidden
-        window.title = firstRun ? "Welcome to Cra" : "Import"
+        window.title = firstRun ? BrowserLocalization.text("Welcome to Cra") : "Import"
         window.isMovableByWindowBackground = true
         window.isReleasedWhenClosed = false
         for b in [NSWindow.ButtonType.closeButton, .miniaturizeButton, .zoomButton] { window.standardWindowButton(b)?.isHidden = true }

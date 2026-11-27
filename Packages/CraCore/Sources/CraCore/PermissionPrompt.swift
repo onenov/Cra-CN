@@ -4,6 +4,8 @@
 /// the like need them), up to 0.1.27 they were denied without a sheet. Every type has Chrome's
 /// own words, so the sheet says what Allow gives (#137: Calendar's sheet said only "a browser
 /// permission").
+import Foundation
+
 public enum PermissionPrompt {
     /// Chrome's wording (its *_PERMISSION_FRAGMENT strings), in the order the sheet lists them.
     public static let requests: [(kind: UInt, wants: String)] = [
@@ -34,21 +36,21 @@ public enum PermissionPrompt {
         (1 << 28, "sign you in automatically"),
     ]
 
-    public static func message(origin: String, kinds: UInt) -> String {
+    public static func message(origin: String, kinds: UInt, localize: (String) -> String = { $0 }) -> String {
         var devices: [String] = []
-        if kinds & 1 != 0 { devices.append("camera") }
-        if kinds & 2 != 0 { devices.append("microphone") }
-        if kinds & 4 != 0 { devices.append("location") }
-        var wants = devices.isEmpty ? [] : ["use your \(list(devices))"]
-        wants += requests.filter { kinds & $0.kind != 0 }.map(\.wants)
-        if kinds & 16 != 0, !wants.isEmpty { wants.append("use another browser permission") }
-        return wants.isEmpty ? "\(origin) is asking for a browser permission"
-                             : "\(origin) wants to \(list(wants))"
+        if kinds & 1 != 0 { devices.append(localize("camera")) }
+        if kinds & 2 != 0 { devices.append(localize("microphone")) }
+        if kinds & 4 != 0 { devices.append(localize("location")) }
+        var wants = devices.isEmpty ? [] : [String(format: localize("use your %1$@"), list(devices, localize: localize))]
+        wants += requests.filter { kinds & $0.kind != 0 }.map { localize($0.wants) }
+        if kinds & 16 != 0, !wants.isEmpty { wants.append(localize("use another browser permission")) }
+        return wants.isEmpty ? String(format: localize("%1$@ is asking for a browser permission"), origin)
+                             : String(format: localize("%1$@ wants to %2$@"), origin, list(wants, localize: localize))
     }
 
     /// "a", "a and b", "a, b and c".
-    private static func list(_ items: [String]) -> String {
+    private static func list(_ items: [String], localize: (String) -> String) -> String {
         guard let last = items.last, items.count > 1 else { return items.first ?? "" }
-        return items.dropLast().joined(separator: ", ") + " and " + last
+        return String(format: localize("%1$@ and %2$@"), items.dropLast().joined(separator: localize(", ")), last)
     }
 }

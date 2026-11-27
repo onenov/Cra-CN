@@ -92,7 +92,7 @@ final class FolderPreviewController {
         extended = false
         let panel = self.panel ?? FolderPreviewPanel()
         self.panel = panel
-        panel.preview.show(title: folder.title ?? "Folder", items: items)
+        panel.preview.show(title: folder.title ?? BrowserLocalization.text("Folder"), items: items)
         // Right of the sidebar (left of one on the right, #464), centred on the folder, kept 18 pt inside the window.
         let size = NSSize(width: FolderPreviewMetrics.width, height: FolderPreviewMetrics.height(rows: items.count))
         let rowRect = host.convertToScreen(row.convert(row.bounds, to: nil))
@@ -260,7 +260,7 @@ enum FolderPreviewMetrics {
 
     /// "15 hours ago", "1 week ago", as Arc words lastVisitDate.
     static func age(of date: Date, now: Date = Date()) -> String {
-        if now.timeIntervalSince(date) < 60 { return "Just now" }
+        if now.timeIntervalSince(date) < 60 { return BrowserLocalization.text("Just now") }
         let f = RelativeDateTimeFormatter()
         f.unitsStyle = .full
         f.dateTimeStyle = .numeric
@@ -399,7 +399,7 @@ final class FolderPreviewView: NSView, NSTextFieldDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(listScrolled), name: NSView.boundsDidChangeNotification, object: scroll.contentView)
         addSubview(scroll)
         // Arc: "No tabs matching that search 🤔", wrapping the emoji onto a second line.
-        empty.stringValue = "No tabs matching that search 🤔"
+        empty.stringValue = BrowserLocalization.text("No tabs matching that search 🤔")
         empty.font = .systemFont(ofSize: 13)
         empty.textColor = FolderPreviewMetrics.secondary
         empty.alignment = .center
@@ -575,14 +575,14 @@ final class FolderPreviewView: NSView, NSTextFieldDelegate {
         let m = NSMenu()
         m.autoenablesItems = false
         c.extended = true
-        MenuItems.add(m, action: "copyURL", title: "Copy Link") {
+        MenuItems.add(m, action: "copyURL", title: BrowserLocalization.text("Copy Link")) {
             NSPasteboard.general.clearContents()
             NSPasteboard.general.setString(item.url, forType: .string)
         }
-        MenuItems.add(m, "Open in Split View") { c.openInSplitView(item.id) }
-        MenuItems.add(m, action: "duplicateTab", title: "Duplicate") { c.duplicate(item.id) }
+        MenuItems.add(m, BrowserLocalization.text("Open in Split View")) { c.openInSplitView(item.id) }
+        MenuItems.add(m, action: "duplicateTab", title: BrowserLocalization.text("Duplicate")) { c.duplicate(item.id) }
         m.addItem(.separator())
-        MenuItems.add(m, "Archive") { c.archive(item.id) }
+        MenuItems.add(m, BrowserLocalization.text("Archive")) { c.archive(item.id) }
         return m
     }
 

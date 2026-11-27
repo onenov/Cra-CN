@@ -46,7 +46,7 @@ private struct DefaultBrowserBanner: View {
         HStack(spacing: 12) {
             Text("Cra isn’t your default browser.").font(.system(size: 13))
             Button(action: action) {
-                Label(prompting ? "Confirm in the Dialog…" : "Make Cra your default", systemImage: "heart.fill")
+                Label(prompting ? BrowserLocalization.text("Confirm in the Dialog…") : BrowserLocalization.text("Make Cra your default"), systemImage: "heart.fill")
                     .font(.system(size: 13, weight: .medium)).foregroundStyle(.white)
                     .padding(.horizontal, 10).frame(height: 24)
                     .background(RoundedRectangle(cornerRadius: 5.5, style: .continuous).fill(Color.settingsBlue))
@@ -264,10 +264,10 @@ private struct MemberStamp: View {
                     Text("’\(year % 100)").font(.system(size: 13, weight: .heavy, design: .rounded))
                 case .months(let n):
                     Text("\(n)").font(.system(size: 15, weight: .heavy, design: .rounded))
-                    Text(n == 1 ? "MONTH" : "MONTHS").font(.system(size: 5.5, weight: .heavy))
+                    Text(n == 1 ? BrowserLocalization.text("MONTH") : BrowserLocalization.text("MONTHS")).font(.system(size: 5.5, weight: .heavy))
                 case .anniversary(let n):
                     Text("\(n)").font(.system(size: 15, weight: .heavy, design: .rounded))
-                    Text(n == 1 ? "YEAR" : "YEARS").font(.system(size: 5.5, weight: .heavy))
+                    Text(n == 1 ? BrowserLocalization.text("YEAR") : BrowserLocalization.text("YEARS")).font(.system(size: 5.5, weight: .heavy))
                 }
             }
             .foregroundStyle(color)
@@ -373,7 +373,7 @@ struct ShareCraSheet: View {
                 copied = true
                 Task { try? await Task.sleep(for: .seconds(2)); copied = false }
             } label: {
-                Text(copied ? "COPIED!" : "COPY LINK")
+                Text(copied ? BrowserLocalization.text("COPIED!") : BrowserLocalization.text("COPY LINK"))
                     .font(.system(size: 13, weight: .bold)).foregroundStyle(.white)
                     .frame(maxWidth: .infinity).frame(height: 30)
                     .background(RoundedRectangle(cornerRadius: 6, style: .continuous).fill(Self.green))

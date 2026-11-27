@@ -155,9 +155,9 @@ enum AppLinkPrompt {
             CraLog.note("page \(page) asks for \(name) again, already asking")
             return true
         }
-        let ask = AppLinks.ask(app: name, initiator: origin, rememberable: rememberable, pageHost: URL(string: browser.currentURL)?.host)
+        let ask = AppLinks.ask(app: name, initiator: origin, rememberable: rememberable, pageHost: URL(string: browser.currentURL)?.host, localize: BrowserLocalization.text)
         CraLog.note("page \(page) asks to open \(name) for \(scheme)" + (ask.alwaysAllow == nil ? "" : ", always allow offered for \(origin ?? "?")"))
-        let alert = AppDialog(title: ask.title, message: ask.message, actions: [DialogAction("Open \(name)"), .cancel],
+        let alert = AppDialog(title: ask.title, message: ask.message, actions: [DialogAction(BrowserLocalization.format("Open %1$@", "\(name)")), .cancel],
                               suppressionTitle: ask.alwaysAllow)
         alert.present(over: window) { response in
             guard response == .alertFirstButtonReturn else { return }

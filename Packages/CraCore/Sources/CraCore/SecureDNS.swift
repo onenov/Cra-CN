@@ -43,15 +43,15 @@ extension SecureDNS {
         let to = servers.joined(separator: ", ")
         switch mode {
         case "": return ""
-        case "off": return "Hostnames are looked up in plain text by the network’s own resolver."
+        case "off": return NSLocalizedString("Hostnames are looked up in plain text by the network’s own resolver.", comment: "")
         case "secure":
-            if servers.isEmpty { return "No provider is set, so hostnames can’t be looked up. Choose one above." }
-            return "Hostnames are looked up over an encrypted connection to \(to). If it can’t be reached, pages don’t load."
+            if servers.isEmpty { return NSLocalizedString("No provider is set, so hostnames can’t be looked up. Choose one above.", comment: "") }
+            return String(format: NSLocalizedString("Hostnames are looked up over an encrypted connection to %@. If it can’t be reached, pages don’t load.", comment: ""), to)
         default:
             if servers.isEmpty {
-                return "System DNS uses the network’s own resolver, encrypted when it supports it. Names only a work network knows keep working."
+                return NSLocalizedString("System DNS uses the network’s own resolver, encrypted when it supports it. Names only a work network knows keep working.", comment: "")
             }
-            return "Hostnames are looked up over an encrypted connection to \(to) when it answers, else by the network’s own resolver."
+            return String(format: NSLocalizedString("Hostnames are looked up over an encrypted connection to %@ when it answers, else by the network’s own resolver.", comment: ""), to)
         }
     }
 }

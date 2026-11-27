@@ -109,7 +109,7 @@ final class SidebarStore {
 
     init(clock: Scheduler? = nil) {
         self.clock = clock ?? LiveScheduler.shared
-        let doc = sidebarFile.load(or: SidebarDocument.fresh)
+        let doc = sidebarFile.load { SidebarDocument.fresh(spaceTitle: BrowserLocalization.text("Personal")) }
         for var s in doc.spaces {
             // An Auto theme saved before #677 gets today's dark half: its colours as Arc keeps them, not darkened.
             if let theme = SpaceThemeVariants.upgradedDarkHalf(s.theme) { s.theme = theme }
@@ -168,7 +168,7 @@ final class SidebarStore {
         }
         // No space a window can list (none, or only Blank Windows' own).
         if spaceOrder.isEmpty {
-            let doc = SidebarDocument.fresh()
+            let doc = SidebarDocument.fresh(spaceTitle: BrowserLocalization.text("Personal"))
             for s in doc.spaces { spaces[s.id] = s }
             spaceOrder = doc.spaceOrder
             for it in doc.items { items[it.id] = it }

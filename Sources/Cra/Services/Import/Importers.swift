@@ -154,8 +154,8 @@ enum ImportError: LocalizedError {
     case unreadable(String)
     var errorDescription: String? {
         switch self {
-        case .notFound(let s): return "\(s) data was not found on this Mac."
-        case .unreadable(let s): return "Could not read \(s)."
+        case .notFound(let s): return BrowserLocalization.format("%1$@ data was not found on this Mac.", "\(s)")
+        case .unreadable(let s): return BrowserLocalization.format("Could not read %1$@.", "\(s)")
         }
     }
 }

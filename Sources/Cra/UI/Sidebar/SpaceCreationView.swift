@@ -12,24 +12,24 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
     private let ui: SidebarUIState
     private let actions: SidebarActions
     private let picture = SpaceCreationPicture()
-    private let title = NSTextField(labelWithString: "Create a Space")
-    private let subtitle = NSTextField(wrappingLabelWithString: "Separate your tabs for life,\nwork, projects, and more.")
+    private let title = NSTextField(labelWithString: BrowserLocalization.text("Create a Space"))
+    private let subtitle = NSTextField(wrappingLabelWithString: BrowserLocalization.text("Separate your tabs for life,\nwork, projects, and more."))
     private let fieldBox = NSView()
     private let iconButton = SpaceCreationIconButton()
     private let name = NSTextField()
     private let profileRow = SpaceCreationRow(symbol: "face.smiling", label: "Profile")
     private let pill = SpaceCreationPill()
     private let info = NSImageView()
-    private let themeRow = SpaceCreationRow(symbol: "paintbrush.fill", label: "Choose a Theme")
+    private let themeRow = SpaceCreationRow(symbol: "paintbrush.fill", label: BrowserLocalization.text("Choose a Theme"))
     /// Cra's own row (#306): the command bar's search engine in this space.
-    private let searchRow = SpaceCreationRow(symbol: "magnifyingglass", label: "Search Engine")
+    private let searchRow = SpaceCreationRow(symbol: "magnifyingglass", label: BrowserLocalization.text("Search Engine"))
     private let enginePill = SpaceCreationPill()
     private let searchInfo = NSImageView()
     /// What the sheet said under each choice, in Arc's own tip on the row's (i).
-    static let profileNote = "Profiles make your Spaces truly separate with their own logins, cookies and site data. Spaces with the same Profile share them."
-    static let searchNote = "Searches from the command bar in this space go here. Default follows Settings."
+    static let profileNote = BrowserLocalization.text("Profiles make your Spaces truly separate with their own logins, cookies and site data. Spaces with the same Profile share them.")
+    static let searchNote = BrowserLocalization.text("Searches from the command bar in this space go here. Default follows Settings.")
     private let create = SpaceCreationButton()
-    private let cancel = NSButton(title: "Cancel", target: nil, action: nil)
+    private let cancel = NSButton(title: BrowserLocalization.text("Cancel"), target: nil, action: nil)
     private let card = NSView()
     private let cardIcon = EmojiLabel.sidebar(size: SpaceCreationAnimation.cardIcon)
     /// A symbol or picture icon on the card, where an emoji goes in `cardIcon`.
@@ -58,7 +58,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
         name.drawsBackground = false
         name.focusRingType = .none
         name.font = .systemFont(ofSize: SpaceCreationLayout.textFont, weight: .semibold)
-        name.placeholderString = "Space name..."
+        name.placeholderString = BrowserLocalization.text("Space name...")
         name.delegate = self
         name.lineBreakMode = .byTruncatingTail
         name.cell?.usesSingleLineMode = true
@@ -67,7 +67,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
         fieldBox.addSubview(iconButton)
         fieldBox.addSubview(name)
         // Arc's (i) shows its tip as the pointer arrives, in its own bubble; the words are the sheet's.
-        for (view, note, label) in [(info, Self.profileNote, "About Profiles"), (searchInfo, Self.searchNote, "About the search engine")] {
+        for (view, note, label) in [(info, Self.profileNote, BrowserLocalization.text("About Profiles")), (searchInfo, Self.searchNote, BrowserLocalization.text("About the search engine"))] {
             view.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: label)
             view.symbolConfiguration = .init(pointSize: 12, weight: .semibold)
             let tip = ArcTooltipAnchorView(frame: view.bounds)
@@ -88,7 +88,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
         searchRow.addSubview(enginePill)
         searchRow.addSubview(searchInfo)
         searchRow.onClick = { [weak self] in self?.showEngineMenu() }
-        create.title = "Create Space"
+        create.title = BrowserLocalization.text("Create Space")
         create.onClick = { [weak self] in self?.actions.commitSpaceCreation() }
         cancel.isBordered = false
         cancel.font = .systemFont(ofSize: SpaceCreationLayout.textFont, weight: .medium)
@@ -149,7 +149,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
         fieldBox.layer?.backgroundColor = NSColor.white.withAlphaComponent(dark ? 0.06 : 0.6).cgColor
         name.textColor = dark ? c.textPrimary : NSColor.black.withAlphaComponent(0.85)
         let placeholder = (dark ? NSColor.white : NSColor.black).withAlphaComponent(dark ? 0.55 : 0.4)
-        name.placeholderAttributedString = NSAttributedString(string: "Space name...", attributes: [
+        name.placeholderAttributedString = NSAttributedString(string: BrowserLocalization.text("Space name..."), attributes: [
             .foregroundColor: placeholder, .font: NSFont.systemFont(ofSize: SpaceCreationLayout.textFont, weight: .semibold)])
         iconButton.ink = placeholder
         for row in [profileRow, themeRow, searchRow] { row.apply(colors: c, dark: dark) }
@@ -309,7 +309,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
         menu.addItem(item(store.profileName(nil), nil))
         for p in store.profiles { menu.addItem(item(p.name, p.id)) }
         menu.addItem(.separator())
-        let new = NSMenuItem(title: "New Profile…", action: #selector(newProfile), keyEquivalent: "")
+        let new = NSMenuItem(title: BrowserLocalization.text("New Profile…"), action: #selector(newProfile), keyEquivalent: "")
         new.target = self
         menu.addItem(new)
         menu.popUp(positioning: nil, at: NSPoint(x: pill.frame.minX, y: pill.frame.maxY + 4), in: profileRow)
@@ -343,7 +343,7 @@ final class SpaceCreationView: NSView, NSTextFieldDelegate, NSPopoverDelegate {
             i.state = keyword == draft.searchEngine ? .on : .off
             return i
         }
-        menu.addItem(item("Default (\(engines.defaultName))", nil))
+        menu.addItem(item(BrowserLocalization.format("Default (%1$@)", "\(engines.defaultName)"), nil))
         menu.addItem(.separator())
         for e in engines.choices { menu.addItem(item(e.name, e.keyword)) }
         menu.popUp(positioning: nil, at: NSPoint(x: enginePill.frame.minX, y: enginePill.frame.maxY + 4), in: searchRow)
@@ -518,7 +518,7 @@ final class SpaceCreationIconButton: NSView {
         refresh()
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Choose Icon")
+        setAccessibilityLabel(BrowserLocalization.text("Choose Icon"))
     }
 
     required init?(coder: NSCoder) { fatalError() }
@@ -527,8 +527,8 @@ final class SpaceCreationIconButton: NSView {
         switch icon {
         case .emoji(let e): return e
         case .symbol(let s): return s
-        case .image: return "image"
-        case .none: return "plus"
+        case .image: return BrowserLocalization.text("image")
+        case .none: return BrowserLocalization.text("plus")
         }
     }
 
@@ -738,7 +738,7 @@ final class SpaceCreationButton: NSView {
         addSubview(label)
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Create Space")
+        setAccessibilityLabel(BrowserLocalization.text("Create Space"))
         refresh()
     }
 

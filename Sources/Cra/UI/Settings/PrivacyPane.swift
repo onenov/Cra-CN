@@ -8,17 +8,17 @@ struct PrivacyPane: View {
     var body: some View {
         @Bindable var store = store
         SettingsCardPane {
-            SettingsHeader("Content blocking")
+            SettingsHeader(BrowserLocalization.text("Content blocking"))
             SettingsFeatureCard {
-                SettingsToggleRow("Block ads and trackers",
-                                  detail: "Requests to known ad and tracker domains are cancelled, unless the domain belongs to the site you’re on. To let one site load everything, turn it off in that site’s menu in the address bar.",
+                SettingsToggleRow(BrowserLocalization.text("Block ads and trackers"),
+                                  detail: BrowserLocalization.text("Requests to known ad and tracker domains are cancelled, unless the domain belongs to the site you’re on. To let one site load everything, turn it off in that site’s menu in the address bar."),
                                   isOn: $store.settings.blocksAdsAndTrackers)
                 if store.settings.blocksAdsAndTrackers {
                     SettingsCardDivider()
-                    SettingsPlainRow("Blocking",
+                    SettingsPlainRow(BrowserLocalization.text("Blocking"),
                                        detail: store.settings.adBlockingLevel == .strict
-                                           ? "Strict also blocks the ads and trackers EasyList and EasyPrivacy know about. It catches more, and now and then a page needs ads turned off for it."
-                                           : "Standard blocks well-known ad and tracker servers and rarely gets in a page’s way.",
+                                           ? BrowserLocalization.text("Strict also blocks the ads and trackers EasyList and EasyPrivacy know about. It catches more, and now and then a page needs ads turned off for it.")
+                                           : BrowserLocalization.text("Standard blocks well-known ad and tracker servers and rarely gets in a page’s way."),
                                        trailing: {
                         Picker("Blocking", selection: $store.settings.adBlockingLevel) {
                             Text("Standard").tag(AdBlockingLevel.standard)
@@ -29,53 +29,53 @@ struct PrivacyPane: View {
                 }
                 SettingsCardDivider()
                 // Arc: Settings ▸ General "Block Cookie Banners", off by default.
-                SettingsToggleRow("Block cookie banners",
-                                  detail: "Cookie banners from the common consent tools are hidden. Pages load again with the change.",
+                SettingsToggleRow(BrowserLocalization.text("Block cookie banners"),
+                                  detail: BrowserLocalization.text("Cookie banners from the common consent tools are hidden. Pages load again with the change."),
                                   isOn: $store.settings.blockCookieBanners)
                 SettingsCardDivider()
                 // Not in Arc: Cra's Chromium (fingerprinting-protection.patch).
-                SettingsToggleRow("Fingerprinting protection",
-                                  detail: "Sites that tell browsers apart by reading back drawings, 3D graphics or sound get faint noise in what they read, different for each site and each time Cra opens. Sites also see 8 processor cores.",
+                SettingsToggleRow(BrowserLocalization.text("Fingerprinting protection"),
+                                  detail: BrowserLocalization.text("Sites that tell browsers apart by reading back drawings, 3D graphics or sound get faint noise in what they read, different for each site and each time Cra opens. Sites also see 8 processor cores."),
                                   isOn: $store.settings.fingerprintingProtection)
                 SettingsCardDivider()
-                SettingsPlainRow("Block lists",
-                                   detail: "Pick lists one by one, add a list by its address or write your own filters."
+                SettingsPlainRow(BrowserLocalization.text("Block lists"),
+                                   detail: BrowserLocalization.text("Pick lists one by one, add a list by its address or write your own filters.")
                                        + (BlockLists.shared.inUse.map { " " + BlockListCount.inUse(rules: $0.rules, lists: $0.lists) } ?? ""),
-                                   trailing: { Button("Advanced…") { showsBlockLists = true } })
+                                   trailing: { Button(BrowserLocalization.text("Advanced…")) { showsBlockLists = true } })
             }
 
-            SettingsHeader("Connection security").padding(.top, 20)
+            SettingsHeader(BrowserLocalization.text("Connection security")).padding(.top, 20)
             SettingsFeatureCard {
-                SettingsToggleRow("Always use secure connections",
-                                  detail: "Pages load over HTTPS. Before opening a public site that doesn’t support it, Cra warns you first. Addresses on your own network, such as 192.168… or a .local name, load as they are.",
+                SettingsToggleRow(BrowserLocalization.text("Always use secure connections"),
+                                  detail: BrowserLocalization.text("Pages load over HTTPS. Before opening a public site that doesn’t support it, Cra warns you first. Addresses on your own network, such as 192.168… or a .local name, load as they are."),
                                   isOn: $store.settings.httpsOnly)
                 SettingsCardDivider()
                 SecureDNSRows(error: $dnsError, footnote: dnsFootnote)
             }
             if let dnsError { SettingsFootnote(dnsError).foregroundStyle(.red) }
 
-            SettingsHeader("Data").padding(.top, 20)
+            SettingsHeader(BrowserLocalization.text("Data")).padding(.top, 20)
             SettingsFeatureCard {
-                SettingsPlainRow("Clear browsing data",
-                                   detail: "Delete history, cookies and cached files for the current space’s profile. History you delete also leaves the command bar.",
-                                   trailing: { Button("Clear…") { actions.openURL(BrowsingDataClear.pageURL) } })
+                SettingsPlainRow(BrowserLocalization.text("Clear browsing data"),
+                                   detail: BrowserLocalization.text("Delete history, cookies and cached files for the current space’s profile. History you delete also leaves the command bar."),
+                                   trailing: { Button(BrowserLocalization.text("Clear…")) { actions.openURL(BrowsingDataClear.pageURL) } })
                 SettingsCardDivider()
-                SettingsToggleRow("Share anonymous usage stats",
-                                  detail: "Once a day: your Cra and macOS versions, the kind of Mac, rough counts of spaces, tabs and extensions, and which settings you changed. Never the sites you visit, what you search or anything on a page. Each report has a new random ID, so reports can’t be tied together or to you.",
+                SettingsToggleRow(BrowserLocalization.text("Share anonymous usage stats"),
+                                  detail: BrowserLocalization.text("Once a day: your Cra and macOS versions, the kind of Mac, rough counts of spaces, tabs and extensions, and which settings you changed. Never the sites you visit, what you search or anything on a page. Each report has a new random ID, so reports can’t be tied together or to you."),
                                   isOn: $store.settings.shareUsageStats) {
                     HStack(spacing: 12) {
-                        Button("Show What’s Sent") { SharingService.shared.showStats() }
-                        Link("How Cra handles your data", destination: URL(string: SiteLinks.tagged("https://crabrowser.app/privacy", from: .privacy))!)
+                        Button(BrowserLocalization.text("Show What’s Sent")) { SharingService.shared.showStats() }
+                        Link(BrowserLocalization.text("How Cra handles your data"), destination: URL(string: SiteLinks.tagged("https://crabrowser.app/privacy", from: .privacy))!)
                     }
                 }
                 SettingsCardDivider()
-                SettingsPlainRow("Crash reports",
-                                   detail: "A report shows what Cra was doing when it crashed, without your name, file paths or anything that identifies this Mac.",
+                SettingsPlainRow(BrowserLocalization.text("Crash reports"),
+                                   detail: BrowserLocalization.text("A report shows what Cra was doing when it crashed, without your name, file paths or anything that identifies this Mac."),
                                    trailing: { EmptyView() }) {
-                    Picker("Crash reports", selection: $store.settings.crashReports) {
-                        Text("Ask each time").tag(CrashReportChoice.ask)
-                        Text("Send automatically").tag(CrashReportChoice.send)
-                        Text("Never send").tag(CrashReportChoice.never)
+                    Picker(BrowserLocalization.text("Crash reports"), selection: $store.settings.crashReports) {
+                        Text(BrowserLocalization.text("Ask each time")).tag(CrashReportChoice.ask)
+                        Text(BrowserLocalization.text("Send automatically")).tag(CrashReportChoice.send)
+                        Text(BrowserLocalization.text("Never send")).tag(CrashReportChoice.never)
                     }
                     .labelsHidden()
                     .fixedSize()
@@ -91,7 +91,7 @@ struct PrivacyPane: View {
     private var dnsFootnote: String? {
         let dns = SecureDNSSetting.shared
         guard let summary = dns.inEffect?.summary, !summary.isEmpty else { return nil }
-        return dns.isManaged ? "Your organization sets secure DNS. " + summary : summary
+        return dns.isManaged ? BrowserLocalization.text("Your organization sets secure DNS. ") + summary : summary
     }
 }
 
@@ -102,7 +102,7 @@ private struct BlockListsSheet: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Block lists").font(.system(size: 13, weight: .semibold))
+            Text(BrowserLocalization.text("Block lists")).font(.system(size: 13, weight: .semibold))
                 .padding(.horizontal, 24).padding(.top, 18).padding(.bottom, 10)
             Divider()
             ScrollView { BlockListRows().padding(24) }
@@ -130,17 +130,17 @@ private struct BlockListRows: View {
     var body: some View {
         @Bindable var store = store
         VStack(alignment: .leading, spacing: 0) {
-            SettingsHeader("Built-in lists")
+            SettingsHeader(BrowserLocalization.text("Built-in lists"))
             SettingsFeatureCard {
-                SettingsToggleRow("AdAway", detail: "Built in. Blocks third-party ad and tracker domains, including in-app advertising networks.", isOn: $store.settings.adAwayEnabled) {
+                SettingsToggleRow(BrowserLocalization.text("AdAway"), detail: BrowserLocalization.text("Built in. Blocks third-party ad and tracker domains, including in-app advertising networks."), isOn: $store.settings.adAwayEnabled) {
                     RuleCountLine(count: lists.builtInCounts["adaway"])
                 }
                 SettingsCardDivider()
-                SettingsToggleRow("Anudeep’s Blacklist", detail: "Built in. Blocks third-party connections to known advertising and tracking servers.", isOn: $store.settings.anudeepEnabled) {
+                SettingsToggleRow(BrowserLocalization.text("Anudeep’s Blacklist"), detail: BrowserLocalization.text("Built in. Blocks third-party connections to known advertising and tracking servers."), isOn: $store.settings.anudeepEnabled) {
                     RuleCountLine(count: lists.builtInCounts["anudeep"])
                 }
             }
-            SettingsHeader("Filter lists").padding(.top, 14)
+            SettingsHeader(BrowserLocalization.text("Filter lists")).padding(.top, 14)
             ForEach(DesktopFilterList.groups(selected: Set(store.settings.customBlocklists))) { group in
                 FilterListGroupCard(title: group.category.title, selected: group.selectedCount, total: group.entries.count,
                                     isExpanded: [.ads, .tracking, .security].contains(group.category)) {
@@ -150,16 +150,16 @@ private struct BlockListRows: View {
                     }
                 }.padding(.bottom, 6)
             }
-            SettingsFootnote("These lists block connections to third-party domains on pages you visit. Opening a listed address directly does not show a warning.")
+            SettingsFootnote(BrowserLocalization.text("These lists block connections to third-party domains on pages you visit. Opening a listed address directly does not show a warning."))
             HStack {
-                SettingsHeader("Manage lists")
+                SettingsHeader(BrowserLocalization.text("Manage lists"))
                 Spacer()
-                Button("Update Enabled Lists") { store.settings.customBlocklists.forEach { lists.fetch($0) } }
+                Button(BrowserLocalization.text("Update Enabled Lists")) { store.settings.customBlocklists.forEach { lists.fetch($0) } }
                     .disabled(store.settings.customBlocklists.isEmpty || !lists.fetching.isEmpty)
-                Button("Add List…") { error = nil; text = ""; adding = true }.disabled(adding)
+                Button(BrowserLocalization.text("Add List…")) { error = nil; text = ""; adding = true }.disabled(adding)
             }.padding(.top, 14)
             if !store.settings.customFilterAddresses.isEmpty || adding {
-                SettingsHeader("Your lists").padding(.top, 14)
+                SettingsHeader(BrowserLocalization.text("Your lists")).padding(.top, 14)
                 SettingsFeatureCard {
                     ForEach(store.settings.customFilterAddresses, id: \.self) { address in
                         listRow(address, name: lists.cached[address]?.name ?? address, detail: address, removable: true)
@@ -170,13 +170,13 @@ private struct BlockListRows: View {
             }
             if let failure = lists.networkFailure { SettingsFootnote(failure).foregroundStyle(.red) }
             if let error { SettingsFootnote(error).foregroundStyle(.red) }
-            SettingsFootnote("Enabled lists update automatically. Downloads contact each list’s host, which can see your IP address. Filtering happens on this Mac.")
-            SettingsHeader("Custom filters").padding(.top, 14)
+            SettingsFootnote(BrowserLocalization.text("Enabled lists update automatically. Downloads contact each list’s host, which can see your IP address. Filtering happens on this Mac."))
+            SettingsHeader(BrowserLocalization.text("Custom filters")).padding(.top, 14)
             SettingsFeatureCard {
-                SettingsToggleRow("Use my filters", detail: "Apply your saved rules.", isOn: $store.settings.personalFiltersEnabled)
+                SettingsToggleRow(BrowserLocalization.text("Use my filters"), detail: BrowserLocalization.text("Apply your saved rules."), isOn: $store.settings.personalFiltersEnabled)
                 SettingsCardDivider()
-                SettingsPlainRow("My filters", detail: "One domain, network rule, exception or element filter per line.", trailing: {
-                    Button("Edit…") { draft = store.settings.personalBlockFilters ?? ""; editingRules = true }
+                SettingsPlainRow(BrowserLocalization.text("My filters"), detail: BrowserLocalization.text("One domain, network rule, exception or element filter per line."), trailing: {
+                    Button(BrowserLocalization.text("Edit…")) { draft = store.settings.personalBlockFilters ?? ""; editingRules = true }
                         .disabled(editingRules)
                 }) {
                     RuleCountLine(count: lists.personalCount(store.settings.personalBlockFilters))
@@ -184,12 +184,12 @@ private struct BlockListRows: View {
                         TextEditor(text: $draft)
                             .font(.system(.body, design: .monospaced))
                             .frame(minHeight: 84)
-                            .accessibilityLabel("Custom filters")
-                        Text("To allow network requests on a site, enter @@||example.org^$document.")
+                            .accessibilityLabel(BrowserLocalization.text("Custom filters"))
+                        Text(BrowserLocalization.text("To allow network requests on a site, enter @@||example.org^$document."))
                             .font(.caption).foregroundStyle(.secondary)
                         HStack {
                             Button("Cancel") { editingRules = false }
-                            Button("Save Changes") {
+                            Button(BrowserLocalization.text("Save Changes")) {
                                 store.settings.personalBlockFilters = draft.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ? nil : draft
                                 editingRules = false
                             }
@@ -206,7 +206,7 @@ private struct BlockListRows: View {
             if lists.fetching.contains(address) { ProgressView().controlSize(.mini) }
             if removable {
                 Button { store.settings.forgetFilterList(address) } label: { Image(systemName: "minus.circle") }
-                    .buttonStyle(.borderless).help("Remove this list").accessibilityLabel("Remove " + name)
+                    .buttonStyle(.borderless).help(BrowserLocalization.text("Remove this list")).accessibilityLabel("Remove " + name)
             }
             Toggle(name, isOn: Binding(
                 get: { store.settings.customBlocklists.contains(address) },
@@ -223,10 +223,10 @@ private struct BlockListRows: View {
 
     private var addListRow: some View {
         SettingsCardRow {
-            TextField("List address", text: $text, prompt: Text("https://example.com/list.txt"))
+            TextField(BrowserLocalization.text("List address"), text: $text, prompt: Text("https://example.com/list.txt"))
                 .textFieldStyle(.roundedBorder).onSubmit(addTyped)
         } trailing: {
-            Button("Choose File…", action: chooseFile)
+            Button(BrowserLocalization.text("Choose File…"), action: chooseFile)
             Button("Cancel") { adding = false; error = nil }
             Button("Add", action: addTyped).keyboardShortcut(.defaultAction)
                 .disabled(text.trimmingCharacters(in: .whitespaces).isEmpty)
@@ -241,7 +241,7 @@ private struct BlockListRows: View {
         let panel = NSOpenPanel()
         panel.canChooseDirectories = false
         panel.allowsMultipleSelection = false
-        panel.message = "Choose a block list: a hosts file, a list of domains or an Adblock Plus list."
+        panel.message = BrowserLocalization.text("Choose a block list: a hosts file, a list of domains or an Adblock Plus list.")
         guard panel.runModal() == .OK, let url = panel.url else { return }
         apply(CustomBlocklist.adding(url, to: store.settings.customBlocklists))
     }
@@ -249,7 +249,7 @@ private struct BlockListRows: View {
     private func apply(_ addition: CustomBlocklist.Addition) {
         switch addition {
         case .invalid:
-            error = "Enter the list’s web address, like https://example.com/list.txt."
+            error = BrowserLocalization.text("Enter the list’s web address, like https://example.com/list.txt.")
             return
         case .added(let next):
             if let address = next.last { store.settings.setFilterList(address, enabled: true) }
@@ -285,8 +285,8 @@ private struct SecureDNSRows: View {
     @State private var customText = ""
 
     var body: some View {
-        SettingsPlainRow("DNS over HTTPS",
-                         detail: "Before a page loads, the site’s address is looked up over an encrypted connection, so the network you’re on can’t see or change it." + (footnote.map { " " + $0 } ?? ""),
+        SettingsPlainRow(BrowserLocalization.text("DNS over HTTPS"),
+                         detail: BrowserLocalization.text("Before a page loads, the site’s address is looked up over an encrypted connection, so the network you’re on can’t see or change it.") + (footnote.map { " " + $0 } ?? ""),
                          trailing: { EmptyView() }) {
             DNSProviderMenu(choice: choice)
             .fixedSize()
@@ -297,7 +297,7 @@ private struct SecureDNSRows: View {
         if showsCustom {
             SettingsCardDivider()
             SettingsCardRow {
-                TextField("Custom provider", text: $customText, prompt: Text("https://dns.example/dns-query{?dns}"))
+                TextField(BrowserLocalization.text("Custom provider"), text: $customText, prompt: Text("https://dns.example/dns-query{?dns}"))
                     .textFieldStyle(.roundedBorder)
                     .font(.system(size: 12))
                     .onSubmit(saveCustom)
@@ -322,7 +322,7 @@ private struct SecureDNSRows: View {
                 return
             }
             editingCustom = false
-            if let prefs = SecureDNSPrefs(new), !dns.apply(prefs) { error = "Cra couldn’t change secure DNS." }
+            if let prefs = SecureDNSPrefs(new), !dns.apply(prefs) { error = BrowserLocalization.text("Cra couldn’t change secure DNS.") }
         })
     }
 
@@ -336,7 +336,7 @@ private struct SecureDNSRows: View {
             editingCustom = false
             customText = prefs.templates
         } else {
-            error = "Cra couldn’t change secure DNS."
+            error = BrowserLocalization.text("Cra couldn’t change secure DNS.")
         }
     }
 }

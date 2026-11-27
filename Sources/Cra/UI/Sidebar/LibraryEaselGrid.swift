@@ -179,9 +179,9 @@ final class EaselTile: NSView {
         guard let entry else { return nil }
         let m = NSMenu()
         m.autoenablesItems = false
-        MenuItems.add(m, "Share Easel…") { [weak self] in self?.share(entry) }
+        MenuItems.add(m, BrowserLocalization.text("Share Easel…")) { [weak self] in self?.share(entry) }
         m.addItem(.separator())
-        MenuItems.add(m, "Delete") { [weak self] in self?.delete(entry) }
+        MenuItems.add(m, BrowserLocalization.text("Delete")) { [weak self] in self?.delete(entry) }
         return m
     }
 }

@@ -10,7 +10,7 @@ final class SpacesMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
     init(app: AppDelegate) { self.app = app }
 
     func makeMenu() -> NSMenu {
-        let menu = NSMenu(title: "Spaces")
+        let menu = NSMenu(title: BrowserLocalization.text("Spaces"))
         menu.delegate = self
         return menu
     }

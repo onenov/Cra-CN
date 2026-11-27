@@ -38,7 +38,7 @@ final class AgentPill {
     static let closeSide: CGFloat = 18
     /// The ×'s middle, in from the capsule's top left corner.
     static let closeInset: CGFloat = 4
-    static let takeOverTitle = "Take Over"
+    static let takeOverTitle = BrowserLocalization.text("Take Over")
     static let background = NSColor(srgbRed: 0.12, green: 0.12, blue: 0.125, alpha: 1)
 
     private let panel: NSPanel

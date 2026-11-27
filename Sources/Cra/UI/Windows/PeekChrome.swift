@@ -59,10 +59,10 @@ final class PeekBarView: NSView {
         let fgDim = light ? NSColor.black.withAlphaComponent(0.6) : NSColor(hex: "#F0E6CC").withAlphaComponent(0.9)
         let hover = NSColor.white.withAlphaComponent(0.1)
         layer?.backgroundColor = fill.cgColor
-        back.configure(symbol: "arrow.left", image: nil, help: "Go Back (⌘[)", enabled: state.canGoBack, width: 37, iconSize: 15, tint: fgDim, hover: hover)
-        forward.configure(symbol: "arrow.right", image: nil, help: "Go Forward (⌘])", enabled: state.canGoForward, width: 37, iconSize: 15,
+        back.configure(symbol: "arrow.left", image: nil, help: BrowserLocalization.text("Go Back (⌘[)"), enabled: state.canGoBack, width: 37, iconSize: 15, tint: fgDim, hover: hover)
+        forward.configure(symbol: "arrow.right", image: nil, help: BrowserLocalization.text("Go Forward (⌘])"), enabled: state.canGoForward, width: 37, iconSize: 15,
                           tint: fgDim, hover: hover)
-        reload.configure(symbol: state.isLoading ? "xmark" : "arrow.clockwise", image: nil, help: "Refresh (⌘R)", enabled: true, width: 37,
+        reload.configure(symbol: state.isLoading ? "xmark" : "arrow.clockwise", image: nil, help: BrowserLocalization.text("Refresh (⌘R)"), enabled: true, width: 37,
                          iconSize: 15, tint: fgDim, hover: hover, animated: true)
         let human = SuggestionEngine.humanURL(state.url)
         let host = AppSettings.siteKey(for: state.url) ?? human

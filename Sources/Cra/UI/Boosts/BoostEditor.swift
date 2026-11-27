@@ -319,16 +319,16 @@ private struct BoostEditorView: View {
             .buttonStyle(.plain).help("Done")
             Spacer(minLength: 0)
             Menu {
-                Button("Rename this Boost…") { rename() }
+                Button(BrowserLocalization.text("Rename this Boost…")) { rename() }
                 Button("Shuffle") { model.shuffle() }
-                Button("Reset all Edits") { model.resetAll() }
-                Button("Delete this Boost") { delete() }
+                Button(BrowserLocalization.text("Reset all Edits")) { model.resetAll() }
+                Button(BrowserLocalization.text("Delete this Boost")) { delete() }
                 Divider()
-                Button("Share Boost…") {
+                Button(BrowserLocalization.text("Share Boost…")) {
                     BoostInstall.share(model.boost) { text in (NSApp.delegate as? AppDelegate)?.main?.showToast(text) }
                 }
                 .disabled(!BoostInstall.canShare(model.boost))
-                Button("All Boosts…") { NotificationCenter.default.post(name: .craShowBoostsLibrary, object: nil) }
+                Button(BrowserLocalization.text("All Boosts…")) { NotificationCenter.default.post(name: .craShowBoostsLibrary, object: nil) }
             } label: {
                 HStack(spacing: 4) {
                     Text(model.boost.name).font(.system(size: 14, weight: .semibold)).foregroundStyle(BoostStyle.ink).lineLimit(1)
@@ -353,10 +353,10 @@ private struct BoostEditorView: View {
             .frame(width: 147, height: 147)
             .padding(.top, 18)
             HStack(spacing: 10) {
-                square("lightbulb", on: model.boost.invert, help: "Invert lightness") { model.change { $0.invert.toggle() } }
-                square("slider.horizontal.3", on: model.showingColors, help: "Advanced color controls") { model.showingColors.toggle() }
+                square("lightbulb", on: model.boost.invert, help: BrowserLocalization.text("Invert lightness")) { model.change { $0.invert.toggle() } }
+                square("slider.horizontal.3", on: model.showingColors, help: BrowserLocalization.text("Advanced color controls")) { model.showingColors.toggle() }
                     .popover(isPresented: $model.showingColors, arrowEdge: .bottom) { advanced }
-                square("nosign", on: false, help: "Reset to original colors") {
+                square("nosign", on: false, help: BrowserLocalization.text("Reset to original colors")) {
                     model.change { $0.hue = 0; $0.strength = 0; $0.invert = false; $0.contrast = 50; $0.brightness = 50; $0.saturation = 50 }
                 }
                 .opacity(model.boost.colorsUntouched ? 0.45 : 1)
@@ -365,22 +365,22 @@ private struct BoostEditorView: View {
             HStack(spacing: 9) {
                 Menu {
                     ForEach([0.8, 0.9, 1, 1.1, 1.25, 1.5], id: \.self) { s in
-                        Button(s == 1 ? "Original" : "\(Int(s * 100)) %") { model.change { $0.textScale = s } }
+                        Button(s == 1 ? BrowserLocalization.text("Original") : "\(Int(s * 100)) %") { model.change { $0.textScale = s } }
                     }
                 } label: { wide("Size", trailing: nil) }
-                .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).help("Change text size")
+                .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).help(BrowserLocalization.text("Change text size"))
                 Menu {
                     ForEach(Boost.TextCase.allCases, id: \.self) { c in Button(c.title) { model.change { $0.textCase = c } } }
                 } label: { wide("Case", trailing: nil) }
-                .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).help("Change text case")
+                .menuStyle(.button).buttonStyle(.plain).menuIndicator(.hidden).help(BrowserLocalization.text("Change text case"))
             }
             .frame(width: 147)
             // Arc 1.172.2: with something zapped the bolt gives way to the count.
             Button { model.toggleZap() } label: {
                 wide("Zap", trailing: "bolt.fill", count: model.boost.zapped.count, on: model.zapping)
             }
-            .buttonStyle(.plain).accessibilityLabel(model.boost.zapped.isEmpty ? "Zap" : "Zap, \(model.boost.zapped.count)")
-                .help("Click things on the page to hide them")
+            .buttonStyle(.plain).accessibilityLabel(model.boost.zapped.isEmpty ? BrowserLocalization.text("Zap") : BrowserLocalization.format("Zap, %1$@", "\(model.boost.zapped.count)"))
+                .help(BrowserLocalization.text("Click things on the page to hide them"))
             Button { model.setCode(true) } label: { wide("Code", trailing: "curlybraces") }.buttonStyle(.plain)
             Spacer(minLength: 0)
         }
@@ -393,7 +393,7 @@ private struct BoostEditorView: View {
         VStack(alignment: .leading, spacing: 18) {
             slider("Contrast", \.contrast)
             slider("Brightness", \.brightness)
-            slider("Original Saturation", \.saturation)
+            slider(BrowserLocalization.text("Original Saturation"), \.saturation)
         }
         .padding(.horizontal, 19).padding(.vertical, 20)
         .frame(width: 224)
@@ -453,14 +453,14 @@ private struct BoostEditorView: View {
                                      set: { v in if model.codeIsJS { model.boost.js = v } else { model.boost.css = v } }))
             // Arc: 38 pt squares 15 pt in, in a 69 pt strip under the 479 pt editor.
             HStack(spacing: 10) {
-                square("eyedropper", on: model.picking, help: model.picking ? "Hide Selector Picker" : "Show Selector Picker", size: 38) {
+                square("eyedropper", on: model.picking, help: model.picking ? BrowserLocalization.text("Hide Selector Picker") : BrowserLocalization.text("Show Selector Picker"), size: 38) {
                     model.togglePicker()
                 }
-                square("hammer", on: model.devToolsOpen, help: model.devToolsOpen ? "Hide Developer Tools" : "Show Developer Tools", size: 38) {
+                square("hammer", on: model.devToolsOpen, help: model.devToolsOpen ? BrowserLocalization.text("Hide Developer Tools") : BrowserLocalization.text("Show Developer Tools"), size: 38) {
                     model.toggleDevTools()
                 }
                 if model.codeIsJS {
-                    square("arrow.clockwise", on: false, help: "Refresh this Page", size: 38) { model.page.reload() }
+                    square("arrow.clockwise", on: false, help: BrowserLocalization.text("Refresh this Page"), size: 38) { model.page.reload() }
                 }
                 Spacer()
             }
@@ -472,21 +472,21 @@ private struct BoostEditorView: View {
 
     private func rename() {
         let alert = NSAlert()
-        alert.messageText = "Rename this Boost"
+        alert.messageText = BrowserLocalization.text("Rename this Boost")
         let field = NSTextField(string: model.boost.name)
         field.frame = NSRect(x: 0, y: 0, width: 220, height: 24)
         alert.accessoryView = field
-        alert.addButton(withTitle: "Rename")
-        alert.addButton(withTitle: "Cancel")
+        alert.addButton(withTitle: BrowserLocalization.text("Rename"))
+        alert.addButton(withTitle: BrowserLocalization.text("Cancel"))
         if alert.runModal() == .alertFirstButtonReturn, !field.stringValue.isEmpty { model.change { $0.name = field.stringValue } }
     }
 
     private func delete() {
         let alert = NSAlert()
-        alert.messageText = "Delete this Boost?"
-        alert.informativeText = "Its changes to \(model.boost.host) go away."
-        alert.addButton(withTitle: "Delete")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = BrowserLocalization.text("Delete this Boost?")
+        alert.informativeText = BrowserLocalization.format("Its changes to %1$@ go away.", "\(model.boost.host)")
+        alert.addButton(withTitle: BrowserLocalization.text("Delete"))
+        alert.addButton(withTitle: BrowserLocalization.text("Cancel"))
         alert.buttons.first?.hasDestructiveAction = true
         guard alert.runModal() == .alertFirstButtonReturn else { return }
         BoostStore.shared.delete(model.boost.id)

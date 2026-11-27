@@ -9,7 +9,7 @@ xcrun swiftc -swift-version 5 -emit-module -emit-library -module-name CraCEF \
 xcrun swiftc -swift-version 5 -parse-as-library ${CRA_TEST_SWIFTC_FLAGS:-} -I "$TEST_DIR" -L "$TEST_DIR" -lCraCEF \
   -Xlinker -rpath -Xlinker "$TEST_DIR" \
   Packages/CraCore/Sources/CraCore/*.swift Packages/CraCore/Sources/CraCore/Perf/*.swift Sources/Cra/Perf/Perf.swift \
-  Sources/Cra/App/KeyBindings.swift Sources/Cra/Services/KeyboardLayoutCharacters.swift \
+  Sources/Cra/BrowserLocalization.swift Sources/Cra/App/KeyBindings.swift Sources/Cra/Services/KeyboardLayoutCharacters.swift \
   Sources/Cra/Services/Persistence.swift Sources/Cra/Services/CraLog.swift Sources/Cra/Services/PageScript.swift \
   Sources/Cra/UI/Windows/CaptureOverlay.swift Sources/Cra/UI/Windows/CaptureEditing.swift Sources/Cra/UI/Windows/MainWindowController+Capture.swift \
   Sources/Cra/UI/Windows/LittleWindowController+Capture.swift \

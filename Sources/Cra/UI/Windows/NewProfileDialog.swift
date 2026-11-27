@@ -76,9 +76,9 @@ struct NewProfileDialog: View {
             .padding(.top, 4)
             HStack(spacing: 8.5) {
                 Spacer()
-                DialogButton(title: "Cancel", key: "ESC", enabled: true, primary: false, action: onCancel)
+                DialogButton(title: BrowserLocalization.text("Cancel"), key: "ESC", enabled: true, primary: false, action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                DialogButton(title: "Next", key: "↩", enabled: !trimmed.isEmpty, primary: true, action: next)
+                DialogButton(title: BrowserLocalization.text("Next"), key: "↩", enabled: !trimmed.isEmpty, primary: true, action: next)
             }
             .padding(.top, 27)
             Spacer(minLength: 0)

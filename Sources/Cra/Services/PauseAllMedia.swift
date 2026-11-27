@@ -125,7 +125,7 @@ extension AppDelegate {
         let all = mediaPauseTargets().filter { MediaPause.isTarget($0.page, in: .everything) }
         PauseAllMedia.run(all, closingPictureInPicture: false) { report in
             CraLog.note("pause all media: \(all.count) pages, paused \(report.paused.count), kept playing \(report.keptPlaying.map { all[$0].title })")
-            let show = report.keptPlaying.first.map { i in ShinyToast.Action(title: "Show") { all[i].show() } }
+            let show = report.keptPlaying.first.map { i in ShinyToast.Action(title: BrowserLocalization.text("Show")) { all[i].show() } }
             if let little, little.window?.isVisible == true {
                 little.showToast(report.toast, action: show)
             } else {

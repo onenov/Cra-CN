@@ -43,7 +43,7 @@ final class DownloadProgressBadgeView: NSView {
         layer.opacity = 0
         setAccessibilityElement(true)
         setAccessibilityRole(.progressIndicator)
-        setAccessibilityLabel("Downloads")
+        setAccessibilityLabel(BrowserLocalization.text("Downloads"))
         paint()
     }
 

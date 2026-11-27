@@ -7,7 +7,7 @@ TEST_DIR="$(mktemp -d "${TMPDIR:-/tmp}/cra-key-bindings.XXXXXX")"
 trap 'rm -rf "$TEST_DIR"' EXIT
 xcrun swiftc -swift-version 5 -parse-as-library ${CRA_TEST_SWIFTC_FLAGS:-} \
   Packages/CraCore/Sources/CraCore/*.swift Packages/CraCore/Sources/CraCore/Perf/*.swift Sources/Cra/Perf/Perf.swift \
-  Sources/Cra/App/KeyBindings.swift Sources/Cra/Services/KeyboardLayoutCharacters.swift \
+  Sources/Cra/BrowserLocalization.swift Sources/Cra/App/KeyBindings.swift Sources/Cra/Services/KeyboardLayoutCharacters.swift \
   Sources/Cra/Services/Persistence.swift Sources/Cra/Services/CraLog.swift \
   Tests/KeyBindingsTests.swift -o "$TEST_DIR/key-binding-tests"
 mkdir -p "$TEST_DIR/data"

@@ -43,7 +43,7 @@ enum MenuSection: String, Codable {
 /// shortcut + the phrases type-travel matches ("typeTravelTriggers").
 struct KeyAction: Identifiable, Hashable {
     let id: String
-    let name: String
+    var name: String
     let section: MenuSection
     var shortcuts: [Shortcut]
     var triggers: [String] = []
@@ -360,6 +360,14 @@ final class KeyBindingRegistry {
         for n in 1...9 {
             list.append(KeyAction(id: "moveTabToSpace\(n)", name: "Move Tab to Space \(n)", section: .spaces,
                                   shortcuts: [Shortcut("\(n)", [.command, .control])], inCommandBar: false))
+        }
+        for i in list.indices {
+            let english = list[i].name
+            let translated = BrowserLocalization.text(english)
+            if translated != english {
+                list[i].triggers.append(english)
+                list[i].name = translated
+            }
         }
         return list
     }()

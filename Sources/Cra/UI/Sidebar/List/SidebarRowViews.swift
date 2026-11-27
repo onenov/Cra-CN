@@ -1229,7 +1229,7 @@ final class TabRowView: SidebarRowView, ArcTooltipTarget, NSTextFieldDelegate {
     /// Arc's hover subtitle (HoverSubtitleState.reset, ⌘: resetAndSeparate) stands in for the
     /// line under the title while the pointer is on the icon.
     private var shownSubtitle: String? {
-        overIcon ? (separating ? "Separate From Pinned Tab" : "Back to Pinned URL") : model?.subtitle
+        overIcon ? (separating ? BrowserLocalization.text("Separate From Pinned Tab") : BrowserLocalization.text("Back to Pinned URL")) : model?.subtitle
     }
 
     private func refreshSubtitle() {
@@ -1248,7 +1248,7 @@ final class TabRowView: SidebarRowView, ArcTooltipTarget, NSTextFieldDelegate {
         dot.wantsLayer = true
         dot.layer?.cornerRadius = d / 2
         dot.layer?.backgroundColor = NSColor.systemRed.cgColor
-        _ = ArcTooltipAnchorView.attach(to: dot, help: "This tab is using your camera or microphone")
+        _ = ArcTooltipAnchorView.attach(to: dot, help: BrowserLocalization.text("This tab is using your camera or microphone"))
         addSubview(dot)
         return dot
     }()
@@ -1285,7 +1285,7 @@ final class TabRowView: SidebarRowView, ArcTooltipTarget, NSTextFieldDelegate {
     /// wide, 8 pt before the title, in the glyph tone); clicking it mutes or unmutes the tab
     /// (31 Oct 2026, issue #28).
     private lazy var soundButton = SidebarGlyphButton(symbol: Self.soundSymbol, size: 20, iconSize: 13, weight: .regular,
-                                                     help: "Mute Tab", colors: colors) { [weak self] in
+                                                     help: BrowserLocalization.text("Mute Tab"), colors: colors) { [weak self] in
         guard let self, let m = self.model, let list = self.list else { return }
         list.store.setMuted(m.id, !m.muted)
         list.actions.performAction("muteTab:\(m.id)")
@@ -1333,7 +1333,7 @@ final class TabRowView: SidebarRowView, ArcTooltipTarget, NSTextFieldDelegate {
             if soundButton.superview == nil { addSubview(soundButton) }
             soundButton.colors = colors
             soundButton.setSymbol(m.muted ? "speaker.slash" : Self.soundSymbol, iconSize: 13, weight: .regular,
-                                  help: m.muted ? "Unmute Tab" : "Mute Tab")
+                                  help: m.muted ? BrowserLocalization.text("Unmute Tab") : BrowserLocalization.text("Mute Tab"))
         }
         soundButton.isHidden = !sound
         if sound != showsSound { showsSound = sound; needsLayout = true }
@@ -1550,7 +1550,7 @@ final class TabRowView: SidebarRowView, ArcTooltipTarget, NSTextFieldDelegate {
     var keys: [String] { [] }
     var followsCursor: Bool { true }
     var subtitle: String? {
-        UserDefaults.standard.bool(forKey: "didShowRenameHint") || model?.customTitle != false ? nil : "Double-click to rename"
+        UserDefaults.standard.bool(forKey: "didShowRenameHint") || model?.customTitle != false ? nil : BrowserLocalization.text("Double-click to rename")
     }
     var optionText: String? { nil }
     var onShow: (() -> Void)? {
@@ -2169,7 +2169,7 @@ final class SplitCellView: NSView, ArcTooltipTarget {
         guard let button, let row, let list = row.list else { needsLayout = true; return }
         let id = cellID
         let b = SidebarGlyphButton(symbol: "xmark", size: SplitRowMetrics.button, iconSize: 13, help: button.help,
-                                   optionHelp: "Separate from Split View", colors: row.colors) { [weak list] in
+                                   optionHelp: BrowserLocalization.text("Separate from Split View"), colors: row.colors) { [weak list] in
             // Option-click un-splits instead of closing (Arc flag option-click-split-tab-close-button-to-unsplit).
             if NSEvent.modifierFlags.contains(.option) { list?.store.separateFromSplit(id) } else { list?.actions.closePane(id) }
         }
@@ -2453,7 +2453,7 @@ final class NewTabRowView: SidebarRowView {
         // Arc's plus, fitted pixel by pixel at 1x and 2x.
         plus.image = Self.plusImage
         plus.imageScaling = .scaleNone
-        label.stringValue = "New Tab"
+        label.stringValue = BrowserLocalization.text("New Tab")
         preview.lineBreakMode = .byTruncatingTail
         preview.isHidden = true
         addSubview(plus)
@@ -2461,7 +2461,7 @@ final class NewTabRowView: SidebarRowView {
         addSubview(preview)
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("New Tab")
+        setAccessibilityLabel(BrowserLocalization.text("New Tab"))
         refreshColors()
     }
 
@@ -2560,7 +2560,7 @@ final class NewTabRowView: SidebarRowView {
         guard p != paste else { return }
         paste = p
         plus.image = p == nil ? Self.plusImage : Self.clipboardImage
-        label.stringValue = p?.title ?? "New Tab"
+        label.stringValue = p?.title ?? BrowserLocalization.text("New Tab")
         preview.stringValue = p?.text?.replacingOccurrences(of: "\n", with: " ") ?? ""
         preview.isHidden = preview.stringValue.isEmpty
         setAccessibilityLabel(label.stringValue)
@@ -2601,7 +2601,7 @@ struct ClipboardPaste: Equatable {
     /// The text itself where it can be read without macOS's paste alert, else nil.
     let text: String?
 
-    var title: String { isAddress ? "Paste and Go" : "Paste and Search" }
+    var title: String { isAddress ? BrowserLocalization.text("Paste and Go") : BrowserLocalization.text("Paste and Search") }
 
     /// What the clipboard holds. Since macOS 15.4 reading it unasked raises an alert unless the user
     /// allowed Cra always; asking what kind of text it is never does.
@@ -2750,7 +2750,7 @@ final class DividerRowView: SidebarRowView {
             label.sizeToFit()
             addSubview(label)
             frame.size = label.frame.size
-            _ = ArcTooltipAnchorView.attach(to: self, help: "Clear Today tabs")
+            _ = ArcTooltipAnchorView.attach(to: self, help: BrowserLocalization.text("Clear Today tabs"))
         }
 
         required init?(coder: NSCoder) { fatalError() }
@@ -2912,8 +2912,8 @@ final class TidyButton: NSView {
         frame.size = fittingSize
         setAccessibilityElement(true)
         setAccessibilityRole(.button)
-        setAccessibilityLabel("Tidy")
-        _ = ArcTooltipAnchorView.attach(to: self, help: "Organize Today Tabs")
+        setAccessibilityLabel(BrowserLocalization.text("Tidy"))
+        _ = ArcTooltipAnchorView.attach(to: self, help: BrowserLocalization.text("Organize Today Tabs"))
         tint()
     }
 
@@ -3089,7 +3089,7 @@ final class GroupHeaderRowView: SidebarRowView {
         if isHovered, buttons.isEmpty, let m = model, let list {
             let id = m.id
             let folder = SidebarGlyphButton(symbol: "folder.badge.plus", size: 26, iconSize: 13, weight: .regular,
-                                            help: "Create Folder", colors: colors) { [weak list] in
+                                            help: BrowserLocalization.text("Create Folder"), colors: colors) { [weak list] in
                 guard let list, let f = list.store.folderFromGroup(id) else { return }
                 list.store.setExpanded(f.id, true)
             }
@@ -3097,7 +3097,7 @@ final class GroupHeaderRowView: SidebarRowView {
                 guard let list else { return }
                 list.closeTabs(list.store.tabs(under: id).map(\.id))
             }
-            close.setCloseMark(minus: false, help: "Close tab group")
+            close.setCloseMark(minus: false, help: BrowserLocalization.text("Close tab group"))
             buttons = [folder, close]
             buttons.forEach(addSubview)
             needsLayout = true
@@ -3142,7 +3142,7 @@ final class PinPlaceholderRowView: SidebarRowView {
         layer?.addSublayer(border)
         icon.image = SidebarSymbols.image("pin", size: 11, weight: .semibold)
         icon.imageScaling = .scaleNone
-        label.stringValue = "Drop to Pin"
+        label.stringValue = BrowserLocalization.text("Drop to Pin")
         addSubview(icon)
         addSubview(label)
     }

@@ -8,12 +8,12 @@ enum LibraryPage: String, CaseIterable {
 
     var title: String {
         switch self {
-        case .media: "Media"
-        case .downloads: "Downloads"
-        case .easels: "Easels"
-        case .spaces: "Spaces"
-        case .boosts: "Boosts"
-        case .archive: "Archived Tabs"
+        case .media: BrowserLocalization.text("Media")
+        case .downloads: BrowserLocalization.text("Downloads")
+        case .easels: BrowserLocalization.text("Easels")
+        case .spaces: BrowserLocalization.text("Spaces")
+        case .boosts: BrowserLocalization.text("Boosts")
+        case .archive: BrowserLocalization.text("Archived Tabs")
         }
     }
     var symbol: String {
@@ -39,11 +39,11 @@ enum LibraryPage: String, CaseIterable {
     }
     var searchPrompt: String {
         switch self {
-        case .media: "Search Media…"
-        case .downloads: "Search Downloads…"
-        case .easels: "Search Easels…"
-        case .boosts: "Search Boosts…"
-        default: "Search Archive…"
+        case .media: BrowserLocalization.text("Search Media…")
+        case .downloads: BrowserLocalization.text("Search Downloads…")
+        case .easels: BrowserLocalization.text("Search Easels…")
+        case .boosts: BrowserLocalization.text("Search Boosts…")
+        default: BrowserLocalization.text("Search Archive…")
         }
     }
 }
@@ -232,7 +232,7 @@ private final class LibraryRailView: NSView {
         for b in buttons { b.show(selected: b.page == page, picked: picked, dark: colors.isDark, tones: tones) }
         if back == nil {
             let b = SidebarGlyphButton(symbol: "arrow.left", size: 32, height: 32, iconSize: 15, weight: .regular,
-                                       help: "Exit the Library (Esc)", colors: colors) { [weak self] in self?.onBack() }
+                                       help: BrowserLocalization.text("Exit the Library (Esc)"), colors: colors) { [weak self] in self?.onBack() }
             addSubview(b)
             back = b
         }
@@ -481,7 +481,7 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
         menuButton.addSubview(filterLabel)
         menuButton.setAccessibilityElement(true)
         menuButton.setAccessibilityRole(.button)
-        menuButton.setAccessibilityLabel("Filter")
+        menuButton.setAccessibilityLabel(BrowserLocalization.text("Filter"))
         addSubview(menuButton)
         let column = NSTableColumn(identifier: .init("row"))
         table.addTableColumn(column)
@@ -563,8 +563,8 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
             let all = MediaScanner.shared.files
             let shown = MediaLibrary.shown(all, query: query, hidden: Set(store.settings.mediaHidden))
             out = MediaLibrary.rows(shown).map { .media($0) }
-            empty.show(symbol: "photo.on.rectangle", title: all.isEmpty ? "Nothing here yet!" : "No matches",
-                       detail: all.isEmpty ? "Screenshots, pictures and videos in the folders you show appear here." : nil)
+            empty.show(symbol: "photo.on.rectangle", title: all.isEmpty ? BrowserLocalization.text("Nothing here yet!") : BrowserLocalization.text("No matches"),
+                       detail: all.isEmpty ? BrowserLocalization.text("Screenshots, pictures and videos in the folders you show appear here.") : nil)
         case .downloads:
             // Running, failed and cancelled downloads too, as in the tray (#245).
             let all = DownloadHistory.shared.library(query: "")
@@ -577,8 +577,8 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
                 out += entries.map { .download($0) }
             }
             // Arc's words.
-            empty.show(symbol: "arrow.down.circle", title: all.isEmpty ? "Nothing here yet!" : "No matches",
-                       detail: all.isEmpty ? "Come back after you’ve found some cool stuff to save." : nil)
+            empty.show(symbol: "arrow.down.circle", title: all.isEmpty ? BrowserLocalization.text("Nothing here yet!") : BrowserLocalization.text("No matches"),
+                       detail: all.isEmpty ? BrowserLocalization.text("Come back after you’ve found some cool stuff to save.") : nil)
         case .easels:
             let all = EaselFiles.all()
             let shown = needle.isEmpty ? all : all.filter { $0.title.lowercased().contains(needle) }
@@ -586,15 +586,15 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
             let entries = shown.map { EaselEntry(id: $0.id, title: $0.title, edited: $0.edited) }
             out = stride(from: 0, to: entries.count, by: 2).map { .easels(Array(entries[$0..<min($0 + 2, entries.count)])) }
             // Arc's empty Easels page: "Out of ideas!"
-            empty.show(symbol: "pencil.and.scribble", title: all.isEmpty ? "Out of ideas!" : "No matches",
-                       detail: all.isEmpty ? "Choose File ▸ New Easel to create a new Easel." : nil)
+            empty.show(symbol: "pencil.and.scribble", title: all.isEmpty ? BrowserLocalization.text("Out of ideas!") : BrowserLocalization.text("No matches"),
+                       detail: all.isEmpty ? BrowserLocalization.text("Choose File ▸ New Easel to create a new Easel.") : nil)
         case .boosts:
             let all = BoostStore.shared.boosts
             let shown = needle.isEmpty ? all : all.filter { $0.name.lowercased().contains(needle) || $0.host.contains(needle) }
             out = shown.sorted { $0.host < $1.host }.map { .boost($0) }
             // Arc's empty Boosts page.
-            empty.show(symbol: "paintbrush.pointed", title: all.isEmpty ? "Nothing Boosted Yet!" : "No matches",
-                       detail: all.isEmpty ? "Type “New Boost” in the command bar on any site to make your own." : nil)
+            empty.show(symbol: "paintbrush.pointed", title: all.isEmpty ? BrowserLocalization.text("Nothing Boosted Yet!") : BrowserLocalization.text("No matches"),
+                       detail: all.isEmpty ? BrowserLocalization.text("Type “New Boost” in the command bar on any site to make your own.") : nil)
         case .spaces:
             break
         case .archive:
@@ -606,8 +606,8 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
                 out.append(.header(label))
                 out += entries.map { .archived($0) }
             }
-            empty.show(symbol: "archivebox", title: store.archive.isEmpty ? "Nothing here yet!" : "No matches",
-                       detail: store.archive.isEmpty ? "Tabs you close end up here." : nil)
+            empty.show(symbol: "archivebox", title: store.archive.isEmpty ? BrowserLocalization.text("Nothing here yet!") : BrowserLocalization.text("No matches"),
+                       detail: store.archive.isEmpty ? BrowserLocalization.text("Tabs you close end up here.") : nil)
         }
         rows = out
         needsLayout = true
@@ -732,7 +732,7 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
     static func mediaFoldersMenu(_ store: SidebarStore) -> NSMenu {
         let menu = NSMenu()
         menu.autoenablesItems = false
-        let header = NSMenuItem(title: "Show media", action: nil, keyEquivalent: "")
+        let header = NSMenuItem(title: BrowserLocalization.text("Show media"), action: nil, keyEquivalent: "")
         header.isEnabled = false
         menu.addItem(header)
         for f in MediaLibrary.Folder.allCases {
@@ -743,7 +743,7 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
         }
         if store.settings.mediaLibraryEnabled {
             menu.addItem(.separator())
-            MenuItems.add(menu, "Hide Media") { store.settings.mediaLibraryEnabled = false }
+            MenuItems.add(menu, BrowserLocalization.text("Hide Media")) { store.settings.mediaLibraryEnabled = false }
         }
         return menu
     }
@@ -755,14 +755,14 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
         case .media: return mediaFoldersMenu(store)
         case .downloads:
             let m = NSMenu()
-            MenuItems.add(m, "Open Downloads Folder") {
+            MenuItems.add(m, BrowserLocalization.text("Open Downloads Folder")) {
                 NSWorkspace.shared.open(DownloadDestinations.folder(profileID: DownloadDestinations.profileID(profilePath: profile)))
             }
             return m
         case .archive:
             let m = NSMenu()
             m.autoenablesItems = false
-            MenuItems.add(m, "Clear Archive", enabled: !store.archive.isEmpty) { store.clearArchive() }
+            MenuItems.add(m, BrowserLocalization.text("Clear Archive"), enabled: !store.archive.isEmpty) { store.clearArchive() }
             return m
         default: return nil
         }
@@ -783,23 +783,23 @@ private final class LibraryListView: NSView, NSTextFieldDelegate, NSTableViewDat
         var sections: [LibraryFilterPanel.Section] = []
         if page == .archive {
             let f = archiveFilter
-            sections.append(.init(title: "How was the tab closed?", chips: [
-                Chip(id: "auto", label: "Auto-Closed", on: f.closed.contains(.auto)),
-                Chip(id: "manual", label: "Manually Closed", on: f.closed.contains(.manual)),
+            sections.append(.init(title: BrowserLocalization.text("How was the tab closed?"), chips: [
+                Chip(id: "auto", label: BrowserLocalization.text("Auto-Closed"), on: f.closed.contains(.auto)),
+                Chip(id: "manual", label: BrowserLocalization.text("Manually Closed"), on: f.closed.contains(.manual)),
             ]))
-            var places = [Chip(id: "little", label: "Little Window", on: f.places.contains(.littleWindow))]
+            var places = [Chip(id: "little", label: BrowserLocalization.text("Little Window"), on: f.places.contains(.littleWindow))]
             for id in store.spaceOrder {
                 guard let sp = store.space(id) else { continue }
                 places.append(Chip(id: "space:" + id.uuidString, label: sp.title, icon: sp.emoji.isEmpty ? nil : sp.emoji,
                                    on: f.places.contains(.space(id))))
             }
-            sections.append(.init(title: "Where was the tab?", chips: places))
+            sections.append(.init(title: BrowserLocalization.text("Where was the tab?"), chips: places))
         } else {
             var chips = [Chip(id: "Default", label: store.profileName(nil), on: downloadFilter.profiles.contains("Default"))]
             for p in store.profiles { chips.append(Chip(id: p.directoryName, label: p.name, on: downloadFilter.profiles.contains(p.directoryName))) }
-            sections.append(.init(title: "Profiles", chips: chips))
+            sections.append(.init(title: BrowserLocalization.text("Profiles"), chips: chips))
         }
-        return LibraryFilterPanel(title: page == .archive ? "Filter Archived Tabs" : "Filter Downloads…", sections: sections, width: max(200, bounds.width),
+        return LibraryFilterPanel(title: page == .archive ? BrowserLocalization.text("Filter Archived Tabs") : BrowserLocalization.text("Filter Downloads…"), sections: sections, width: max(200, bounds.width),
                                   dark: colors.isDark, toggle: { [weak self] id in self?.toggleChip(id) },
                                   done: { [weak self] in self?.filtering = false })
     }
@@ -961,20 +961,20 @@ extension LibraryListView: NSMenuDelegate {
         case .boost(let b):
             // Arc 1.172.1: Rename (in place) and Delete.
             let cell = table.view(atColumn: 0, row: row, makeIfNecessary: false) as? BoostRowCell
-            MenuItems.add(menu, "Rename") { cell?.beginRename() }
+            MenuItems.add(menu, BrowserLocalization.text("Rename")) { cell?.beginRename() }
             // Cra's own: the boost's look in a crabrowser.app link (SharedBoost), like Share Folder….
             let toast = actions.showToast
-            MenuItems.add(menu, "Share Boost…", enabled: BoostInstall.canShare(b)) { BoostInstall.share(b, toast: toast) }
-            MenuItems.add(menu, "Delete") { BoostStore.shared.delete(b.id) }
+            MenuItems.add(menu, BrowserLocalization.text("Share Boost…"), enabled: BoostInstall.canShare(b)) { BoostInstall.share(b, toast: toast) }
+            MenuItems.add(menu, BrowserLocalization.text("Delete")) { BoostStore.shared.delete(b.id) }
         case .archived(let e):
             let actions = actions, store = store
-            MenuItems.add(menu, "Restore") { actions.restoreArchived(e.id) }
-            MenuItems.add(menu, "Copy Link") {
+            MenuItems.add(menu, BrowserLocalization.text("Restore")) { actions.restoreArchived(e.id) }
+            MenuItems.add(menu, BrowserLocalization.text("Copy Link")) {
                 NSPasteboard.general.clearContents()
                 NSPasteboard.general.setString(e.item.tab?.url ?? "", forType: .string)
             }
             menu.addItem(.separator())
-            MenuItems.add(menu, "Remove from Archive") { store.removeFromArchive(e.id) }
+            MenuItems.add(menu, BrowserLocalization.text("Remove from Archive")) { store.removeFromArchive(e.id) }
         case .download(let d):
             // Arc's Download Context Menu, the tray's too (#272).
             DownloadRowMenu.fill(menu, for: d)
@@ -1081,7 +1081,7 @@ private final class LibraryItemCell: NSView, NSDraggingSource {
         moreButton.isHidden = true
         moreButton.setAccessibilityElement(true)
         moreButton.setAccessibilityRole(.button)
-        moreButton.setAccessibilityLabel("More")
+        moreButton.setAccessibilityLabel(BrowserLocalization.text("More"))
         moreGlyph.image = NSImage(systemSymbolName: "ellipsis", accessibilityDescription: nil)?.withSymbolConfiguration(.init(pointSize: 14, weight: .semibold))
         moreGlyph.imageScaling = .scaleNone
         moreButton.addSubview(moreGlyph)

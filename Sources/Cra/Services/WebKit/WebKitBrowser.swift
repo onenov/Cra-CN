@@ -519,7 +519,7 @@ final class WebKitBrowser: CraBrowser, WKNavigationDelegate, WKUIDelegate, WKDow
     private func runAlert(_ message: String, frame: WKFrameInfo, buttons: [String], accessory: NSView? = nil,
                           done: @escaping (NSApplication.ModalResponse) -> Void) {
         let alert = NSAlert()
-        alert.messageText = frame.securityOrigin.host.isEmpty ? "This page says" : "\(frame.securityOrigin.host) says"
+        alert.messageText = frame.securityOrigin.host.isEmpty ? BrowserLocalization.text("This page says") : BrowserLocalization.format("%1$@ says", "\(frame.securityOrigin.host)")
         alert.informativeText = message
         for b in buttons { alert.addButton(withTitle: b) }
         alert.accessoryView = accessory

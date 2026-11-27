@@ -335,7 +335,7 @@ final class SpaceListView: NSView, NSDraggingSource {
             d.dimmed = drop.draggedID == id || (picks.count > 1 && picks.contains(drop.draggedID) && picks.contains(id))
             switch drop.target {
             case .into(let t)? where t == id:
-                d.badge = store.item(id)?.isFolder == true ? .init(symbol: "folder", label: "Move to Folder") : .init(symbol: "rectangle.split.3x1", label: "Add to Split")
+                d.badge = store.item(id)?.isFolder == true ? .init(symbol: "folder", label: BrowserLocalization.text("Move to Folder")) : .init(symbol: "rectangle.split.3x1", label: BrowserLocalization.text("Add to Split"))
             case .split(let t, let leading)? where t == id:
                 d.combine = .split(leading: leading)
                 d.combineDragged = drop.draggedID
@@ -348,7 +348,7 @@ final class SpaceListView: NSView, NSDraggingSource {
             var row = Row(key: .item(item.id), kind: .newTab, decor: decor(item.id), itemID: item.id, parent: parent, index: index, depth: depth)
             if item.isTabGroup {
                 // Arc lists a group's tabs under its header without an indent.
-                row.eager = .groupHeader(GroupHeaderRowModel(id: item.id, title: item.title ?? "Untitled"))
+                row.eager = .groupHeader(GroupHeaderRowModel(id: item.id, title: item.title ?? BrowserLocalization.text("Untitled")))
                 row.kind = .groupHeader
                 out.append(row)
                 for (index, c) in SidebarChildOrder.listed(item.children, lookup: store.item) {
@@ -404,7 +404,7 @@ final class SpaceListView: NSView, NSDraggingSource {
             case .folder:
                 let glyph = palette.folderColors(item.folderIcon)
                 return .folder(FolderRowModel(
-                    id: item.id, depth: row.depth, title: item.title ?? "Folder", renameText: item.title ?? "",
+                    id: item.id, depth: row.depth, title: item.title ?? BrowserLocalization.text("Folder"), renameText: item.title ?? "",
                     editing: renaming == item.id, expanded: row.expanded, peeked: row.folderPeeks, live: item.isLiveFolder,
                     tint: NSColor(glyph.tint), fill: NSColor(glyph.fill), back: NSColor(glyph.back),
                     tabCount: row.folderTabCount,
@@ -417,7 +417,7 @@ final class SpaceListView: NSView, NSDraggingSource {
                 let navigatedAway = pinned && tab.url != tab.savedURL && !tab.savedURL.isEmpty
                 // An easel's row has an easel glyph, not a favicon (Arc's EaselCellView).
                 let (img, flip) = Easel.id(fromURL: tab.url) != nil && tab.customIconKey == nil
-                    ? (NSImage(systemSymbolName: "pencil.and.scribble", accessibilityDescription: "Easel"), false) : icon(tab.iconKey)
+                    ? (NSImage(systemSymbolName: "pencil.and.scribble", accessibilityDescription: BrowserLocalization.text("Easel")), false) : icon(tab.iconKey)
                 if img == nil {
                     // A tab that never loaded here: its site's icon, the rows on screen before those near it
                     // and those of spaces paged out of view.

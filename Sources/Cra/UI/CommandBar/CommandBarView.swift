@@ -711,7 +711,7 @@ final class CommandBarRowView: NSView {
         let isTab = s.tabID != nil
         if isTab {
             trailing.font = .systemFont(ofSize: size, weight: .semibold)
-            trailing.stringValue = otherSpace ?? "Switch to Tab"
+            trailing.stringValue = otherSpace ?? BrowserLocalization.text("Switch to Tab")
         } else {
             trailing.font = .systemFont(ofSize: 13, weight: .medium)
             trailing.stringValue = s.trailing ?? ""
@@ -804,14 +804,14 @@ final class CommandBarDeleteTile: NSImageView {
         if bounds.contains(convert(event.locationInWindow, from: nil)) { onPress() }
     }
     override func accessibilityRole() -> NSAccessibility.Role? { .button }
-    override func accessibilityLabel() -> String? { "Delete Suggestion" }
+    override func accessibilityLabel() -> String? { BrowserLocalization.text("Delete Suggestion") }
     override func accessibilityPerformPress() -> Bool { onPress(); return true }
 }
 
 /// The info badge: a click (or an accessibility press) runs `onPress`, as the bar's rows do.
 private final class CommandBarBadge: NSImageView {
     var onPress: () -> Void = {}
-    var label = "About search suggestions"
+    var label = BrowserLocalization.text("About search suggestions")
 
     override func mouseDown(with event: NSEvent) {}
     override func mouseUp(with event: NSEvent) {
@@ -838,8 +838,8 @@ private final class SearchSuggestionsBannerView: NSView {
     private let title = NSTextField.sidebarLabel(size: 13, weight: .bold)
     private let subtitle = NSTextField.sidebarLabel(size: 12, weight: .regular)
     private let link = NoticeLinkLabel()
-    private let settings = NoticeButton(title: "Search Settings…")
-    private let dismiss = NoticeButton(title: "Dismiss")
+    private let settings = NoticeButton(title: BrowserLocalization.text("Search Settings…"))
+    private let dismiss = NoticeButton(title: BrowserLocalization.text("Dismiss"))
 
     override init(frame: NSRect) {
         super.init(frame: frame)
@@ -848,7 +848,7 @@ private final class SearchSuggestionsBannerView: NSView {
         icon.image = SidebarSymbols.image("info.circle", size: 13, weight: .regular)
         icon.imageScaling = .scaleNone
         icon.contentTintColor = NSColor(white: 115 / 255, alpha: 1)
-        title.stringValue = "We talk to your search engine to help us suggest results."
+        title.stringValue = BrowserLocalization.text("We talk to your search engine to help us suggest results.")
         title.textColor = NSColor(white: 237 / 255, alpha: 1)
         let ink = NSColor(white: 126 / 255, alpha: 1), font = NSFont.systemFont(ofSize: 12)
         let text = NSMutableAttributedString(string: Self.lead, attributes: [.font: font, .foregroundColor: ink])
@@ -872,7 +872,7 @@ private final class SearchSuggestionsBannerView: NSView {
         for b in [settings, dismiss] { b.set(fill: CommandBarView.ink(tones.noticeButtonFill), outline: CommandBarView.ink(tones.noticeButtonOutline)) }
     }
 
-    private static let lead = "Learn more about your data on Cra "
+    private static let lead = BrowserLocalization.text("Learn more about your data on Cra ")
 
     func debugPress(_ name: String) -> Bool {
         switch name {

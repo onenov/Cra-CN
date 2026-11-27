@@ -95,9 +95,11 @@ final class SoftwareUpdater: NSObject {
     private(set) var olderStable: AppcastRelease?
     /// Settings ▸ Advanced, next to Check for Updates: when Sparkle last looked.
     var lastCheckSummary: String {
-        guard isAvailable else { return "Development builds don’t update." }
-        guard let date = updater?.lastUpdateCheckDate else { return "Not checked yet." }
-        return "Last checked " + RelativeDateTimeFormatter().localizedString(for: date, relativeTo: Date()) + "."
+        guard isAvailable else { return BrowserLocalization.text("Development builds don’t update.") }
+        guard let date = updater?.lastUpdateCheckDate else { return BrowserLocalization.text("Not checked yet.") }
+        let formatter = RelativeDateTimeFormatter()
+        formatter.locale = Locale(identifier: Bundle.main.preferredLocalizations.first ?? "en")
+        return BrowserLocalization.format("Last checked %1$@.", formatter.localizedString(for: date, relativeTo: Date()))
     }
     /// This launch came from an automatic restart, so it should not take focus.
     private(set) var launchedByAutoUpdate = false

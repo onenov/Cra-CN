@@ -71,9 +71,9 @@ enum CredentialImportError: LocalizedError {
     case primaryPassword(String)
     var errorDescription: String? {
         switch self {
-        case .keychainDenied(let s): return "macOS did not unlock \(s)'s data."
-        case .unreadable(let s): return "Could not read \(s)'s passwords and cookies."
-        case .primaryPassword(let s): return "\(s) is protected by a primary password; turn it off in \(s) to import passwords."
+        case .keychainDenied(let s): return BrowserLocalization.format("macOS did not unlock %1$@'s data.", "\(s)")
+        case .unreadable(let s): return BrowserLocalization.format("Could not read %1$@'s passwords and cookies.", "\(s)")
+        case .primaryPassword(let s): return BrowserLocalization.format("%1$@ is protected by a primary password; turn it off in %2$@ to import passwords.", "\(s)", "\(s)")
         }
     }
 }

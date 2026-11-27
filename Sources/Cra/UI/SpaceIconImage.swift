@@ -81,8 +81,8 @@ enum SpaceIconImage {
         panel.allowedContentTypes = contentTypes
         panel.allowsMultipleSelection = false
         panel.canChooseDirectories = false
-        panel.message = "Choose a PNG or SVG for this space's icon"
-        panel.prompt = "Choose"
+        panel.message = BrowserLocalization.text("Choose a PNG or SVG for this space's icon")
+        panel.prompt = BrowserLocalization.text("Choose")
         guard panel.runModal() == .OK, let url = panel.url else { return }
         if let data = normalized(from: url) { completion(data) } else { NSSound.beep() }
     }

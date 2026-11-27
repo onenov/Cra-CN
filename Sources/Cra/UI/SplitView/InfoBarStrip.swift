@@ -62,7 +62,7 @@ final class InfoBarStrip: NSView {
         if let cancel = bar.cancel { row.addSubview(button(cancel, "cancel")) }
         if bar.closeable {
             let close = ActionButton(title: "") { [weak self] in self?.onAction?(bar.id, "close") }
-            close.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: "Close")
+            close.image = NSImage(systemSymbolName: "xmark", accessibilityDescription: BrowserLocalization.text("Close"))
             close.isBordered = false
             close.imagePosition = .imageOnly
             close.contentTintColor = .secondaryLabelColor

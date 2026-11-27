@@ -196,7 +196,7 @@ private final class BoostSwitch: NSView {
         knob.shadowOffset = CGSize(width: 0, height: -0.5)
         setAccessibilityElement(true)
         setAccessibilityRole(.checkBox)
-        setAccessibilityLabel("Boost on")
+        setAccessibilityLabel(BrowserLocalization.text("Boost on"))
     }
 
     required init?(coder: NSCoder) { fatalError() }

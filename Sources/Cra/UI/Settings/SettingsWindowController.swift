@@ -19,6 +19,11 @@ struct SettingsActions {
 }
 
 extension SettingsTab {
+    var displayTitle: String {
+        let label = title(fullName: NSFullUserName())
+        return self == .sync ? label : BrowserLocalization.text(label)
+    }
+
     /// The glyph over the tab's name. Arc draws its own; these are the SF Symbols closest to them.
     var symbol: String {
         switch self {
@@ -99,7 +104,7 @@ final class SettingsWindowController: NSWindowController {
         // Opened from a full-screen window, Settings comes over it on that window's Space, as Arc's and Safari's
         // do, instead of macOS swiping back to a Desktop to show it; one shown before follows to the active Space (#431).
         window.collectionBehavior = [.fullScreenAuxiliary, .moveToActiveSpace]
-        let root = SettingsRoot(nav: nav, actions: actions) { [weak window] tab in window?.title = tab.title(fullName: NSFullUserName()) }
+        let root = SettingsRoot(nav: nav, actions: actions) { [weak window] tab in window?.title = tab.displayTitle }
             .environment(store).environment(bindings).environment(sync)
         let host = NSHostingController(rootView: root)
         host.sizingOptions = []
@@ -142,7 +147,7 @@ struct SettingsRoot: View {
         .background(Color.settingsWindow)
         // Arc's title, the tab's name, centred and dimmed in the title bar (the system's would sit beside the buttons).
         .overlay(alignment: .top) {
-            Text(nav.tab.title(fullName: NSFullUserName())).font(.system(size: 13, weight: .bold)).foregroundStyle(.secondary)
+            Text(nav.tab.displayTitle).font(.system(size: 13, weight: .bold)).foregroundStyle(.secondary)
                 .frame(height: 28)
                 .allowsHitTesting(false)
         }
@@ -163,7 +168,7 @@ struct SettingsRoot: View {
             // Performance is Cra's own, in no Arc tab: what the recorder saw, at the foot of Advanced.
             SettingsCardPane {
                 AdvancedPane(actions: actions).settingsNested()
-                SettingsHeader("Performance").padding(.top, 20)
+                SettingsHeader(BrowserLocalization.text("Performance")).padding(.top, 20)
                 PerformancePane(nav: nav, actions: actions).settingsNested()
             }
         case .privacy: PrivacyPane(actions: actions)
@@ -199,7 +204,7 @@ private struct SettingsTabButton: View {
                 Image(systemName: tab.symbol)
                     .font(.system(size: 19))
                     .frame(height: 24)
-                Text(tab.title(fullName: NSFullUserName())).font(.system(size: 12))
+                Text(tab.displayTitle).font(.system(size: 12))
             }
             .foregroundStyle(selected ? Color.settingsBlue : Color.secondary)
             .padding(.horizontal, 5.5)
@@ -216,7 +221,7 @@ private struct SettingsTabButton: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(tab.title(fullName: NSFullUserName()))
+        .accessibilityLabel(tab.displayTitle)
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 }

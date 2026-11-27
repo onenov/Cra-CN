@@ -22,7 +22,7 @@ final class UpdaterWindowController: NSWindowController, NSWindowDelegate {
         w.styleMask = [.titled, .closable, .miniaturizable, .fullSizeContentView]
         w.titlebarAppearsTransparent = true
         w.titleVisibility = .hidden
-        w.title = "Software Update"
+        w.title = BrowserLocalization.text("Software Update")
         w.isReleasedWhenClosed = false
         w.standardWindowButton(.zoomButton)?.isEnabled = false
         super.init(window: w)
@@ -69,23 +69,23 @@ struct UpdaterWindowView: View {
     }
 
     private var title: String {
-        if case .found(let r, _) = updater.phase { return "Cra \(r.version)" }
-        return "Cra"
+        if case .found(let r, _) = updater.phase { return BrowserLocalization.format("Cra %1$@", "\(r.version)") }
+        return BrowserLocalization.text("Cra")
     }
 
     private var subtitle: String {
-        if case .found = updater.phase { return "You have \(current)" }
+        if case .found = updater.phase { return BrowserLocalization.format("You have %1$@", "\(current)") }
         return current
     }
 
     @ViewBuilder private var content: some View {
         switch updater.phase {
         case .idle, .checking:
-            status("Checking for updates…")
-            UpdaterButton(title: "Cancel") { updater.dismissWindowAction() }
+            status(BrowserLocalization.text("Checking for updates…"))
+            UpdaterButton(title: BrowserLocalization.text("Cancel")) { updater.dismissWindowAction() }
         case .upToDate:
-            status("Your browser is up to date")
-            UpdaterButton(title: "Close") { updater.dismissWindowAction() }
+            status(BrowserLocalization.text("Your browser is up to date"))
+            UpdaterButton(title: BrowserLocalization.text("Close")) { updater.dismissWindowAction() }
         case .found(let r, let downloaded):
             if let html = r.notesHTML, !html.isEmpty {
                 ReleaseNotesView(html: html)
@@ -93,25 +93,25 @@ struct UpdaterWindowView: View {
             } else {
                 status("A new version is available")
             }
-            UpdaterButton(title: downloaded ? "Install and Relaunch" : "Download") { updater.installAndRelaunch() }
-            LaterButton(title: "Later") { updater.dismissWindowAction() }
+            UpdaterButton(title: downloaded ? BrowserLocalization.text("Install and Relaunch") : BrowserLocalization.text("Download")) { updater.installAndRelaunch() }
+            LaterButton(title: BrowserLocalization.text("Later")) { updater.dismissWindowAction() }
         case .downloading(let received, let expected):
             progress(expected > 0 ? Double(received) / Double(expected) : nil,
-                     expected > 0 ? "\(Self.bytes(received)) of \(Self.bytes(expected))" : "Downloading…")
-            UpdaterButton(title: "Cancel") { updater.dismissWindowAction() }
+                     expected > 0 ? BrowserLocalization.format("%1$@ of %2$@", "\(Self.bytes(received))", "\(Self.bytes(expected))") : BrowserLocalization.text("Downloading…"))
+            UpdaterButton(title: BrowserLocalization.text("Cancel")) { updater.dismissWindowAction() }
         case .extracting:
-            progress(nil, "Preparing update…")
-            UpdaterButton(title: "Install and Relaunch") {}.disabled(true)
+            progress(nil, BrowserLocalization.text("Preparing update…"))
+            UpdaterButton(title: BrowserLocalization.text("Install and Relaunch")) {}.disabled(true)
         case .readyToInstall:
-            status("Ready to Install")
-            UpdaterButton(title: "Install and Relaunch") { updater.installAndRelaunch() }
+            status(BrowserLocalization.text("Ready to Install"))
+            UpdaterButton(title: BrowserLocalization.text("Install and Relaunch")) { updater.installAndRelaunch() }
         case .installing:
-            progress(nil, "Installing update…")
-            UpdaterButton(title: "Install and Relaunch") {}.disabled(true)
+            progress(nil, BrowserLocalization.text("Installing update…"))
+            UpdaterButton(title: BrowserLocalization.text("Install and Relaunch")) {}.disabled(true)
         case .failed(let message):
             status(message)
-            UpdaterButton(title: "Download Manually") { updater.openDownloadPage() }
-            LaterButton(title: "Close") { updater.dismissWindowAction() }
+            UpdaterButton(title: BrowserLocalization.text("Download Manually")) { updater.openDownloadPage() }
+            LaterButton(title: BrowserLocalization.text("Close")) { updater.dismissWindowAction() }
         }
     }
 

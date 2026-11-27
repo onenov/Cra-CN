@@ -95,8 +95,8 @@ MainActor.assumeIsolated {
                 .activate()
             exit(0)
         }
-        let alert = AppDialog(title: "Cra could not start Chromium",
-                              message: "Chromium failed to initialize. See \(AppPaths.log.path).")
+        let alert = AppDialog(title: BrowserLocalization.text("Cra could not start Chromium"),
+                              message: BrowserLocalization.format("Chromium failed to initialize. See %1$@.", "\(AppPaths.log.path)"))
         alert.runModal()
         exit(1)
     }

@@ -1003,13 +1003,13 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
         syncPeekBar()
         syncFloatingBar()
         var buttons: [PeekControlsPanel.Button] = [
-            .init(control: .close, symbol: "xmark", help: "Close (⌘W)") { [weak self] in self?.attemptPeekClose(.closeButton) },
-            .init(control: .expand, symbol: "arrow.up.left.and.arrow.down.right", help: "Expand (⌘O)") { [weak self] in
+            .init(control: .close, symbol: "xmark", help: BrowserLocalization.text("Close (⌘W)")) { [weak self] in self?.attemptPeekClose(.closeButton) },
+            .init(control: .expand, symbol: "arrow.up.left.and.arrow.down.right", help: BrowserLocalization.text("Expand (⌘O)")) { [weak self] in
                 self?.expandPeek(commandClick: NSApp.currentEvent?.modifierFlags.contains(.command) == true)
             },
         ]
         if easel == nil {
-            buttons.append(.init(control: .addToSplit, symbol: "square.split.2x1", help: "Add To Split") { [weak self] in self?.promoteToSplit() })
+            buttons.append(.init(control: .addToSplit, symbol: "square.split.2x1", help: BrowserLocalization.text("Add To Split")) { [weak self] in self?.promoteToSplit() })
         }
         let controls = PeekControlsPanel(buttons: buttons)
         self.controls = controls
@@ -1278,7 +1278,7 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
     func promoteToSplit() {
         guard let b = browser, hasPage, let parent = peekParent, let source = parent.selectedTabID else { return }
         guard parent.canAddPane(to: source) else {
-            parent.showToast("Cannot Add New Pane")
+            parent.showToast(BrowserLocalization.text("Cannot Add New Pane"))
             return
         }
         closePopup()
@@ -1744,9 +1744,9 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
     func changeProfile(to id: UUID?) {
         guard id != state.profileID, let window else { return }
         if UserDefaults.standard.bool(forKey: Self.bypassProfileDialogKey) { reload(inProfile: id); return }
-        let alert = AppDialog(title: "Open this page in \(store.profileName(id))?",
-                              message: "Each Profile has different browser data, so this webpage might look a little different.",
-                              actions: [DialogAction("Change Profile"), .cancel], suppressionTitle: "Don’t ask again")
+        let alert = AppDialog(title: BrowserLocalization.format("Open this page in %1$@?", "\(store.profileName(id))"),
+                              message: BrowserLocalization.text("Each Profile has different browser data, so this webpage might look a little different."),
+                              actions: [DialogAction(BrowserLocalization.text("Change Profile")), .cancel], suppressionTitle: BrowserLocalization.text("Don’t ask again"))
         alert.present(over: window) { [weak self, weak alert] resp in
             guard let self, resp == .alertFirstButtonReturn else { return }
             if alert?.isSuppressed == true { UserDefaults.standard.set(true, forKey: Self.bypassProfileDialogKey) }
@@ -1842,7 +1842,7 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
         case "copyURL": copyURL()
         case "copyURLMarkdown":
             copy("[\(browser?.currentTitle ?? state.title)](\(currentURL))")
-            showToast("Copied URL as Markdown")
+            showToast(BrowserLocalization.text("Copied URL as Markdown"))
         case "viewSource": browser?.viewSource()
         case "devTools": runDevTools(.toggle)
         case "jsConsole": runDevTools(.console)
@@ -1857,8 +1857,8 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
         case "capturePortrait": PageCommands.capturePortrait(self)
         case "jumpToSelection": PageCommands.jumpToSelection(browser)
         case "pictureInPicture": browser?.requestPictureInPicture(automatic: false)
-        case "cast": if browser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { showToast("Nothing to Cast") }
-        case "taskManager": if browser?.runChromeCommand("IDC_TASK_MANAGER") != true { showToast("Open a Page First") }
+        case "cast": if browser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { showToast(BrowserLocalization.text("Nothing to Cast")) }
+        case "taskManager": if browser?.runChromeCommand("IDC_TASK_MANAGER") != true { showToast(BrowserLocalization.text("Open a Page First")) }
         case "toggleDeveloperMode": if hasPage { store.settings.toggleDeveloperMode(url: currentURL) }
         case "stayOnTop": toggleStayOnTop()
         case "promoteLittleWindow": promote(to: nil)
@@ -1902,7 +1902,7 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
     /// ⇧⌘C and the link button: Arc's toast over the window's top-right corner, as in a browser window.
     func copyURL() {
         copy(currentURL)
-        showToast("Copied Current URL", action: .share(currentURL))
+        showToast(BrowserLocalization.text("Copied Current URL"), action: .share(currentURL))
     }
 
     /// The toast sits 8 pt under the window's top, over the toolbar (Arc's Little Arc).
@@ -2246,7 +2246,7 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
             slowResponseShown = true
             let host = browser.isIncognito ? "(incognito)" : CraLog.host(browser.navigatingURL ?? currentURL)
             toast.show(SlowResponseNotice.message(for: browser.navigatingURL ?? currentURL),
-                       action: ShinyToast.Action(title: "Stop Loading") { [weak browser] in
+                       action: ShinyToast.Action(title: BrowserLocalization.text("Stop Loading")) { [weak browser] in
                            CraLog.note("Little Window: page \(host) stopped from the notice")
                            browser?.stopLoading()
                        },
@@ -2642,8 +2642,8 @@ final class LittleWindowController: NSWindowController, NSWindowDelegate, @preco
     func browser(_ browser: CraBrowser, requestsPermissionForOrigin origin: String, kinds: UInt, completion: @escaping (Bool) -> Void) {
         // The main window's card, in the page's top left corner as in a Little Arc (#371). A quiet
         // notification deny here would save a block for the site that its tabs then hit too (#137).
-        let card = PermissionPopover(title: PermissionPrompt.message(origin: origin, kinds: kinds),
-                                     actions: [DialogAction("Allow"), DialogAction("Not Now", role: .cancel)])
+        let card = PermissionPopover(title: PermissionPrompt.message(origin: origin, kinds: kinds, localize: BrowserLocalization.text),
+                                     actions: [DialogAction(BrowserLocalization.text("Allow")), DialogAction(BrowserLocalization.text("Not Now"), role: .cancel)])
         guard window != nil else { completion(false); return }
         let page = shell.page
         permissionCards.append(card)
@@ -3431,7 +3431,7 @@ final class LittleToolbarView: NSView {
         text.append(NSAttributedString(string: openTitle.displayedName, attributes: [.font: NSFont.systemFont(ofSize: 13, weight: .bold),
                                                                          .foregroundColor: NSColor(tones.spaceName)]))
         openLabel.attributedStringValue = text
-        openButton.toolTip = "Open this page in \(space.title) as a tab (⌘O)"
+        openButton.toolTip = BrowserLocalization.format("Open this page in %1$@ as a tab (⌘O)", "\(space.title)")
         openPart.layer?.backgroundColor = hover == .open ? NSColor(tones.buttonHover).cgColor : nil
         chevronPart.layer?.backgroundColor = hover == .chevron ? NSColor(tones.buttonHover).cgColor : nil
         chevron.image = SidebarSymbols.image(popupOpen ? "chevron.up" : "chevron.down", size: 10, weight: .bold)

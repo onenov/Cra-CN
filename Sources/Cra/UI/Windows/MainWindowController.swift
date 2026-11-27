@@ -326,7 +326,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
             if hiddenByResize, !UserDefaults.standard.bool(forKey: Self.hiddenSidebarByDragKey) {
                 UserDefaults.standard.set(true, forKey: Self.hiddenSidebarByDragKey)
                 let keys = KeyBindingRegistry.shared.action("toggleSidebar")?.primary?.display ?? "⌘S"
-                showToast("You can use", keyCap: (keys, "to easily show and hide your Sidebar!"))
+                showToast(BrowserLocalization.text("You can use"), keyCap: (keys, "to easily show and hide your Sidebar!"))
             }
             hiddenByResize = false
             store.prefs.sidebarWidth = Double(shell.sidebarWidth)
@@ -1150,7 +1150,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
         let page = shell.webContainer.convert(shell.webContainer.bounds, to: nil)
         protectedVideoPromptUp = false
         toast.show(SlowResponseNotice.message(for: url),
-                   action: ShinyToast.Action(title: "Stop Loading") { [weak self] in
+                   action: ShinyToast.Action(title: BrowserLocalization.text("Stop Loading")) { [weak self] in
                        CraLog.note("page \(self?.slowResponseLogHost(id) ?? "") stopped from the notice")
                        self?.browsers.runtime(for: id)?.browser.stopLoading()
                    },
@@ -1298,7 +1298,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
     func addSplitPane() {
         guard let current = selectedTabID else { openCommandBar(.newTab); return }
         if store.paneTabIDs(for: current).count >= store.splitPaneLimit {
-            showToast("Cannot Add New Pane")
+            showToast(BrowserLocalization.text("Cannot Add New Pane"))
             return
         }
         guard store.addEmptyPane(nextTo: current) != nil else { return }
@@ -1316,7 +1316,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             let browser = app.runtime(for: id)?.browser ?? currentBrowser
-            if browser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { showToast("Nothing to Cast") }
+            if browser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { showToast(BrowserLocalization.text("Nothing to Cast")) }
         }
     }
 
@@ -1325,7 +1325,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
     func openTabInSplit(_ id: UUID) {
         guard let current = selectedTabID, current != id, store.item(current)?.isEmptyTab == false else { return }
         if store.paneTabIDs(for: current).contains(id) { store.selectTab(id, window: windowID); return }
-        guard store.paneTabIDs(for: current).count < store.splitPaneLimit else { showToast("Cannot Add New Pane"); return }
+        guard store.paneTabIDs(for: current).count < store.splitPaneLimit else { showToast(BrowserLocalization.text("Cannot Add New Pane")); return }
         let split = store.splitContaining(current).map { sp in store.addToSplit(sp.id, tabID: id, at: nil); return store.item(sp.id) }
             ?? store.createSplit(with: [current, id], at: current)
         store.selectTab(split.flatMap { store.paneID(for: id, in: $0) } ?? id, window: windowID)
@@ -2769,7 +2769,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
         // cra:// is Cra's scripting scheme; a page must not drive it.
         if url.isEmpty || url.lowercased().hasPrefix("cra:") || store.item(tabID) == nil { return }
         guard store.openLinkInSplit(url, from: tabID, window: windowID) != nil else {
-            showToast("Cannot Add New Pane")
+            showToast(BrowserLocalization.text("Cannot Add New Pane"))
             return
         }
         refresh()
@@ -3469,7 +3469,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
         case .copy?:
             guard let png else { return }
             PageCommands.copyCapture(png)
-            if let peek { peek.showToast("Screenshot Copied to Clipboard") } else { showToast("Screenshot Copied to Clipboard") }
+            if let peek { peek.showToast(BrowserLocalization.text("Screenshot Copied to Clipboard")) } else { showToast(BrowserLocalization.text("Screenshot Copied to Clipboard")) }
         case .save?:
             if let png { saveCapture(png, over: peek?.window) }
         case .message?:
@@ -5168,7 +5168,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
     /// with an id, that boost (a Site Control Center row's chevron).
     func openBoostEditor(_ id: UUID? = nil) {
         guard let window, let url = selectedTabID.flatMap({ store.item($0)?.tab?.url }),
-              let boost = id.flatMap(BoostStore.shared.boost) ?? BoostStore.shared.boostForSite(of: url) else { showToast("Boosts Work on Websites"); return }
+              let boost = id.flatMap(BoostStore.shared.boost) ?? BoostStore.shared.boostForSite(of: url) else { showToast(BrowserLocalization.text("Boosts Work on Websites")); return }
         BoostEditorController.shared.open(boost, over: window, page: .init(
             zap: { [weak self] on in self?.setZapping(on) },
             dim: { [weak self] on in self?.zapBrowser?.executeJavaScript(BoostZap.dimExpression(on)) },
@@ -5766,7 +5766,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
             }
         }
         guard store.paneTabIDs(for: current).count < store.splitPaneLimit else {
-            showToast("Cannot Add New Pane")
+            showToast(BrowserLocalization.text("Cannot Add New Pane"))
             return true
         }
         if case .switchToTab(let id)? = s?.kind {
@@ -5820,7 +5820,7 @@ final class MainWindowController: NSWindowController, NSWindowDelegate, BrowserM
             self.slowResponseToastTab = nil
             self.protectedVideoPromptUp = false
             self.toast.show("\(service) plays with Safari's engine",
-                            action: ShinyToast.Action(title: "Why?") { [weak self] in self?.showSiteControlsFromTheirButton() },
+                            action: ShinyToast.Action(title: BrowserLocalization.text("Why?")) { [weak self] in self?.showSiteControlsFromTheirButton() },
                             page: page, in: window, theme: self.focusedSpace.theme, onClose: told)
         }
     }

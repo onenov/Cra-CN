@@ -13,7 +13,7 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
     init(app: AppDelegate) { self.app = app }
 
     func makeMenu() -> NSMenu {
-        let menu = NSMenu(title: "Extensions")
+        let menu = NSMenu(title: BrowserLocalization.text("Extensions"))
         menu.delegate = self
         return menu
     }
@@ -34,17 +34,17 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
         }
         if !entries.isEmpty { menu.addItem(.separator()) }
 
-        let add = NSMenuItem(title: "Add Extension…", action: #selector(addExtension), keyEquivalent: "")
+        let add = NSMenuItem(title: BrowserLocalization.text("Add Extension…"), action: #selector(addExtension), keyEquivalent: "")
         add.target = self
         add.image = NSImage(systemSymbolName: "plus", accessibilityDescription: nil)
         menu.addItem(add)
-        let manage = NSMenuItem(title: "Manage Extensions…", action: #selector(manageExtensions), keyEquivalent: "")
+        let manage = NSMenuItem(title: BrowserLocalization.text("Manage Extensions…"), action: #selector(manageExtensions), keyEquivalent: "")
         manage.target = self
         menu.addItem(manage)
 
         // Dia's checklist; the Site Control Center's tiles pin the same list (Arc).
-        let pin = NSMenuItem(title: "Pin Extensions…", action: nil, keyEquivalent: "")
-        let pinMenu = NSMenu(title: "Pin Extensions")
+        let pin = NSMenuItem(title: BrowserLocalization.text("Pin Extensions…"), action: nil, keyEquivalent: "")
+        let pinMenu = NSMenu(title: BrowserLocalization.text("Pin Extensions"))
         for e in entries {
             let item = NSMenuItem(title: e.name, action: #selector(togglePin(_:)), keyEquivalent: "")
             item.target = self
@@ -57,8 +57,8 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
         pin.isEnabled = !entries.isEmpty
         menu.addItem(pin)
 
-        let icons = NSMenuItem(title: "Toolbar Icons", action: nil, keyEquivalent: "")
-        let iconsMenu = NSMenu(title: "Toolbar Icons")
+        let icons = NSMenuItem(title: BrowserLocalization.text("Toolbar Icons"), action: nil, keyEquivalent: "")
+        let iconsMenu = NSMenu(title: BrowserLocalization.text("Toolbar Icons"))
         for e in entries {
             let item = NSMenuItem(title: e.name, action: nil, keyEquivalent: "")
             item.image = Self.menuIcon(store.toolbarIcon(for: e, profile: profile, tab: tab))
@@ -167,10 +167,10 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
 
     /// Remove from Cra: asked first, as Chrome's "Remove from Chrome…" does (#695).
     static func confirmRemove(_ e: ExtensionStore.Entry) {
-        let dialog = AppDialog(title: "Remove “\(e.name)”?",
+        let dialog = AppDialog(title: BrowserLocalization.format("Remove “%1$@”?", "\(e.name)"),
                                message: ExtensionRemoval.message(isShared: ExtensionStore.shared.shares.isShared(e.extensionID),
                                                                  isCraCopy: !e.managedByChrome, profileCount: e.profiles?.count),
-                               actions: [DialogAction("Remove", role: .destructive), .cancel])
+                               actions: [DialogAction(BrowserLocalization.text("Remove"), role: .destructive), .cancel])
         let remove = { (r: NSApplication.ModalResponse) in if r == .alertFirstButtonReturn { Self.remove(e) } }
         if let window = AppDialog.parentWindow { dialog.present(over: window, completion: remove) } else { remove(dialog.runModal()) }
     }
@@ -196,10 +196,10 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
         let style = store.iconStyle(id)
         let menu = NSMenu(title: e.name)
 
-        let original = BlockMenuItem(title: "Original Icon") { store.setIconStyle(id, .init()) }
+        let original = BlockMenuItem(title: BrowserLocalization.text("Original Icon")) { store.setIconStyle(id, .init()) }
         original.state = style == .init() ? .on : .off
         menu.addItem(original)
-        let mono = BlockMenuItem(title: "Monochrome") {
+        let mono = BlockMenuItem(title: BrowserLocalization.text("Monochrome")) {
             var s = store.iconStyle(id)
             s.monochrome.toggle()
             s.symbol = nil
@@ -209,8 +209,8 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
         menu.addItem(mono)
         menu.addItem(.separator())
 
-        let symbols = NSMenuItem(title: "Symbol", action: nil, keyEquivalent: "")
-        let symbolMenu = NSMenu(title: "Symbol")
+        let symbols = NSMenuItem(title: BrowserLocalization.text("Symbol"), action: nil, keyEquivalent: "")
+        let symbolMenu = NSMenu(title: BrowserLocalization.text("Symbol"))
         for name in ExtensionStore.iconSymbols {
             let item = BlockMenuItem(title: name) {
                 var s = store.iconStyle(id)
@@ -225,10 +225,10 @@ final class ExtensionsMenu: NSObject, NSMenuDelegate, NSMenuItemValidation {
         symbols.submenu = symbolMenu
         symbols.state = style.symbol != nil ? .on : .off
         menu.addItem(symbols)
-        let choose = BlockMenuItem(title: "Choose Image…") {
+        let choose = BlockMenuItem(title: BrowserLocalization.text("Choose Image…")) {
             let panel = NSOpenPanel()
             panel.allowedContentTypes = [.image]
-            panel.message = "Choose an icon for \(e.name)'s toolbar button"
+            panel.message = BrowserLocalization.format("Choose an icon for %1$@'s toolbar button", "\(e.name)")
             guard panel.runModal() == .OK, let url = panel.url else { return }
             do { try store.setCustomIcon(id, from: url) } catch { AppDialog(error: error).runModal() }
         }

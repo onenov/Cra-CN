@@ -11,8 +11,8 @@ struct MCPAgentTiles: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             VStack(alignment: .leading, spacing: 2) {
-                Text("Add Cra to an agent").font(.system(size: 13))
-                Text("Cra writes itself into the agent’s MCP settings. Each agent asks before it uses Cra the first time.")
+                Text(BrowserLocalization.text("Add Cra to an agent")).font(.system(size: 13))
+                Text(BrowserLocalization.text("Cra writes itself into the agent’s MCP settings. Each agent asks before it uses Cra the first time."))
                     .font(.system(size: 11)).foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
             }
@@ -22,7 +22,7 @@ struct MCPAgentTiles: View {
                 }
             }
             HStack(spacing: 8) {
-                Menu("Other Agent") {
+                Menu(BrowserLocalization.text("Other Agent")) {
                     ForEach(MCPAgentSetup.agents.filter { !$0.popular }) { agent in
                         let state = installer.state(agent)
                         Button {
@@ -34,7 +34,7 @@ struct MCPAgentTiles: View {
                     }
                 }
                 .fixedSize()
-                Button("Copy MCP Configuration") {
+                Button(BrowserLocalization.text("Copy MCP Configuration")) {
                     NSPasteboard.general.clearContents()
                     NSPasteboard.general.setString(MCPServer.shared.configuration, forType: .string)
                 }
@@ -87,9 +87,9 @@ private struct MCPAgentTile: View {
         .help(help(state, installed: installed))
         .contextMenu {
             if state == .current || state == .outdated {
-                Button("Remove Cra from \(agent.name)") { installer.remove(agent) }
+                Button(BrowserLocalization.format("Remove Cra from %1$@", "\(agent.name)")) { installer.remove(agent) }
             }
-            Button("Show Settings File in Finder") { installer.reveal(agent) }
+            Button(BrowserLocalization.text("Show Settings File in Finder")) { installer.reveal(agent) }
         }
         .accessibilityLabel(agent.name)
         .accessibilityValue(help(state, installed: installed))
@@ -110,18 +110,18 @@ private struct MCPAgentTile: View {
         switch state {
         case .current: Label("Added", systemImage: "checkmark").labelStyle(.titleAndIcon).foregroundStyle(.green)
         case .outdated: Text("Update").foregroundStyle(Color.accentColor)
-        case .unreadable: Text("Can’t edit its settings").foregroundStyle(.red)
-        case .absent: Text(installed ? (agent.detail.isEmpty ? "Add" : agent.detail) : "Not on this Mac").foregroundStyle(.secondary)
+        case .unreadable: Text(BrowserLocalization.text("Can’t edit its settings")).foregroundStyle(.red)
+        case .absent: Text(installed ? (agent.detail.isEmpty ? BrowserLocalization.text("Add") : agent.detail) : BrowserLocalization.text("Not on this Mac")).foregroundStyle(.secondary)
         }
     }
 
     private func help(_ state: MCPEntryState, installed: Bool) -> String {
-        if !installed { return "Cra didn’t find \(agent.name) on this Mac." }
+        if !installed { return BrowserLocalization.format("Cra didn’t find %1$@ on this Mac.", "\(agent.name)") }
         switch state {
-        case .current: return "Cra is in \(agent.name)’s MCP settings."
-        case .outdated: return "\(agent.name) has Cra at another location. Click to point it at this Cra."
-        case .unreadable: return "\(agent.name)’s settings file isn’t one Cra can change safely. Copy the configuration and add it by hand."
-        case .absent: return "Add Cra to \(agent.name)’s MCP settings."
+        case .current: return BrowserLocalization.format("Cra is in %1$@’s MCP settings.", "\(agent.name)")
+        case .outdated: return BrowserLocalization.format("%1$@ has Cra at another location. Click to point it at this Cra.", "\(agent.name)")
+        case .unreadable: return BrowserLocalization.format("%1$@’s settings file isn’t one Cra can change safely. Copy the configuration and add it by hand.", "\(agent.name)")
+        case .absent: return BrowserLocalization.format("Add Cra to %1$@’s MCP settings.", "\(agent.name)")
         }
     }
 }

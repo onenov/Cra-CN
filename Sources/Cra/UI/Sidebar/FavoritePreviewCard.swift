@@ -189,7 +189,7 @@ final class FavoritePreviewCard {
         case .calendar, .notionCalendar, .outlookCalendar:
             // Arc's card shows its timeline whether or not the fetch worked; Cra waits for a first answer.
             guard let state = calendarState(target) else { return nil }
-            let service = SidebarTabPreview.card(for: target.favorite) == .outlookCalendar ? "Outlook" : "Google Calendar"
+            let service = SidebarTabPreview.card(for: target.favorite) == .outlookCalendar ? "Outlook" : BrowserLocalization.text("Google Calendar")
             return AnyView(CalendarPreviewView(state: state, now: Date(), service: service, actions: calendarActions(target)))
         case .pullRequest:
             guard let item = target.pullRequest() else { return nil }
@@ -201,7 +201,7 @@ final class FavoritePreviewCard {
             if state.signedOut || state.inbox == nil {
                 // Arc's MailPreviewLoginView line; Cra's button opens the favorite to sign in there.
                 guard state.signedOut else { return nil }
-                return AnyView(SignInCard(text: "Sign in to your Email to see messages at a glance.") { [weak self] in self?.open(target.favorite) })
+                return AnyView(SignInCard(text: BrowserLocalization.text("Sign in to your Email to see messages at a glance.")) { [weak self] in self?.open(target.favorite) })
             }
             return AnyView(GmailPreviewView(inbox: state.inbox!, now: Date(), open: { [weak self] in self?.open($0) },
                                             compose: { [weak self] in OutlookPreview.composeURL(for: target.favorite).map { self?.open($0) } }))
@@ -239,9 +239,9 @@ final class FavoritePreviewCard {
         let m = NSMenu()
         m.autoenablesItems = false
         MenuItems.add(m, CalendarPreview.lastFetch(calendarState(target)?.fetched, now: Date()), enabled: false) {}
-        MenuItems.add(m, "Refresh") { [weak self] in self?.refreshCalendar(target) }
+        MenuItems.add(m, BrowserLocalization.text("Refresh")) { [weak self] in self?.refreshCalendar(target) }
         m.addItem(.separator())
-        MenuItems.add(m, SidebarTabPreview.card(for: target.favorite)?.turnOffTitle ?? "Disable Live Calendar") { [weak self] in
+        MenuItems.add(m, SidebarTabPreview.card(for: target.favorite)?.turnOffTitle ?? BrowserLocalization.text("Disable Live Calendar")) { [weak self] in
             self?.dismiss(animated: false)
             target.turnOff()
         }
@@ -290,7 +290,7 @@ final class FavoritePreviewCard {
     func demoGmail(unread: Int, in window: NSWindow) {
         let now = Date()
         let mails = (0..<min(unread, 20)).map {
-            GmailPreview.Mail(from: "Sender \($0 + 1)", subject: "Subject line \($0 + 1)", snippet: "The first lines of mail \($0 + 1), long enough to run onto a second line of the card.",
+            GmailPreview.Mail(from: "Sender \($0 + 1)", subject: BrowserLocalization.format("Subject line %1$@", "\($0 + 1)"), snippet: BrowserLocalization.format("The first lines of mail %1$@, long enough to run onto a second line of the card.", "\($0 + 1)"),
                               received: now.addingTimeInterval(-Double($0 + 1) * 2400))
         }
         let favorite = "https://mail.google.com/mail/u/0/"
@@ -304,10 +304,10 @@ final class FavoritePreviewCard {
         let favorite = "https://calendar.google.com/calendar/u/0/r"
         let now = Date()
         let events = [
-            CalendarPreview.Event(title: "Design review", start: now.addingTimeInterval(90), end: now.addingTimeInterval(90 + 1800),
+            CalendarPreview.Event(title: BrowserLocalization.text("Design review"), start: now.addingTimeInterval(90), end: now.addingTimeInterval(90 + 1800),
                                   meetingURL: "https://meet.google.com/cra-demo"),
             CalendarPreview.Event(title: "Lunch", start: now.addingTimeInterval(7200), end: now.addingTimeInterval(9000)),
-            CalendarPreview.Event(title: "Call with Ada", start: now.addingTimeInterval(7800), end: now.addingTimeInterval(9600),
+            CalendarPreview.Event(title: BrowserLocalization.text("Call with Ada"), start: now.addingTimeInterval(7800), end: now.addingTimeInterval(9600),
                                   meetingURL: "https://zoom.us/j/1"),
         ]
         LiveCalendarClient.shared.setDemo(events, favorite: favorite, profilePath: nil)
@@ -319,7 +319,7 @@ final class FavoritePreviewCard {
         let now = Date()
         let favorite = which == "calendar" ? "https://outlook.live.com/calendar/0/" : "https://outlook.live.com/mail/0/"
         let mails = (0..<min(unread, 20)).map {
-            GmailPreview.Mail(from: "Sender \($0 + 1)", subject: "Subject line \($0 + 1)", snippet: "The first lines of mail \($0 + 1), long enough to run onto a second line of the card.",
+            GmailPreview.Mail(from: "Sender \($0 + 1)", subject: BrowserLocalization.format("Subject line %1$@", "\($0 + 1)"), snippet: BrowserLocalization.format("The first lines of mail %1$@, long enough to run onto a second line of the card.", "\($0 + 1)"),
                               received: now.addingTimeInterval(-Double($0 + 1) * 2400))
         }
         let events = [CalendarPreview.Event(title: "Standup", start: now.addingTimeInterval(90), end: now.addingTimeInterval(990),
@@ -348,7 +348,7 @@ final class FavoritePreviewCard {
         case .confluence: "https://acme.atlassian.net/wiki/"
         }
         let pages = (0..<min(count, RecentPagesPreview.limit)).map {
-            RecentPagesPreview.Page(title: "Recent page \($0 + 1) with a title long enough to be cut", url: favorite + "demo-\($0 + 1)",
+            RecentPagesPreview.Page(title: BrowserLocalization.format("Recent page %1$@ with a title long enough to be cut", "\($0 + 1)"), url: favorite + "demo-\($0 + 1)",
                                     lastVisit: now.addingTimeInterval(-Double($0 + 1) * 1500))
         }
         demo(favorite, in: window, pages: pages)
@@ -651,7 +651,7 @@ private struct SignInCard: View {
         CardStyle.card(
             VStack(spacing: 8) {
                 Text(text).font(.system(size: 13)).multilineTextAlignment(.center).foregroundStyle(.white.opacity(0.78))
-                Button("Sign In", action: signIn).buttonStyle(.borderedProminent).controlSize(.small)
+                Button(BrowserLocalization.text("Sign In"), action: signIn).buttonStyle(.borderedProminent).controlSize(.small)
             }
             .padding(.vertical, 14).padding(.horizontal, 16)
             .frame(width: FavoritePreviewMetrics.width))
@@ -723,7 +723,7 @@ private struct GmailPreviewView: View {
                         }
                     }
                 }
-                RoundButton(symbol: "plus", label: "New Email") { _ in compose() }
+                RoundButton(symbol: "plus", label: BrowserLocalization.text("New Email")) { _ in compose() }
                     .padding(FavoritePreviewMetrics.buttonInset)
             }
             .frame(width: FavoritePreviewMetrics.width, height: height))
@@ -865,7 +865,7 @@ struct CalendarPreviewView: View {
     let state: LiveCalendarClient.State
     let now: Date
     /// Whose sign-in the signed-out card asks for.
-    var service = "Google Calendar"
+    var service = BrowserLocalization.text("Google Calendar")
     let actions: Actions
 
     static let nowColor = Color(red: 1, green: 0.94, blue: 0.78)
@@ -878,9 +878,9 @@ struct CalendarPreviewView: View {
     private var signIn: some View {
         CardStyle.card(
             VStack(spacing: 8) {
-                Text("Sign in to \(service) to see today's meetings here.")
+                Text(BrowserLocalization.format("Sign in to %1$@ to see today's meetings here.", "\(service)"))
                     .font(.system(size: 13)).multilineTextAlignment(.center).foregroundStyle(.white.opacity(0.78))
-                Button("Sign In", action: actions.signIn).buttonStyle(.borderedProminent).controlSize(.small)
+                Button(BrowserLocalization.text("Sign In"), action: actions.signIn).buttonStyle(.borderedProminent).controlSize(.small)
             }
             .padding(.vertical, 14).padding(.horizontal, 16)
             .frame(width: FavoritePreviewMetrics.width))
@@ -924,8 +924,8 @@ struct CalendarPreviewView: View {
                     }
                 }
                 HStack(spacing: FavoritePreviewMetrics.buttonGap) {
-                    RoundButton(symbol: "gearshape.fill", light: true, label: "Calendar Settings", run: actions.gear)
-                    RoundButton(symbol: "plus", label: "New Event") { _ in actions.newEvent() }
+                    RoundButton(symbol: "gearshape.fill", light: true, label: BrowserLocalization.text("Calendar Settings"), run: actions.gear)
+                    RoundButton(symbol: "plus", label: BrowserLocalization.text("New Event")) { _ in actions.newEvent() }
                 }
                 .padding(FavoritePreviewMetrics.buttonInset)
             }
@@ -1056,7 +1056,7 @@ private struct PullRequestPreviewView: View {
                         .font(.system(size: 12)).foregroundStyle(CardStyle.secondary)
                     }
                     if card.extraFailing > 0 {
-                        Text("and \(card.extraFailing) more").font(.system(size: 12)).foregroundStyle(CardStyle.secondary)
+                        Text(BrowserLocalization.format("and %1$@ more", "\(card.extraFailing)")).font(.system(size: 12)).foregroundStyle(CardStyle.secondary)
                     }
                     if !card.labels.isEmpty {
                         FlowRow(spacing: 5) {

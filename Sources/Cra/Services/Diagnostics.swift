@@ -110,7 +110,7 @@ enum Diagnostics {
         }
         try? fm.removeItem(at: staging)
         guard ditto.terminationStatus == 0, fm.fileExists(atPath: destination.path) else {
-            let alert = AppDialog(title: "Cra couldn’t save the diagnostics", message: "Try another folder.")
+            let alert = AppDialog(title: BrowserLocalization.text("Cra couldn’t save the diagnostics"), message: BrowserLocalization.text("Try another folder."))
             alert.runModal()
             return
         }
@@ -132,8 +132,8 @@ enum Diagnostics {
 
     private static func askWhere(_ fileName: String) -> URL? {
         let panel = NSSavePanel()
-        panel.title = "Export Diagnostics"
-        panel.message = "Cra's logs, its performance record, the state of the pages on screen and recent crash reports. Site names only: no addresses, history, cookies or passwords."
+        panel.title = BrowserLocalization.text("Export Diagnostics")
+        panel.message = BrowserLocalization.text("Cra's logs, its performance record, the state of the pages on screen and recent crash reports. Site names only: no addresses, history, cookies or passwords.")
         panel.nameFieldStringValue = fileName
         panel.allowedContentTypes = [.zip]
         panel.directoryURL = FileManager.default.urls(for: .desktopDirectory, in: .userDomainMask).first

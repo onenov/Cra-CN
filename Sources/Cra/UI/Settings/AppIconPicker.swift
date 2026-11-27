@@ -19,13 +19,13 @@ struct IconPane: View {
                     } trailing: { EmptyView() }
                 }
                 divider
-                IconRow(name: "Your own icon", image: icons.customImage, selected: icons.selectedID == AppIconManager.customID) {
+                IconRow(name: BrowserLocalization.text("Your own icon"), image: icons.customImage, selected: icons.selectedID == AppIconManager.customID) {
                     if icons.customImage == nil { chooseImage() } else { icons.select(AppIconManager.customID) }
                 } trailing: {
                     if icons.customImage != nil {
                         Button("Remove") { icons.removeCustom(); error = nil }
                     }
-                    Button("Choose Image…") { chooseImage() }
+                    Button(BrowserLocalization.text("Choose Image…")) { chooseImage() }
                 }
                 .dropDestination(for: URL.self) { urls, _ in
                     guard let url = urls.first else { return false }
@@ -33,7 +33,7 @@ struct IconPane: View {
                     return true
                 }
             }
-            SettingsFootnote("Pick any image or drop one on “Your own icon”. It’s sized to match the other icons in the Dock, and a photo or a logo on a background fills the rounded tile. The Dock keeps the icon after Cra quits.")
+            SettingsFootnote(BrowserLocalization.text("Pick any image or drop one on “Your own icon”. It’s sized to match the other icons in the Dock, and a photo or a logo on a background fills the rounded tile. The Dock keeps the icon after Cra quits."))
             if let error { SettingsFootnote(error).foregroundStyle(.red) }
         }
     }
@@ -45,8 +45,8 @@ struct IconPane: View {
     private func chooseImage() {
         let panel = NSOpenPanel()
         panel.allowedContentTypes = [.image]
-        panel.message = "Choose an image for Cra’s icon"
-        panel.prompt = "Use as Icon"
+        panel.message = BrowserLocalization.text("Choose an image for Cra’s icon")
+        panel.prompt = BrowserLocalization.text("Use as Icon")
         let done: (NSApplication.ModalResponse) -> Void = { response in
             if response == .OK, let url = panel.url { use(url) }
         }
@@ -98,7 +98,7 @@ private struct IconRow<Trailing: View>: View {
         }
         .frame(height: 81)
         .accessibilityElement(children: .contain)
-        .accessibilityLabel("\(name) app icon")
+        .accessibilityLabel(BrowserLocalization.format("%1$@ app icon", "\(name)"))
         .accessibilityAddTraits(selected ? .isSelected : [])
     }
 

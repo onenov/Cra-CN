@@ -2,7 +2,7 @@ import Foundation
 
 /// The languages a profile asks websites for, most wanted first (GitHub #209): Chromium's
 /// `intl.accept_languages`, which becomes the Accept-Language header and `navigator.languages`.
-/// It is not Cra's interface language, which stays English (#34).
+/// It is not Cra's interface language, which is selected separately.
 ///
 /// Arc has no control of its own for it. Its Translate bubble's "Language Settings" item and
 /// Settings ▸ Advanced ▸ More Settings open Chromium's page, arc://settings/languages, which is
@@ -48,7 +48,7 @@ public enum BrowserLanguages {
     }
 
     /// The row's summary: "Danish, English (United Kingdom), English".
-    public static func summary(_ codes: [String]) -> String {
-        codes.map(name).joined(separator: ", ")
+    public static func summary(_ codes: [String], locale: Locale = Locale(identifier: "en_US")) -> String {
+        codes.map { locale.localizedString(forIdentifier: $0) ?? $0 }.joined(separator: locale.language.languageCode?.identifier == "zh" ? "、" : ", ")
     }
 }

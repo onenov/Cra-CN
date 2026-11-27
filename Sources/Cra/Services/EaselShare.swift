@@ -14,7 +14,7 @@ enum EaselShare {
     static func share(_ id: UUID, over window: NSWindow?, toast: @escaping (String) -> Void) {
         let easel = EaselFiles.current(id)
         guard !easel.items.isEmpty else {
-            toast("This Easel Is Empty")
+            toast(BrowserLocalization.text("This Easel Is Empty"))
             return
         }
         SidebarMenus.confirmShare(over: window, kind: "Easel") { copyLink(easel, toast: toast) }
@@ -30,7 +30,7 @@ enum EaselShare {
             await MainActor.run {
                 guard let made else {
                     CraLog.note("easel share: too big")
-                    toast("This Easel Is Too Big to Share")
+                    toast(BrowserLocalization.text("This Easel Is Too Big to Share"))
                     return
                 }
                 // The Mac's clipboard (a scenario's copy has one of its own, CRA_TEST_PASTEBOARD).
@@ -39,8 +39,8 @@ enum EaselShare {
                 board.setString(made.link, forType: .string)
                 CraLog.note("easel share: \(easel.items.count) items, \(made.link.count) characters, pictures \(made.fit), \(made.link.prefix(29))")
                 switch made.fit {
-                case .full, .shrunk: toast("Copied Easel URL")
-                case .dropped: toast("Copied Easel URL, Without Its Pictures")
+                case .full, .shrunk: toast(BrowserLocalization.text("Copied Easel URL"))
+                case .dropped: toast(BrowserLocalization.text("Copied Easel URL, Without Its Pictures"))
                 }
             }
         }
@@ -79,25 +79,25 @@ enum EaselShare {
         }
         guard let received = EaselShareLink.easel(from: url) else {
             CraLog.note("easel link from \(page) doesn't read")
-            AppDialog(title: "This Easel Link Doesn’t Work",
-                      message: "It may have been cut short when it was copied.").present(over: window) { _ in }
+            AppDialog(title: BrowserLocalization.text("This Easel Link Doesn’t Work"),
+                      message: BrowserLocalization.text("It may have been cut short when it was copied.")).present(over: window) { _ in }
             return
         }
         let easel = received.easel
         let count = easel.items.count
         CraLog.note("easel link from \(page) offers \(count) items")
-        let dialog = AppDialog(title: "Add the “\(easel.title)” Easel?",
-                               message: "It opens as a new Easel in this space, with \(count) \(count == 1 ? "item" : "items"). Changes you make stay on this Mac.",
-                               actions: [DialogAction("Add Easel"), .cancel])
+        let dialog = AppDialog(title: BrowserLocalization.format("Add the “%1$@” Easel?", "\(easel.title)"),
+                               message: BrowserLocalization.format("It opens as a new Easel in this space, with %1$@ %2$@. Changes you make stay on this Mac.", "\(count)", "\(count == 1 ? "item" : "items")"),
+                               actions: [DialogAction(BrowserLocalization.text("Add Easel")), .cancel])
         dialog.present(over: window) { response in
             guard response == .alertFirstButtonReturn else { return }
             guard let added = add(received) else {
-                AppDialog(title: "Cra Couldn’t Add This Easel", message: "Nothing on it could be read.").present(over: window) { _ in }
+                AppDialog(title: BrowserLocalization.text("Cra Couldn’t Add This Easel"), message: BrowserLocalization.text("Nothing on it could be read.")).present(over: window) { _ in }
                 return
             }
             let controller = app.mainWindows.first { $0.window === window } ?? app.main
             _ = app.store.createTab(url: added.url, title: added.title, select: true, window: controller?.windowID)
-            controller?.showToast("Easel Added")
+            controller?.showToast(BrowserLocalization.text("Easel Added"))
             CraLog.note("easel added: \(added.items.count) items")
         }
     }

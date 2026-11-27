@@ -242,7 +242,7 @@ private final class MediaPreviewPanel: NSView {
     private let name = NSTextField(labelWithString: "")
     private let age = NSTextField(labelWithString: "")
     private let moreButton = HeaderButton(symbol: "ellipsis", label: "More", filled: true)
-    private let openButton = HeaderButton(symbol: "arrow.up.right", label: "Open in Preview", title: "Open in Preview", filled: true)
+    private let openButton = HeaderButton(symbol: "arrow.up.right", label: BrowserLocalization.text("Open in Preview"), title: BrowserLocalization.text("Open in Preview"), filled: true)
     private let picture = NSImageView()
     private var player: AVPlayerView?
     private var mediaSize = NSSize(width: 4, height: 3)
@@ -291,7 +291,7 @@ private final class MediaPreviewPanel: NSView {
         forwardButton.isEnabled = canForward
         let url = URL(fileURLWithPath: file.path)
         let app = NSWorkspace.shared.urlForApplication(toOpen: url).map { FileManager.default.displayName(atPath: $0.path).replacingOccurrences(of: ".app", with: "") } ?? "Preview"
-        openButton.setTitle("Open in \(app)")
+        openButton.setTitle(BrowserLocalization.format("Open in %1$@", "\(app)"))
         stop()
         let ext = url.pathExtension.lowercased()
         isVideo = ["mov", "mp4", "m4v"].contains(ext)

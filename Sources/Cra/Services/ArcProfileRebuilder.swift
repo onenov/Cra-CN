@@ -24,8 +24,8 @@ enum ArcProfileRebuilder {
         let message = moves.map { "\($0.spaceTitle) → \($0.profileName)" }.joined(separator: "\n") + "\n\n"
             + "Cra brings over the sign-ins, passwords and extensions these Arc profiles have, so the spaces work as they did in Arc. "
             + "Sign-ins and passwords you added in Cra since the import stay with Default. macOS asks for your password to unlock Arc's data, then Cra restarts."
-        let a = AppDialog(title: "Move \(moves.count == 1 ? "this space" : "these spaces") to \(moves.count == 1 ? "its" : "their") Arc profile\(moves.count == 1 ? "" : "s")?",
-                          message: message, actions: [DialogAction("Move and Restart"), .cancel])
+        let a = AppDialog(title: BrowserLocalization.format("Move %1$@ to %2$@ Arc profile%3$@?", "\(moves.count == 1 ? "this space" : "these spaces")", "\(moves.count == 1 ? "its" : "their")", "\(moves.count == 1 ? "" : "s")"),
+                          message: message, actions: [DialogAction(BrowserLocalization.text("Move and Restart")), .cancel])
         guard a.runModal() == .alertFirstButtonReturn else { return }
 
         let folders = Set(moves.map(\.folder))
@@ -41,9 +41,9 @@ enum ArcProfileRebuilder {
                 case .success(let c): credentials = c
                 case .failure(let error):
                     CraLog.note("rebuild from Arc: sign-ins not read: \(error.localizedDescription)")
-                    let b = AppDialog(title: "Move the spaces without their sign-ins?",
-                                      message: "\(error.localizedDescription) The spaces would start signed out of every site. Cancel changes nothing.",
-                                      actions: [DialogAction("Move Without Sign-ins"), .cancel])
+                    let b = AppDialog(title: BrowserLocalization.text("Move the spaces without their sign-ins?"),
+                                      message: BrowserLocalization.format("%1$@ The spaces would start signed out of every site. Cancel changes nothing.", "\(error.localizedDescription)"),
+                                      actions: [DialogAction(BrowserLocalization.text("Move Without Sign-ins")), .cancel])
                     guard b.runModal() == .alertFirstButtonReturn else { return }
                 }
             }

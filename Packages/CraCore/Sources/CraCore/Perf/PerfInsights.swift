@@ -33,44 +33,47 @@ public enum PerfInsights {
     public static let idleCpuPct = 10.0
     public static let idleMinSamples = 12
 
-    public static func evaluate(_ r: PerfReport) -> [PerfInsight] {
+    public static func evaluate(_ r: PerfReport, localize: (String) -> String = { $0 }) -> [PerfInsight] {
+        func format(_ key: String, _ values: String...) -> String {
+            String(format: localize(key), arguments: values)
+        }
         var out: [PerfInsight] = []
         if let p = r.session.previous, p.abnormal {
-            out.append(PerfInsight(id: "previous-abnormal", severity: .warning, title: "The last session ended without quitting",
-                                   detail: "Cra \(p.craVersion) crashed, was forced to quit or the Mac lost power. Its last minute is in the export."))
+            out.append(PerfInsight(id: "previous-abnormal", severity: .warning, title: localize("The last session ended without quitting"),
+                                   detail: format("Cra %1$@ crashed, was forced to quit or the Mac lost power. Its last minute is in the export.", "\(p.craVersion)")))
         }
         let m = r.mainThread
         if m.longFreezes > 0 {
             out.append(PerfInsight(id: "freezes", severity: .warning,
-                                   title: "Cra froze \(m.longFreezes) time\(m.longFreezes == 1 ? "" : "s") for a second or more",
-                                   detail: "The longest lasted \(Self.duration(m.longestFreezeMs))\(m.hangs > 0 ? "; \(m.hangs) went past 2 s" : "")."))
+                                   title: format(m.longFreezes == 1 ? "Cra froze %1$@ time for a second or more" : "Cra froze %1$@ times for a second or more", "\(m.longFreezes)"),
+                                   detail: format("The longest lasted %1$@%2$@.", "\(Self.duration(m.longestFreezeMs))", "\(m.hangs > 0 ? format("; %1$@ went past 2 s", "\(m.hangs)") : "")")))
         }
         let hours = max(r.session.awakeSeconds / 3600, 1.0 / 12)
         if m.freezes >= 5, Double(m.freezes) / hours >= frequentStallsPerHour {
-            out.append(PerfInsight(id: "stalls", severity: .info, title: "Frequent short stalls",
-                                   detail: "\(m.freezes) pauses of a quarter second or more since launch."))
+            out.append(PerfInsight(id: "stalls", severity: .info, title: localize("Frequent short stalls"),
+                                   detail: format("%1$@ pauses of a quarter second or more since launch.", "\(m.freezes)")))
         }
         if m.outsideFreezes > 0 {
-            let longest = m.longestPassMs > m.longestFreezeMs ? " The longest lasted \(Self.duration(m.longestPassMs))\(m.longestPassMode.map { " (\($0))" } ?? "")." : ""
+            let longest = m.longestPassMs > m.longestFreezeMs ? format(" The longest lasted %1$@%2$@.", "\(Self.duration(m.longestPassMs))", "\(m.longestPassMode.map { " (\(localize($0)))" } ?? "")") : ""
             out.append(PerfInsight(id: "outside-freezes", severity: .info,
-                                   title: "\(m.outsideFreezes) long pass\(m.outsideFreezes == 1 ? "" : "es") in menus, drags, alerts or start-up",
-                                   detail: "Not counted as freezes: Cra was in a loop of its own on purpose.\(longest)"))
+                                   title: format(m.outsideFreezes == 1 ? "%1$@ long pass in menus, drags, alerts or start-up" : "%1$@ long passes in menus, drags, alerts or start-up", "\(m.outsideFreezes)"),
+                                   detail: format("Not counted as freezes: Cra was in a loop of its own on purpose.%1$@", "\(longest)")))
         }
         if r.selfCost.cpuPct > selfCostBudgetPct {
             out.append(PerfInsight(id: "profiler-overhead", severity: .info,
-                                   title: "Recording costs \(String(format: "%.3f", r.selfCost.cpuPct)) % of a core",
-                                   detail: "Over its \(selfCostBudgetPct) % budget. The numbers still hold; selfCost in perf.json says which part costs it."))
+                                   title: format("Recording costs %1$@ %% of a core", "\(String(format: "%.3f", r.selfCost.cpuPct))"),
+                                   detail: format("Over its %1$@ %% budget. The numbers still hold; selfCost in perf.json says which part costs it.", "\(selfCostBudgetPct)")))
         }
         if r.idle.samples >= idleMinSamples, r.idle.cpuPct >= idleCpuPct {
             out.append(PerfInsight(id: "idle-cpu", severity: .info,
-                                   title: "Cra kept working while the Mac was idle",
-                                   detail: "\(Int(r.idle.cpuPct.rounded())) % of a core on average over \(r.idle.samples * 5 / 60) min without keyboard or mouse input. A playing video counts too."))
+                                   title: localize("Cra kept working while the Mac was idle"),
+                                   detail: format("%1$@ %% of a core on average over %2$@ min without keyboard or mouse input. A playing video counts too.", "\(Int(r.idle.cpuPct.rounded()))", "\(r.idle.samples * 5 / 60)")))
         }
         let crashes = r.counters[PerfCounter.rendererTerminated.rawValue]?.values.reduce(0, +) ?? 0
         if crashes > 0 {
             out.append(PerfInsight(id: "renderer-crashes", severity: .warning,
-                                   title: "\(crashes) page\(crashes == 1 ? "" : "s") stopped (“Aw, Snap!”)",
-                                   detail: "A page's process crashed, ran out of memory or was ended."))
+                                   title: format(crashes == 1 ? "%1$@ page stopped (“Aw, Snap!”)" : "%1$@ pages stopped (“Aw, Snap!”)", "\(crashes)"),
+                                   detail: localize("A page's process crashed, ran out of memory or was ended.")))
         }
         let runaway = r.events.filter { $0.kind == "runaway" }
         if !runaway.isEmpty {
@@ -78,38 +81,38 @@ public enum PerfInsights {
             for e in runaway { if let s = e.site, !sites.contains(s) { sites.append(s) } }
             let n = runaway.count
             out.append(PerfInsight(id: "runaway-slept", severity: .warning,
-                                   title: "Cra put \(n) tab\(n == 1 ? "" : "s") to sleep that used too much memory",
-                                   detail: "\(sites.isEmpty ? "A page" : sites.joined(separator: ", ")) grew past \(PerfRunawaySleep.bytes >> 30) GB while out of sight"
-                                       + " (\(runaway.map(\.detail).joined(separator: ", "))). It loads again when you open it."
-                                       + " Exporting diagnostics and sending them helps find out why."))
+                                   title: format(n == 1 ? "Cra put %1$@ tab to sleep that used too much memory" : "Cra put %1$@ tabs to sleep that used too much memory", "\(n)"),
+                                   detail: format("%1$@ grew past %2$@ GB while out of sight", "\(sites.isEmpty ? localize("A page") : sites.joined(separator: ", "))", "\(PerfRunawaySleep.bytes >> 30)")
+                                       + format(" (%1$@). It loads again when you open it.", "\(runaway.map(\.detail).joined(separator: ", "))")
+                                       + localize(" Exporting diagnostics and sending them helps find out why.")))
         }
         let unresponsive = r.counters[PerfCounter.rendererUnresponsive.rawValue]?.values.reduce(0, +) ?? 0
         if unresponsive > 0 {
-            out.append(PerfInsight(id: "unresponsive", severity: .warning, title: "\(unresponsive) page\(unresponsive == 1 ? "" : "s") stopped responding",
-                                   detail: "Chromium asked whether to wait or close the page."))
+            out.append(PerfInsight(id: "unresponsive", severity: .warning, title: format(unresponsive == 1 ? "%1$@ page stopped responding" : "%1$@ pages stopped responding", "\(unresponsive)"),
+                                   detail: localize("Chromium asked whether to wait or close the page.")))
         }
         if let s = r.system {
             if s.memoryPressure == .warning || s.memoryPressure == .critical {
-                out.append(PerfInsight(id: "memory-pressure", severity: .warning, title: "The Mac is short of memory",
-                                       detail: "macOS reports \(s.memoryPressure.rawValue) memory pressure; pages may reload and everything slows down."))
+                out.append(PerfInsight(id: "memory-pressure", severity: .warning, title: localize("The Mac is short of memory"),
+                                       detail: format("macOS reports %1$@ memory pressure; pages may reload and everything slows down.", "\(localize(s.memoryPressure.rawValue))")))
             }
             if s.thermalState == "serious" || s.thermalState == "critical" {
-                out.append(PerfInsight(id: "thermal", severity: .info, title: "The Mac is running hot",
-                                       detail: "macOS slows the processor down until it cools."))
+                out.append(PerfInsight(id: "thermal", severity: .info, title: localize("The Mac is running hot"),
+                                       detail: localize("macOS slows the processor down until it cools.")))
             }
             if s.lowPowerMode {
-                out.append(PerfInsight(id: "low-power", severity: .info, title: "Low Power Mode is on", detail: "Video and scrolling may be less smooth."))
+                out.append(PerfInsight(id: "low-power", severity: .info, title: localize("Low Power Mode is on"), detail: localize("Video and scrolling may be less smooth.")))
             }
         }
         if let free = r.storage.freeDiskBytes ?? r.system?.freeDiskBytes, free < lowDiskBytes {
-            out.append(PerfInsight(id: "low-disk", severity: .warning, title: "The disk is almost full",
-                                   detail: "\(bytes(free)) free. Chromium's caches and swap need room."))
+            out.append(PerfInsight(id: "low-disk", severity: .warning, title: localize("The disk is almost full"),
+                                   detail: format("%1$@ free. Chromium's caches and swap need room.", "\(bytes(free))")))
         }
         let footprint = r.processes.reduce(Int64(0)) { $0 + $1.footprintBytes }
         if footprint >= largeFootprintBytes {
             let slept = r.tabs.latest?.slept ?? 0
-            out.append(PerfInsight(id: "footprint", severity: .info, title: "Cra uses \(bytes(footprint)) of memory",
-                                   detail: slept > 0 ? "Tab sleeping has \(slept) tab\(slept == 1 ? "" : "s") asleep." : "Pages you haven't looked at in a while (4 hours unless you change it) close, and reload when you open them. Settings ▸ Tabs ▸ Tab Cleanup can close them sooner, or when the Mac is short of memory."))
+            out.append(PerfInsight(id: "footprint", severity: .info, title: format("Cra uses %1$@ of memory", "\(bytes(footprint))"),
+                                   detail: slept > 0 ? format(slept == 1 ? "Tab sleeping has %1$@ tab asleep." : "Tab sleeping has %1$@ tabs asleep.", "\(slept)") : localize("Pages you haven't looked at in a while (4 hours unless you change it) close, and reload when you open them. Settings ▸ Tabs ▸ Tab Cleanup can close them sooner, or when the Mac is short of memory.")))
         }
         return out
     }

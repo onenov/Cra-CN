@@ -55,7 +55,7 @@ struct CoverStep: View {
             }
             .offset(y: 150)
             // Dia pairs this with a Sign In button; Cra has no accounts for now.
-            PrimaryButton(title: "Get Started", c: c, enabled: true) { model.continueFromCover() }
+            PrimaryButton(title: BrowserLocalization.text("Get Started"), c: c, enabled: true) { model.continueFromCover() }
                 .offset(x: -1, y: ImportMetrics.buttonTop)
         }
     }
@@ -71,23 +71,23 @@ struct PrivacyStep: View {
     let c: ImportColors
     var body: some View {
         ZStack(alignment: .topLeading) {
-            TwoLineHeader(title: "Privacy in Cra,\nyou're in control",
-                          subtitle: "Cra works fully signed out. Your spaces, tabs and archive are plain files on your Mac.", c: c)
+            TwoLineHeader(title: BrowserLocalization.text("Privacy in Cra,\nyou're in control"),
+                          subtitle: BrowserLocalization.text("Cra works fully signed out. Your spaces, tabs and archive are plain files on your Mac."), c: c)
             VStack(alignment: .leading, spacing: 8) {
                 SelectableRow(c: c, checked: model.adAwayEnabled, toggle: { model.adAwayEnabled.toggle() }) {
                     RowSymbol(name: "hand.raised.fill", c: c)
-                    RowTitle(title: "Enable AdAway",
-                             caption: "Block third-party ad and tracker domains with this offline list.", c: c)
+                    RowTitle(title: BrowserLocalization.text("Enable AdAway"),
+                             caption: BrowserLocalization.text("Block third-party ad and tracker domains with this offline list."), c: c)
                 }
                 SelectableRow(c: c, checked: model.anudeepEnabled, toggle: { model.anudeepEnabled.toggle() }) {
                     RowSymbol(name: "hand.raised.fill", c: c)
-                    RowTitle(title: "Enable Anudeep’s Blacklist",
-                             caption: "Block additional advertising and tracking servers.", c: c)
+                    RowTitle(title: BrowserLocalization.text("Enable Anudeep’s Blacklist"),
+                             caption: BrowserLocalization.text("Block additional advertising and tracking servers."), c: c)
                 }
                 SelectableRow(c: c, checked: model.sharesToImproveCra, toggle: { model.sharesToImproveCra.toggle() }) {
                     RowSymbol(name: "chart.bar.fill", c: c)
-                    RowTitle(title: "Help improve Cra by sharing usage stats",
-                             caption: "And crash reports. Never the sites you visit.", c: c)
+                    RowTitle(title: BrowserLocalization.text("Help improve Cra by sharing usage stats"),
+                             caption: BrowserLocalization.text("And crash reports. Never the sites you visit."), c: c)
                 }
                 Link(destination: URL(string: SiteLinks.tagged("https://crabrowser.app/privacy", from: .privacy))!) {
                     (Text("Learn more").underline() + Text(" about what Cra shares and what it never does."))
@@ -99,7 +99,7 @@ struct PrivacyStep: View {
             }
             .frame(width: ImportMetrics.columnWidth, alignment: .leading)
             .offset(y: ImportMetrics.listTop)
-            PrimaryButton(title: "Continue", c: c, enabled: true) { model.continueFromPrivacy() }
+            PrimaryButton(title: BrowserLocalization.text("Continue"), c: c, enabled: true) { model.continueFromPrivacy() }
                 .offset(x: -1, y: ImportMetrics.buttonTop)
         }
     }
@@ -114,18 +114,18 @@ struct UnlockStep: View {
         let many = model.credentialProfiles.count > 1
         ZStack(alignment: .topLeading) {
             BackLink(c: c) { model.go(.source) }
-            StepHeader(title: "Unlock your data for import",
+            StepHeader(title: BrowserLocalization.text("Unlock your data for import"),
                        subtitle: model.unlockReadsSidebar
-                           ? "Dia encrypts your spaces, tabs and passwords, so macOS will ask for your computer password."
-                           : many ? "Some data is encrypted, so macOS will ask for your computer password once for each selected profile."
-                                  : "Some data is encrypted, so macOS will ask for your computer password to bring it securely into Cra.", c: c)
+                           ? BrowserLocalization.text("Dia encrypts your spaces, tabs and passwords, so macOS will ask for your computer password.")
+                           : many ? BrowserLocalization.text("Some data is encrypted, so macOS will ask for your computer password once for each selected profile.")
+                                  : BrowserLocalization.text("Some data is encrypted, so macOS will ask for your computer password to bring it securely into Cra."), c: c)
             if many {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 8) {
                         ForEach(model.credentialProfiles) { p in
                             SelectableRow(c: c, checked: model.selectedProfiles.contains(p.id), toggle: { model.toggleProfile(p.id) }) {
                                 RowSymbol(name: "person.crop.circle", c: c)
-                                RowTitle(title: p.name, caption: "Passwords and sign-ins", c: c)
+                                RowTitle(title: p.name, caption: BrowserLocalization.text("Passwords and sign-ins"), c: c)
                             }
                         }
                     }
@@ -138,8 +138,8 @@ struct UnlockStep: View {
             } else {
                 HStack(spacing: 12) {
                     RowSymbol(name: "key.fill", c: c)
-                    RowTitle(title: "Passwords and sign-ins",
-                             caption: "So you don't have to enter all your passwords again", c: c)
+                    RowTitle(title: BrowserLocalization.text("Passwords and sign-ins"),
+                             caption: BrowserLocalization.text("So you don't have to enter all your passwords again"), c: c)
                     Spacer()
                 }
                 .padding(.horizontal, 16).frame(width: ImportMetrics.columnWidth, height: 52)
@@ -153,8 +153,8 @@ struct UnlockStep: View {
                     .offset(y: ImportMetrics.buttonTop - 44)
             }
             HStack(spacing: 6) {
-                SecondaryButton(title: "Skip", c: c) { model.skipCredentials() }.frame(width: 146)
-                PrimaryButton(title: model.unlocking ? "Waiting for password" : model.unlockError == nil ? "Continue" : "Try Again",
+                SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.skipCredentials() }.frame(width: 146)
+                PrimaryButton(title: model.unlocking ? BrowserLocalization.text("Waiting for password") : model.unlockError == nil ? BrowserLocalization.text("Continue") : BrowserLocalization.text("Try Again"),
                               c: c, enabled: !model.unlocking, width: 290) { model.unlock() }
             }
             .frame(width: ImportMetrics.columnWidth + 2)
@@ -176,14 +176,14 @@ struct ExportedFileStep: View {
     var body: some View {
         ZStack(alignment: .topLeading) {
             BackLink(c: c) { model.go(.source) }
-            StepHeader(title: isSafari ? "Import from Safari" : "Import \(browser) passwords",
-                       subtitle: isSafari ? "Open Safari and follow these steps to import your passwords, history, and bookmarks."
-                                          : "In \(browser), open Settings ▸ Passwords ▸ ⋯ ▸ Export Passwords, then drop the file here.", c: c)
+            StepHeader(title: isSafari ? BrowserLocalization.text("Import from Safari") : BrowserLocalization.format("Import %1$@ passwords", "\(browser)"),
+                       subtitle: isSafari ? BrowserLocalization.text("Open Safari and follow these steps to import your passwords, history, and bookmarks.")
+                                          : BrowserLocalization.format("In %1$@, open Settings ▸ Passwords ▸ ⋯ ▸ Export Passwords, then drop the file here.", "\(browser)"), c: c)
             VStack(alignment: .leading, spacing: 10) {
                 if isSafari {
-                    InstructionRow(n: 1, text: "Open the Safari app.", c: c)
-                    InstructionRow(n: 2, text: "Open File ▸ Export Browsing Data to File.", c: c)
-                    InstructionRow(n: 3, text: "Save the file, then drop it below.", c: c)
+                    InstructionRow(n: 1, text: BrowserLocalization.text("Open the Safari app."), c: c)
+                    InstructionRow(n: 2, text: BrowserLocalization.text("Open File ▸ Export Browsing Data to File."), c: c)
+                    InstructionRow(n: 3, text: BrowserLocalization.text("Save the file, then drop it below."), c: c)
                 }
                 DropWell(fileName: model.exportFileName, targeted: dropTargeted, reading: model.readingExport, isSafari: isSafari, c: c) {
                     chooseFile()
@@ -203,8 +203,8 @@ struct ExportedFileStep: View {
             .frame(width: ImportMetrics.columnWidth, alignment: .topLeading)
             .offset(y: ImportMetrics.listTop - (isSafari ? 24 : 0))
             HStack(spacing: 6) {
-                SecondaryButton(title: "Skip", c: c) { model.skipExport() }.frame(width: 146)
-                PrimaryButton(title: "Continue", c: c, enabled: model.exportFileName != nil, width: 290) { model.continueFromExport() }
+                SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.skipExport() }.frame(width: 146)
+                PrimaryButton(title: BrowserLocalization.text("Continue"), c: c, enabled: model.exportFileName != nil, width: 290) { model.continueFromExport() }
             }
             .frame(width: ImportMetrics.columnWidth + 2)
             .offset(x: -1, y: ImportMetrics.buttonTop)
@@ -217,7 +217,7 @@ struct ExportedFileStep: View {
         panel.canChooseFiles = true
         panel.allowsMultipleSelection = false
         panel.allowedContentTypes = isSafari ? [.zip, .folder] : [.commaSeparatedText]
-        panel.prompt = isSafari ? "Choose .zip file" : "Choose .csv file"
+        panel.prompt = isSafari ? BrowserLocalization.text("Choose .zip file") : BrowserLocalization.text("Choose .csv file")
         if panel.runModal() == .OK, let url = panel.url { model.readExport(url) }
     }
 }
@@ -260,7 +260,7 @@ private struct DropWell: View {
                         .buttonStyle(.plain)
                 } else {
                     Image(systemName: "arrow.down.doc").font(.system(size: 16)).foregroundStyle(c.body)
-                    Text(isSafari ? "Choose .zip file or drag it here" : "Choose .csv file or drag it here")
+                    Text(isSafari ? BrowserLocalization.text("Choose .zip file or drag it here") : BrowserLocalization.text("Choose .csv file or drag it here"))
                         .font(.system(size: 14)).foregroundStyle(c.body)
                     Spacer()
                 }
@@ -288,21 +288,21 @@ struct CredentialsResultStep: View {
             VStack(alignment: .leading, spacing: 16) {
                 Image(systemName: ok ? "checkmark.circle.fill" : "exclamationmark.triangle.fill")
                     .font(.system(size: 44)).foregroundStyle(ok ? c.ink.opacity(0.9) : .orange)
-                Text(ok ? "You're all set" : "Something went wrong")
+                Text(ok ? BrowserLocalization.text("You're all set") : BrowserLocalization.text("Something went wrong"))
                     .font(.system(size: 29, weight: .regular, design: .serif)).tracking(-0.6).foregroundStyle(c.title)
-                Text(ok ? "Your passwords and cookies are now available in Cra. Start browsing and you'll be signed in to your sites."
-                        : "Cra was unable to import your passwords and cookies. You can try again now or skip this step.")
+                Text(ok ? BrowserLocalization.text("Your passwords and cookies are now available in Cra. Start browsing and you'll be signed in to your sites.")
+                        : BrowserLocalization.text("Cra was unable to import your passwords and cookies. You can try again now or skip this step."))
                     .font(.system(size: 15)).lineSpacing(2.5).foregroundStyle(c.body)
                     .frame(width: 420, alignment: .leading)
             }
             .offset(y: 150)
             if ok {
-                PrimaryButton(title: "Continue", c: c, enabled: true) { model.afterImport() }
+                PrimaryButton(title: BrowserLocalization.text("Continue"), c: c, enabled: true) { model.afterImport() }
                     .offset(x: -1, y: ImportMetrics.buttonTop)
             } else {
                 HStack(spacing: 6) {
-                    SecondaryButton(title: "Skip", c: c) { model.afterImport() }.frame(width: 146)
-                    PrimaryButton(title: "Try Again", c: c, enabled: true, width: 290) { model.retryCredentials() }
+                    SecondaryButton(title: BrowserLocalization.text("Skip"), c: c) { model.afterImport() }.frame(width: 146)
+                    PrimaryButton(title: BrowserLocalization.text("Try Again"), c: c, enabled: true, width: 290) { model.retryCredentials() }
                 }
                 .frame(width: ImportMetrics.columnWidth + 2)
                 .offset(x: -1, y: ImportMetrics.buttonTop)
@@ -319,8 +319,8 @@ struct PinnedTabsStep: View {
     private let cols = Array(repeating: GridItem(.flexible(), spacing: 10), count: 4)
     var body: some View {
         ZStack(alignment: .topLeading) {
-            StepHeader(title: "Keep your favorites handy",
-                       subtitle: "Pin the apps you use most so they're always a click away in Cra.", c: c)
+            StepHeader(title: BrowserLocalization.text("Keep your favorites handy"),
+                       subtitle: BrowserLocalization.text("Pin the apps you use most so they're always a click away in Cra."), c: c)
             ScrollView {
                 LazyVGrid(columns: cols, spacing: 10) {
                     ForEach(model.pinCandidates) { p in
@@ -335,7 +335,7 @@ struct PinnedTabsStep: View {
             .frame(width: ImportMetrics.columnWidth, height: ImportMetrics.listHeight + 8)
             .mask(ScrollFade())
             .offset(y: ImportMetrics.listTop - 8)
-            PrimaryButton(title: model.selectedPins.isEmpty ? "Skip" : "Pin \(model.selectedPins.count)", c: c, enabled: true) {
+            PrimaryButton(title: model.selectedPins.isEmpty ? BrowserLocalization.text("Skip") : BrowserLocalization.format("Pin %1$@", "\(model.selectedPins.count)"), c: c, enabled: true) {
                 model.continueFromPinnedTabs()
             }
             .offset(x: -1, y: ImportMetrics.buttonTop)
@@ -387,8 +387,8 @@ struct PersonalizationStep: View {
     let c: ImportColors
     var body: some View {
         ZStack(alignment: .topLeading) {
-            StepHeader(title: "Make it yours",
-                       subtitle: "Pick the theme color and layout that feel right for you.", c: c)
+            StepHeader(title: BrowserLocalization.text("Make it yours"),
+                       subtitle: BrowserLocalization.text("Pick the theme color and layout that feel right for you."), c: c)
             HStack(spacing: (ImportMetrics.columnWidth - 34 * CGFloat(SpaceTheme.presets.count)) / CGFloat(SpaceTheme.presets.count - 1)) {
                 ForEach(SpaceTheme.presets.indices, id: \.self) { i in
                     ThemeSwatch(theme: SpaceTheme.presets[i], on: model.chosenTheme == i, c: c) { model.chooseTheme(i) }
@@ -405,7 +405,7 @@ struct PersonalizationStep: View {
                 ForEach(AddressBarPlacement.allCases, id: \.self) { LayoutTile(placement: $0, model: model, c: c) }
             }
             .offset(y: 252)
-            PrimaryButton(title: "Continue", c: c, enabled: true) { model.continueFromPersonalization() }
+            PrimaryButton(title: BrowserLocalization.text("Continue"), c: c, enabled: true) { model.continueFromPersonalization() }
                 .offset(x: -1, y: ImportMetrics.buttonTop)
         }
     }
@@ -437,7 +437,7 @@ private struct LayoutTile: View {
         .contentShape(Rectangle())
         .onTapGesture { withAnimation(.easeOut(duration: 0.15)) { model.classicLayout = toolbar } }
         .accessibilityElement(children: .ignore)
-        .accessibilityLabel("\(placement.title): the address bar \(placement.detail.lowercased())")
+        .accessibilityLabel(BrowserLocalization.format("%1$@: the address bar %2$@", "\(placement.title)", "\(placement.detail.lowercased())"))
         .accessibilityAddTraits(selected ? [.isButton, .isSelected] : .isButton)
         .accessibilityAction { model.classicLayout = toolbar }
     }
@@ -531,7 +531,7 @@ struct OutroStep: View {
                 .foregroundStyle(c.title)
                 .opacity(shown ? 1 : 0)
                 .offset(y: shown ? 0 : 12)
-            PrimaryButton(title: "Start browsing", c: c, enabled: true, width: 260) { model.finish() }
+            PrimaryButton(title: BrowserLocalization.text("Start browsing"), c: c, enabled: true, width: 260) { model.finish() }
                 .opacity(shown ? 1 : 0)
                 .padding(.top, 8)
         }

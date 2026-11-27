@@ -13,8 +13,8 @@ final class MenuBarItem: NSObject, NSMenuDelegate {
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
         super.init()
         item.button?.image = Self.icon
-        item.button?.setAccessibilityLabel("Cra")
-        item.button?.toolTip = "Cra"
+        item.button?.setAccessibilityLabel(BrowserLocalization.text("Cra"))
+        item.button?.toolTip = BrowserLocalization.text("Cra")
         let menu = NSMenu()
         menu.delegate = self
         item.menu = menu

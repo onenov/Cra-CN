@@ -38,9 +38,9 @@ struct ProfileSpacesStep: View {
             .padding(.top, 14)
             HStack(spacing: 7) {
                 Spacer()
-                DialogButton(title: "Back", key: "ESC", enabled: true, primary: false, action: onBack)
+                DialogButton(title: BrowserLocalization.text("Back"), key: "ESC", enabled: true, primary: false, action: onBack)
                     .keyboardShortcut(.cancelAction)
-                DialogButton(title: "Create Profile", key: "↩", enabled: true, style: .accent, action: onCreate)
+                DialogButton(title: BrowserLocalization.text("Create Profile"), key: "↩", enabled: true, style: .accent, action: onCreate)
                     .keyboardShortcut(.defaultAction)
             }
             .padding(.top, 31)
@@ -143,7 +143,7 @@ struct ChangeProfileDialog: View {
         MenuItems.add(m, defaultName) { choice = .existing(nil) }
         for p in profiles { MenuItems.add(m, p.name) { choice = .existing(p.id) } }
         m.addItem(.separator())
-        MenuItems.add(m, "New Profile") { choice = .new }
+        MenuItems.add(m, BrowserLocalization.text("New Profile")) { choice = .new }
         // SwiftUI's global frame is top-left based in the window; the content view is not flipped.
         let y = content.isFlipped ? pill.maxY + 4 : content.bounds.height - pill.maxY - 4
         // Next turn of the run loop, so the button's press returns before the menu tracks.
@@ -172,7 +172,7 @@ struct ChangeProfileDialog: View {
                 .frame(width: 375.5, alignment: .leading)
                 .padding(.top, 12)
             HStack(spacing: 6) {
-                (Text("\(space.title)’s").bold() + Text(" Profile"))
+                (Text(BrowserLocalization.format("%1$@’s", "\(space.title)")).bold() + Text(" Profile"))
                     .font(.system(size: 14))
                     .foregroundStyle(Color(hex: "#DBDCDF"))
                 // An NSMenu under the pill, like Arc's (Default, the other profiles, New Profile).
@@ -203,9 +203,9 @@ struct ChangeProfileDialog: View {
             .padding(.top, 8)
             HStack(spacing: 7) {
                 Spacer()
-                DialogButton(title: "Cancel", key: "ESC", enabled: true, primary: false, action: onCancel)
+                DialogButton(title: BrowserLocalization.text("Cancel"), key: "ESC", enabled: true, primary: false, action: onCancel)
                     .keyboardShortcut(.cancelAction)
-                DialogButton(title: "Change Profile", key: "↩", enabled: true, style: .accent, action: confirm)
+                DialogButton(title: BrowserLocalization.text("Change Profile"), key: "↩", enabled: true, style: .accent, action: confirm)
                     .keyboardShortcut(.defaultAction)
             }
             .padding(.top, 27.5)

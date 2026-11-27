@@ -20,7 +20,7 @@ struct MaxPane: View {
             VStack(alignment: .leading, spacing: 0) {
                 MaxBanner()
                 VStack(alignment: .leading, spacing: 0) {
-                    SettingsBlurb("Let Cra do more for you with Max, so you can do less. Power up your browsing with Apple Intelligence on this Mac and spend time on the things that matter — on or off screen.")
+                    SettingsBlurb(BrowserLocalization.text("Let Cra do more for you with Max, so you can do less. Power up your browsing with Apple Intelligence on this Mac and spend time on the things that matter — on or off screen."))
                         .padding(.top, 20)
                     // Arc's "Enable Max" with its button: Turn On All / Turn On Max / Turn Off Max, by how many are on.
                     SettingsCard {
@@ -29,11 +29,11 @@ struct MaxPane: View {
                                 Image(systemName: MaxPane.glyph).font(.system(size: 11, weight: .semibold)).foregroundStyle(.white)
                                     .frame(width: 24, height: 24)
                                     .background(RoundedRectangle(cornerRadius: 5.5, style: .continuous).fill(Color(.sRGB, red: 0.22, green: 0.24, blue: 1)))
-                                Text("Enable Max").font(.system(size: 13))
+                                Text(BrowserLocalization.text("Enable Max")).font(.system(size: 13))
                             }
                         } trailing: {
                             let on = MaxMasterSwitch.pressTurnsOn(features)
-                            Button(MaxMasterSwitch.title(features)) {
+                            Button(BrowserLocalization.text(MaxMasterSwitch.title(features))) {
                                 store.settings.tidyTabs = on
                                 store.settings.tidyTabTitles = on
                                 store.settings.tidyDownloads = on
@@ -49,38 +49,38 @@ struct MaxPane: View {
                     .padding(.top, 20)
                     SettingsFeatureCard {
                         // Arc's first Max row (MaxSettingsUnit.askOnPage), with its text.
-                        SettingsSwitchRow("Ask on Page",
-                                  detail: "Press Command + F on any page to ask a question and let Max answer it for you in seconds.",
+                        SettingsSwitchRow(BrowserLocalization.text("Ask on Page"),
+                                  detail: BrowserLocalization.text("Press Command + F on any page to ask a question and let Max answer it for you in seconds."),
                                   isOn: $store.settings.askOnPage, enabled: available) {
                     AskOnPagePicture()
                 }
                 SettingsCardDivider()
-                        SettingsSwitchRow("Tidy Tabs",
-                                  detail: Text("Press the \(Image(nsImage: BroomGlyph.image).renderingMode(.template)) icon to let your Sidebar organize itself whenever you have six or more Today Tabs."),
+                        SettingsSwitchRow(BrowserLocalization.text("Tidy Tabs"),
+                                  detail: Text(BrowserLocalization.format("Press the %1$@ icon to let your Sidebar organize itself whenever you have six or more Today Tabs.", "\(Image(nsImage: BroomGlyph.image).renderingMode(.template))")),
                                   isOn: $store.settings.tidyTabs, enabled: available) {
                     TidyTabsPicture()
                 }
                 SettingsCardDivider()
                 // Arc 1.172's order: Instant Links comes right after Tidy Tabs.
-                SettingsSwitchRow(InstantLinks.settingsTitle, detail: InstantLinks.settingsDetail,
+                SettingsSwitchRow(BrowserLocalization.text(InstantLinks.settingsTitle), detail: BrowserLocalization.text(InstantLinks.settingsDetail),
                                   isOn: $store.settings.instantLinks, enabled: available) {
                     InstantLinksPicture()
                 }
                 SettingsCardDivider()
-                SettingsSwitchRow("Tidy Tab Titles",
-                                  detail: "Have your tabs automatically renamed with tidier, shorter titles when you Pin them.",
+                SettingsSwitchRow(BrowserLocalization.text("Tidy Tab Titles"),
+                                  detail: BrowserLocalization.text("Have your tabs automatically renamed with tidier, shorter titles when you Pin them."),
                                   isOn: $store.settings.tidyTabTitles, enabled: available) {
                     TidyTabTitlesPicture()
                 }
                 SettingsCardDivider()
-                SettingsSwitchRow("Tidy Downloads",
-                                  detail: "Keep your many files more organized with smartly renamed downloads — and make them a little easier to find later.",
+                SettingsSwitchRow(BrowserLocalization.text("Tidy Downloads"),
+                                  detail: BrowserLocalization.text("Keep your many files more organized with smartly renamed downloads — and make them a little easier to find later."),
                                   isOn: $store.settings.tidyDownloads, enabled: available) {
                     TidyDownloadsPicture()
                 }
                 SettingsCardDivider()
-                SettingsSwitchRow("5-Second Previews",
-                                  detail: "Instant summaries appear when you hover over links on certain websites (Google results, X and Hacker News). Or hold Shift while hovering to preview any link.",
+                SettingsSwitchRow(BrowserLocalization.text("5-Second Previews"),
+                                  detail: BrowserLocalization.text("Instant summaries appear when you hover over links on certain websites (Google results, X and Hacker News). Or hold Shift while hovering to preview any link."),
                                   isOn: $store.settings.fiveSecondPreviews, enabled: available) {
                     FiveSecondPreviewsPicture()
                 }
@@ -114,20 +114,20 @@ private struct MaxFooter: View {
 
     var body: some View {
         VStack(spacing: 3) {
-            Text(status.explanation)
+            Text(BrowserLocalization.text(status.explanation))
                 .font(.system(size: 12)).foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
                 .fixedSize(horizontal: false, vertical: true)
             // The searches Instant Links makes are the one thing that leaves the Mac.
             if status == .available, instantLinks {
-                Text("Instant Links sends what it searches for to your search engine, as a search would.")
+                Text(BrowserLocalization.text("Instant Links sends what it searches for to your search engine, as a search would."))
                     .font(.system(size: 12)).foregroundStyle(.secondary)
                     .multilineTextAlignment(.center)
                     .fixedSize(horizontal: false, vertical: true)
             }
             if status.canOpenSettings {
                 Button(action: openSettings) {
-                    Text("Turn on Apple Intelligence in System Settings").font(.system(size: 12)).underline()
+                    Text(BrowserLocalization.text("Turn on Apple Intelligence in System Settings")).font(.system(size: 12)).underline()
                 }
                 .buttonStyle(.link)
             }
@@ -170,12 +170,12 @@ private struct TidyDownloadsPicture: View {
             Color(red: 0.16, green: 0.20, blue: 0.93)
             VStack(alignment: .leading, spacing: 1) {
                 HStack(spacing: 3) {
-                    Text("Download renamed to:").font(.system(size: 4)).foregroundStyle(grey).lineLimit(1).fixedSize()
+                    Text(BrowserLocalization.text("Download renamed to:")).font(.system(size: 4)).foregroundStyle(grey).lineLimit(1).fixedSize()
                     Spacer(minLength: 0)
                     Image(systemName: "arrow.uturn.backward").font(.system(size: 4.5, weight: .semibold)).foregroundStyle(grey)
                     Image(systemName: "xmark").font(.system(size: 4.5, weight: .semibold)).foregroundStyle(grey)
                 }
-                Text("Navan Itinerary.pdf").font(.system(size: 6, weight: .medium)).foregroundStyle(.black).lineLimit(1).fixedSize()
+                Text(BrowserLocalization.text("Navan Itinerary.pdf")).font(.system(size: 6, weight: .medium)).foregroundStyle(.black).lineLimit(1).fixedSize()
                 Text("387494875.pdf").font(.system(size: 4.5)).strikethrough().foregroundStyle(grey).lineLimit(1).fixedSize()
             }
             .padding(.horizontal, 5).padding(.vertical, 4)
@@ -196,9 +196,9 @@ private struct TidyTabTitlesPicture: View {
                 RoundedRectangle(cornerRadius: 1.5).fill(Color(red: 0.32, green: 0.12, blue: 0.36))
                     .frame(width: 8, height: 6)
                 VStack(alignment: .leading, spacing: 0) {
-                    Text("Interior Design Book").font(.system(size: 6, weight: .medium)).foregroundStyle(ink)
+                    Text(BrowserLocalization.text("Interior Design Book")).font(.system(size: 6, weight: .medium)).foregroundStyle(ink)
                         .lineLimit(1).fixedSize()
-                    Text("Double-click to rename").font(.system(size: 4.5)).foregroundStyle(ink.opacity(0.8))
+                    Text(BrowserLocalization.text("Double-click to rename")).font(.system(size: 4.5)).foregroundStyle(ink.opacity(0.8))
                         .lineLimit(1).fixedSize()
                 }
             }

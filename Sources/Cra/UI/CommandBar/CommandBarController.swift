@@ -79,10 +79,10 @@ final class CommandBarController {
     }
 
     var placeholder: String {
-        if scope != nil { return "Search…" }
+        if scope != nil { return BrowserLocalization.text("Search…") }
         switch mode {
-        case .newTab: return "Search or Enter URL…"
-        case .editURL: return "Edit URL or search…"
+        case .newTab: return BrowserLocalization.text("Search or Enter URL…")
+        case .editURL: return BrowserLocalization.text("Edit URL or search…")
         }
     }
 

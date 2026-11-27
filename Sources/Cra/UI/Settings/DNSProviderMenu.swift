@@ -9,11 +9,11 @@ struct DNSProviderMenu: NSViewRepresentable {
 
     func makeNSView(context: Context) -> NSPopUpButton {
         let button = NSPopUpButton(frame: .zero, pullsDown: false)
-        button.setAccessibilityLabel("DNS over HTTPS")
+        button.setAccessibilityLabel(BrowserLocalization.text("DNS over HTTPS"))
         func add(_ title: String, _ value: SecureDNSChoice, _ help: String) {
-            button.addItem(withTitle: title)
+            button.addItem(withTitle: BrowserLocalization.text(title))
             button.lastItem?.representedObject = value
-            button.lastItem?.toolTip = help
+            button.lastItem?.toolTip = BrowserLocalization.text(help)
         }
         add("Use System DNS (Default)", .automatic, "Use your current DNS provider over HTTPS when available.")
         add("Off", .off, SecureDNS(mode: "off", templates: "").summary)

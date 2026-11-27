@@ -733,17 +733,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     /// Cra's). Also asked before Install and Relaunch restarts into an update (#272).
     func confirmQuitCancellingDownloads() -> Bool {
         CraLog.note("quit asks: downloads in progress")
-        let alert = AppDialog(title: "Downloads in progress",
-                              message: "There are downloads in progress. Closing the application will cancel them.",
-                              actions: [DialogAction("Close Cra"), DialogAction("Keep browsing", role: .cancel)],
+        let alert = AppDialog(title: BrowserLocalization.text("Downloads in progress"),
+                              message: BrowserLocalization.text("There are downloads in progress. Closing the application will cancel them."),
+                              actions: [DialogAction(BrowserLocalization.text("Close Cra")), DialogAction(BrowserLocalization.text("Keep browsing"), role: .cancel)],
                               icon: .application)
         return alert.runModal() == .alertFirstButtonReturn
     }
 
     private func confirmQuit() -> Bool {
         CraLog.note("quit asks: Quit Cra?")
-        let alert = AppDialog(title: "Quit Cra?",
-                              actions: [DialogAction("Quit"), .cancel, DialogAction("Quit, and don’t ask again", role: .secondary)],
+        let alert = AppDialog(title: BrowserLocalization.text("Quit Cra?"),
+                              actions: [DialogAction(BrowserLocalization.text("Quit")), .cancel, DialogAction(BrowserLocalization.text("Quit, and don’t ask again"), role: .secondary)],
                               icon: .application, buttonSpacing: 45.5)
         switch alert.runModal() {
         case .alertFirstButtonReturn: return true
@@ -766,7 +766,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             return
         }
         CraLog.note("task manager: no page open, \"Open a Page First\"")
-        main.showToast("Open a Page First")
+        main.showToast(BrowserLocalization.text("Open a Page First"))
     }
 
     func openExternalURL(_ url: String) {
@@ -843,7 +843,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         menu.addItem(.separator())
         menu.addItem(item("settings"))
         menu.addItem(.separator())
-        menu.addItem(withTitle: "Quit Cra", action: #selector(quitFromMenuBar), keyEquivalent: "").target = self
+        menu.addItem(withTitle: BrowserLocalization.text("Quit Cra"), action: #selector(quitFromMenuBar), keyEquivalent: "").target = self
     }
 
     /// The menu bar item's Quit, and `cra://debug?quit=1`: Cra quits for real.
@@ -2723,7 +2723,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             if let change = dict["spacesMenuChange"] {
                 switch change {
                 case "add":
-                    store.createSpace(title: dict["title"] ?? "Added", emoji: dict["emoji"] ?? "", focus: false)
+                    store.createSpace(title: dict["title"] ?? BrowserLocalization.text("Added"), emoji: dict["emoji"] ?? "", focus: false)
                 case "moveLastFirst":
                     if let id = store.spaceOrder.last { store.moveSpace(id, to: 0) }
                 case "renameFirst":
@@ -2746,9 +2746,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             // menuPress=<menu>/<row>: the row chosen from the menu bar as a click chooses it, once AppKit has validated it
             // (#680: Edit ▸ Redo on an easel; a posted ⇧⌘Z doesn't match the menu as a typed one does).
             if let path = dict["menuPress"]?.split(separator: "/").map(String.init), path.count == 2 {
-                let menu = NSApp.mainMenu?.items.first { $0.title == path[0] }?.submenu
+                let menu = NSApp.mainMenu?.items.first { $0.title == BrowserLocalization.text(path[0]) }?.submenu
                 menu?.update()
-                if let menu, let i = menu.items.firstIndex(where: { $0.title == path[1] }), menu.items[i].isEnabled {
+                if let menu, let i = menu.items.firstIndex(where: { $0.title == BrowserLocalization.text(path[1]) }), menu.items[i].isEnabled {
                     menu.performActionForItem(at: i)
                 } else {
                     CraLog.note("menu press \(path.joined(separator: "/")): no enabled row")
@@ -2756,7 +2756,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
                 return
             }
             if let title = dict["menuRows"] {
-                let menu = NSApp.mainMenu?.items.first { $0.title == title }?.submenu
+                let menu = NSApp.mainMenu?.items.first { $0.title == BrowserLocalization.text(title) }?.submenu
                 if let menu { menu.delegate?.menuNeedsUpdate?(menu) }
                 menu?.update()
                 // A delegate may have inserted new rows after AppKit's validation pass. Validate
@@ -3797,9 +3797,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     private func flippingTitle(_ id: String) -> String? {
         guard let main = self.main else { return nil }
         switch id {
-        case "toggleSidebar": return main.sidebarVisible ? "Hide Sidebar" : "Show Sidebar"
-        case "toggleToolbar": return store.settings.showToolbar ? "Hide Toolbar" : "Show Toolbar"
-        case "collapsePinned": return store.isPinnedCollapsed(main.focusedSpaceID) ? "Expand Pinned Tabs" : "Collapse Pinned Tabs"
+        case "toggleSidebar": return main.sidebarVisible ? BrowserLocalization.text("Hide Sidebar") : BrowserLocalization.text("Show Sidebar")
+        case "toggleToolbar": return store.settings.showToolbar ? BrowserLocalization.text("Hide Toolbar") : BrowserLocalization.text("Show Toolbar")
+        case "collapsePinned": return store.isPinnedCollapsed(main.focusedSpaceID) ? BrowserLocalization.text("Expand Pinned Tabs") : BrowserLocalization.text("Collapse Pinned Tabs")
         default: return nil
         }
     }
@@ -3831,7 +3831,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         if let id = item.representedObject as? String, let title = flippingTitle(id), item.title != title { item.title = title }
         // The menu bar's Tabs rows can act only when there is something to act on (CraCore TabsMenu, #622).
         if let id = item.representedObject as? String, item.menu === tabsMenu, let state = tabsMenuState(id) {
-            if let title = state.title, item.title != title { item.title = title }
+            if let title = state.title.map(BrowserLocalization.text), item.title != title { item.title = title }
             return state.enabled
         }
         switch item.representedObject as? String {
@@ -3854,16 +3854,16 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         case "toggleDeveloperMode":
             let url = keyLittleWindow.map { $0.hasPage ? $0.currentURL : nil } ?? store.selectedTab?.tab?.url
             let on = url.map { store.settings.isDeveloperMode(url: $0) } ?? false
-            item.title = on ? "Turn off Developer Mode for this Site" : "Turn on Developer Mode for this Site"
+            item.title = on ? BrowserLocalization.text("Turn off Developer Mode for this Site") : BrowserLocalization.text("Turn on Developer Mode for this Site")
         case "pinTab":
-            item.title = store.selectedTabID.map { store.isPinned($0) ? "Unpin Tab" : "Pin Tab" } ?? "Pin/Unpin Tab"
+            item.title = store.selectedTabID.map { store.isPinned($0) ? BrowserLocalization.text("Unpin Tab") : BrowserLocalization.text("Pin Tab") } ?? BrowserLocalization.text("Pin/Unpin Tab")
             return !main.isBlank  // a Blank Window has no pinned section (Arc)
         case "setDefaultBrowser":
             SystemIntegration.shared.refresh()
             return !SystemIntegration.shared.isDefaultBrowser
         case "pictureInPicture":
             let browser = keyLittleWindow.map { $0.browser } ?? main.currentBrowser
-            item.title = browser?.isInPictureInPicture == true ? "Exit Picture in Picture" : "Picture in Picture"
+            item.title = browser?.isInPictureInPicture == true ? BrowserLocalization.text("Exit Picture in Picture") : BrowserLocalization.text("Picture in Picture")
         // Arc: Tabs ▸ "Open in <space>", there only while a Little Window or Peek is in front.
         case TabsMenu.openIn:
             let little = keyLittleWindow.flatMap { $0.hasPage ? $0 : nil }
@@ -4235,7 +4235,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             guard useBoth.pageKept(action.id, pressedAt: pressedAt, now: now, offerTime: ShinyToast.visibleFor) else { return }
             CraLog.note("shortcut \(action.id): the page kept it, Use Both offers the next press")
             let keys = bindings.action(action.id)?.primary?.display ?? ""
-            let edit = ShinyToast.Action(title: "Edit the shortcut") { [weak self] in self?.showShortcutSettings(action.id) }
+            let edit = ShinyToast.Action(title: BrowserLocalization.text("Edit the shortcut")) { [weak self] in self?.showShortcutSettings(action.id) }
             let text = "Press \(keys) again to \(action.name.trimmingCharacters(in: CharacterSet(charactersIn: "…")))"
             // The page is a child window of the browser window or Little Window it shows in.
             var w = window
@@ -4407,15 +4407,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             let urls = ids.compactMap { store.item($0)?.tab?.url }
             if urls.count > 1 {
                 copy(CleanURL.links(urls))
-                main.showToast("Copied item links")  // Arc's wording, lower case as in Arc
+                main.showToast(BrowserLocalization.text("Copied item links"))  // Arc's wording, lower case as in Arc
             } else if let url = urls.first.map(CleanURL.withoutTrackers) {
                 copy(url)
-                main.showToast("Copied Current URL", action: .share(url))
+                main.showToast(BrowserLocalization.text("Copied Current URL"), action: .share(url))
             }
         case "copyURLMarkdown":
             if let c = current, let it = store.item(c), let url = it.tab?.url {
                 copy("[\(it.displayTitle)](\(CleanURL.withoutTrackers(url)))")
-                main.showToast("Copied URL as Markdown")
+                main.showToast(BrowserLocalization.text("Copied URL as Markdown"))
             }
         case "copyURLQuote": main.copyURLAsQuote()
         case "pasteAndGo":
@@ -4434,7 +4434,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             let held = NSApp.currentEvent.map { $0.type == .keyDown && $0.modifierFlags.contains(.command) } ?? false
             main.openExtensions(commandHeld: held) { [bindings] e in bindings.action(for: e)?.id == "openExtensions" }
         case "manageExtensions": main.openExtensionsPage()
-        case "cast": if main.currentBrowser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { main.showToast("Nothing to Cast") }
+        case "cast": if main.currentBrowser?.runChromeCommand("IDC_ROUTE_MEDIA") != true { main.showToast(BrowserLocalization.text("Nothing to Cast")) }
         case "taskManager": openTaskManager()
         case "showArchive": main.showLibrary(.archive)
         case "clearArchive": store.clearArchive()
@@ -4451,7 +4451,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         case "revealData": NSWorkspace.shared.activateFileViewerSelecting([AppPaths.supportDir])
         case "copyAppInfo":
             copy(appInfo())
-            main.showToast("Copied Cra Info!")  // Arc's `basicInfoCopied` toast, "Copied Arc Info!"
+            main.showToast(BrowserLocalization.text("Copied Cra Info!"))  // Arc's `basicInfoCopied` toast, "Copied Arc Info!"
         case "print": main.currentBrowser?.print()
         case "capturePage": main.capturePage()
         case "find": main.showFindBar()
@@ -4575,7 +4575,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         copy(CraVersion.line(short: info?["CFBundleShortVersionString"] as? String ?? "dev",
                              build: info?["CFBundleVersion"] as? String ?? "",
                              engine: EngineVersion.label(chromium: CraCEFRuntime.chromiumVersion(), cef: CraCEFRuntime.cefVersion())))
-        settingsController?.showToast("Cra version copied to clipboard", colors: ShinyToast.colors(main.focusedSpace.theme))
+        settingsController?.showToast(BrowserLocalization.text("Cra version copied to clipboard"), colors: ShinyToast.colors(main.focusedSpace.theme))
     }
 
     private func copy(_ s: String) {
@@ -4586,13 +4586,13 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
     func confirmDeleteSpace(_ space: Space, in window: NSWindow? = nil) {
         let window = window ?? main?.window ?? AppDialog.parentWindow
         guard store.spaceOrder.count > 1 else {
-            let a = AppDialog(title: "You need at least one space.")
+            let a = AppDialog(title: BrowserLocalization.text("You need at least one space."))
             a.runModal(over: window)
             return
         }
-        let a = AppDialog(title: "Delete your “\(space.title)” Space?",
-                          message: "This will archive all the tabs and folders inside it.",
-                          actions: [DialogAction("Delete", role: .destructive), .cancel])
+        let a = AppDialog(title: BrowserLocalization.format("Delete your “%1$@” Space?", "\(space.title)"),
+                          message: BrowserLocalization.text("This will archive all the tabs and folders inside it."),
+                          actions: [DialogAction(BrowserLocalization.text("Delete"), role: .destructive), .cancel])
         if a.runModal(over: window) == .alertFirstButtonReturn { store.deleteSpace(space.id) }
     }
 
@@ -4702,7 +4702,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
 
     private func std(_ title: String, _ sel: Selector, _ key: String = "", _ mods: NSEvent.ModifierFlags = .command,
                      beforePage: Bool = false) -> NSMenuItem {
-        let m = NSMenuItem(title: title, action: sel, keyEquivalent: key)
+        let m = NSMenuItem(title: BrowserLocalization.text(title), action: sel, keyEquivalent: key)
         m.keyEquivalentModifierMask = mods
         if beforePage { nativePageShortcuts.append(m) }
         return m
@@ -4712,8 +4712,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         nativePageShortcuts.removeAll()
         let menubar = NSMenu()
 
-        let appMenu = NSMenu(title: "Cra")
-        appMenu.addItem(withTitle: "About Cra", action: #selector(showAbout), keyEquivalent: "").target = self
+        let appMenu = NSMenu(title: BrowserLocalization.text("Cra"))
+        appMenu.addItem(withTitle: BrowserLocalization.text("About Cra"), action: #selector(showAbout), keyEquivalent: "").target = self
         appMenu.addItem(.separator())
         appMenu.addItem(item("settings"))
         let setDefault = item("setDefaultBrowser")
@@ -4729,17 +4729,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         appMenu.addItem(std("Show All", #selector(NSApplication.unhideAllApplications(_:))))
         appMenu.addItem(.separator())
         appMenu.addItem(std("Quit Cra", #selector(NSApplication.terminate(_:)), "q", beforePage: true))
-        menubar.addItem(submenu: appMenu, title: "Cra")
+        menubar.addItem(submenu: appMenu, title: BrowserLocalization.text("Cra"))
 
         // Arc's File menu, its sections and rows (FileMenu, #279).
-        let file = NSMenu(title: "File")
+        let file = NSMenu(title: BrowserLocalization.text("File"))
         for (i, section) in FileMenu.sections.enumerated() {
             if i > 0 { file.addItem(.separator()) }
             for id in section { file.addItem(item(id)) }
         }
-        menubar.addItem(submenu: file, title: "File")
+        menubar.addItem(submenu: file, title: BrowserLocalization.text("File"))
 
-        let edit = NSMenu(title: "Edit")
+        let edit = NSMenu(title: BrowserLocalization.text("Edit"))
         edit.addItem(std("Undo", Selector(("undo:")), "z"))
         edit.addItem(std("Redo", Selector(("redo:")), "z", [.command, .shift]))
         edit.addItem(.separator())
@@ -4752,21 +4752,21 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         edit.addItem(std("Delete", #selector(NSText.delete(_:))))
         edit.addItem(std("Select All", #selector(NSText.selectAll(_:)), "a"))
         edit.addItem(.separator())
-        let find = NSMenu(title: "Find")
+        let find = NSMenu(title: BrowserLocalization.text("Find"))
         for id in ["find", "findNext", "findPrevious", "useSelectionForFind", "jumpToSelection"] { find.addItem(item(id)) }
-        edit.addItem(submenu: find, title: "Find")
-        menubar.addItem(submenu: edit, title: "Edit")
+        edit.addItem(submenu: find, title: BrowserLocalization.text("Find"))
+        menubar.addItem(submenu: edit, title: BrowserLocalization.text("Edit"))
 
-        let view = NSMenu(title: "View")
+        let view = NSMenu(title: BrowserLocalization.text("View"))
         // Arc: View ▸ Appearance ▸ "Websites, Easels, and Notes will use:" Automatic / Light / Dark.
-        let appearance = NSMenu(title: "Appearance")
-        appearance.addItem(withTitle: "Websites will use:", action: nil, keyEquivalent: "").isEnabled = false
+        let appearance = NSMenu(title: BrowserLocalization.text("Appearance"))
+        appearance.addItem(withTitle: BrowserLocalization.text("Websites will use:"), action: nil, keyEquivalent: "").isEnabled = false
         for a in WebsiteAppearance.allCases {
             let m = item("appearance" + a.title)
-            m.title = a.title
+            m.title = BrowserLocalization.text(a.title)
             appearance.addItem(m)
         }
-        view.addItem(submenu: appearance, title: "Appearance")
+        view.addItem(submenu: appearance, title: BrowserLocalization.text("Appearance"))
         view.addItem(.separator())
         view.addItem(item("toggleSidebar")); view.addItem(item("toggleToolbar")); view.addItem(item("collapsePinned"))
         view.addItem(.separator())
@@ -4782,19 +4782,19 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         // Arc's order: Add, Close, Separate, Expand Current Split (Cra's Flip after them).
         for id in ["addSplitView", "closeSplitPane", "separateFromSplit", "expandSplitPane", "flipSplitOrientation"] { view.addItem(item(id)) }
         view.addItem(.separator())
-        let dev = NSMenu(title: "Developer")
+        let dev = NSMenu(title: BrowserLocalization.text("Developer"))
         for id in ["viewSource", "devTools", "inspectElement", "jsConsole"] { dev.addItem(item(id)) }
         dev.addItem(item("allowAppleEventsJavaScript"))
         dev.addItem(.separator())
         dev.addItem(item("toggleDeveloperMode"))
-        view.addItem(submenu: dev, title: "Developer")
+        view.addItem(submenu: dev, title: BrowserLocalization.text("Developer"))
         view.addItem(.separator())
         view.addItem(std("Enter Full Screen", #selector(NSWindow.toggleFullScreen(_:)), "f", [.command, .control], beforePage: true))
-        menubar.addItem(submenu: view, title: "View")
+        menubar.addItem(submenu: view, title: BrowserLocalization.text("View"))
 
-        menubar.addItem(submenu: spacesMenu.makeMenu(), title: "Spaces")
+        menubar.addItem(submenu: spacesMenu.makeMenu(), title: BrowserLocalization.text("Spaces"))
 
-        let tabs = NSMenu(title: "Tabs")
+        let tabs = NSMenu(title: BrowserLocalization.text("Tabs"))
         tabsMenu = tabs
         // Arc's three groups (#622); Open in <space> shows only while a Little Window or Peek is in front (#279).
         for (i, section) in TabsMenu.sections.enumerated() {
@@ -4813,18 +4813,18 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
             row.allowsKeyEquivalentWhenHidden = true
             tabs.addItem(row)
         }
-        menubar.addItem(submenu: tabs, title: "Tabs")
+        menubar.addItem(submenu: tabs, title: BrowserLocalization.text("Tabs"))
 
-        let archive = NSMenu(title: "Archive")
+        let archive = NSMenu(title: BrowserLocalization.text("Archive"))
         archive.addItem(item("goBack")); archive.addItem(item("goForward"))
         archive.addItem(.separator())
         for id in ["viewArchive", "showArchive", "clearArchive"] { archive.addItem(item(id)) }
-        menubar.addItem(submenu: archive, title: "Archive")
+        menubar.addItem(submenu: archive, title: BrowserLocalization.text("Archive"))
 
         // Dia: Extensions sits just before Window.
-        menubar.addItem(submenu: extensionsMenu.makeMenu(), title: "Extensions")
+        menubar.addItem(submenu: extensionsMenu.makeMenu(), title: BrowserLocalization.text("Extensions"))
 
-        let window = NSMenu(title: "Window")
+        let window = NSMenu(title: BrowserLocalization.text("Window"))
         window.addItem(item("stayOnTop"))
         window.addItem(std("Minimize Window", #selector(NSWindow.performMiniaturize(_:)), "m", beforePage: true))
         window.addItem(std("Zoom", #selector(NSWindow.performZoom(_:))))
@@ -4834,28 +4834,28 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
         window.addItem(item("littleWindowOpenInMenu")); window.addItem(item("closeLittleWindows"))
         window.addItem(.separator())
         window.addItem(std("Bring All to Front", #selector(NSApplication.arrangeInFront(_:))))
-        menubar.addItem(submenu: window, title: "Window")
+        menubar.addItem(submenu: window, title: BrowserLocalization.text("Window"))
         NSApp.windowsMenu = window
 
-        let help = NSMenu(title: "Help")
+        let help = NSMenu(title: BrowserLocalization.text("Help"))
         help.addItem(withTitle: EngineVersion.label(chromium: CraCEFRuntime.chromiumVersion(), cef: CraCEFRuntime.cefVersion()), action: nil, keyEquivalent: "")
         help.addItem(.separator())
         help.addItem(item("essentialShortcuts"))
         for (title, url) in [("Cra Help", "https://crabrowser.app/help"), ("Release Notes", "https://crabrowser.app/release-notes"),
                              ("Report an Issue…", "https://github.com/VictorKildahl/cra/issues"), ("Support Cra…", "https://crabrowser.app/support")] {
-            let link = NSMenuItem(title: title, action: #selector(openHelpLink(_:)), keyEquivalent: "")
+            let link = NSMenuItem(title: BrowserLocalization.text(title), action: #selector(openHelpLink(_:)), keyEquivalent: "")
             link.target = self
             link.representedObject = SiteLinks.tagged(url, from: .helpMenu)
             help.addItem(link)
         }
         help.addItem(.separator())
         // Arc: Help ▸ Troubleshooting.
-        let trouble = NSMenu(title: "Troubleshooting")
-        trouble.addItem(withTitle: "Export Diagnostics…", action: #selector(exportDiagnostics), keyEquivalent: "").target = self
+        let trouble = NSMenu(title: BrowserLocalization.text("Troubleshooting"))
+        trouble.addItem(withTitle: BrowserLocalization.text("Export Diagnostics…"), action: #selector(exportDiagnostics), keyEquivalent: "").target = self
         trouble.addItem(.separator())
         trouble.addItem(item("taskManager")); trouble.addItem(item("revealData")); trouble.addItem(item("copyAppInfo"))
-        help.addItem(submenu: trouble, title: "Troubleshooting")
-        menubar.addItem(submenu: help, title: "Help")
+        help.addItem(submenu: trouble, title: BrowserLocalization.text("Troubleshooting"))
+        menubar.addItem(submenu: help, title: BrowserLocalization.text("Help"))
         NSApp.helpMenu = help
 
         NSApp.mainMenu = menubar
@@ -4889,7 +4889,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSMenuItemValidation {
 
 private extension NSMenu {
     func addItem(submenu: NSMenu, title: String) {
-        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        let item = NSMenuItem(title: BrowserLocalization.text(title), action: nil, keyEquivalent: "")
+        submenu.title = item.title
         item.submenu = submenu
         addItem(item)
     }

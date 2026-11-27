@@ -177,11 +177,11 @@ final class SharingService {
         asking = true
         let quit = reports.contains { CrashReports.isAppQuit($0.name) }
         let dialog = AppDialog(
-            title: quit ? "Cra quit unexpectedly" : "Part of Cra stopped unexpectedly",
-            message: (reports.count == 1 ? "Send the crash report to help fix it?" : "Send the \(reports.count) crash reports to help fix it?")
-                + " It shows what Cra was doing when it crashed. It never holds the sites you visit, and nothing that identifies you or this Mac.",
-            actions: [DialogAction("Send"), DialogAction("Show Report", role: .secondary), DialogAction("Don’t Send", role: .cancel)],
-            suppressionTitle: "Always send crash reports", icon: .application)
+            title: quit ? BrowserLocalization.text("Cra quit unexpectedly") : BrowserLocalization.text("Part of Cra stopped unexpectedly"),
+            message: (reports.count == 1 ? BrowserLocalization.text("Send the crash report to help fix it?") : BrowserLocalization.format("Send the %1$@ crash reports to help fix it?", "\(reports.count)"))
+                + BrowserLocalization.text(" It shows what Cra was doing when it crashed. It never holds the sites you visit, and nothing that identifies you or this Mac."),
+            actions: [DialogAction(BrowserLocalization.text("Send")), DialogAction(BrowserLocalization.text("Show Report"), role: .secondary), DialogAction(BrowserLocalization.text("Don’t Send"), role: .cancel)],
+            suppressionTitle: BrowserLocalization.text("Always send crash reports"), icon: .application)
         let finish: (NSApplication.ModalResponse) -> Void = { [weak self] response in
             guard let self else { return }
             switch response.rawValue - NSApplication.ModalResponse.alertFirstButtonReturn.rawValue {

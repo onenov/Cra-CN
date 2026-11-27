@@ -184,7 +184,7 @@ class BannerCard: NSView {
         layer?.addSublayer(backdrop)
         close.image = SidebarSymbols.image("xmark", size: 10, weight: .medium)
         close.imageScaling = .scaleNone
-        _ = ArcTooltipAnchorView.attach(to: close, help: "Dismiss")
+        _ = ArcTooltipAnchorView.attach(to: close, help: BrowserLocalization.text("Dismiss"))
         addSubview(close)
     }
 
@@ -452,10 +452,10 @@ final class UpdatedCard: BannerCard {
     private let rows: [BannerRow]
 
     init() {
-        rows = [BannerRow(symbol: "heart", text: "What’s new") { SoftwareUpdater.shared.openReleaseNotes() },
-                BannerRow(symbol: "gift", text: "Sponsor Cra") { SoftwareUpdater.shared.openSponsors() }]
+        rows = [BannerRow(symbol: "heart", text: BrowserLocalization.text("What’s new")) { SoftwareUpdater.shared.openReleaseNotes() },
+                BannerRow(symbol: "gift", text: BrowserLocalization.text("Sponsor Cra")) { SoftwareUpdater.shared.openSponsors() }]
         super.init(frame: .zero)
-        title.stringValue = "Cra updated!"
+        title.stringValue = BrowserLocalization.text("Cra updated!")
         // Arc's ✕ here is larger and lighter than the ready card's hover one.
         close.image = SidebarSymbols.image("xmark", size: 12, weight: .regular)
         addSubview(title)
@@ -537,19 +537,19 @@ final class SharingCard: BannerCard {
         guard let app = NSApp.delegate as? AppDelegate else { return }
         app.store.settings.answerSharingPrompt(share: share)
         CraLog.note("sharing: the sidebar card was answered, \(share ? "share" : "not now")")
-        if share { app.main.showToast("Thanks! Usage stats are on") }
+        if share { app.main.showToast(BrowserLocalization.text("Thanks! Usage stats are on")) }
     }
 
     init() {
-        rows = [BannerRow(symbol: "chart.bar", text: "Share usage stats") { SharingCard.answer(share: true) },
-                BannerRow(symbol: "lock", text: "What’s sent") {
+        rows = [BannerRow(symbol: "chart.bar", text: BrowserLocalization.text("Share usage stats")) { SharingCard.answer(share: true) },
+                BannerRow(symbol: "lock", text: BrowserLocalization.text("What’s sent")) {
                     guard let app = NSApp.delegate as? AppDelegate else { return }
                     app.store.createTab(url: SiteLinks.tagged("https://crabrowser.app/privacy", from: .sharingCard), select: true)
                     app.main.showWindow(nil)
                 }]
         super.init(frame: .zero)
-        title.stringValue = "Help improve Cra"
-        subtitle.stringValue = "Anonymous, never the sites you visit"
+        title.stringValue = BrowserLocalization.text("Help improve Cra")
+        subtitle.stringValue = BrowserLocalization.text("Anonymous, never the sites you visit")
         subtitle.lineBreakMode = .byTruncatingTail
         close.image = SidebarSymbols.image("xmark", size: 12, weight: .regular)
         addSubview(title)

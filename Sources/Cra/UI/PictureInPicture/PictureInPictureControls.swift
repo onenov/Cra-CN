@@ -26,14 +26,14 @@ final class PictureInPictureControlsView: NSView {
     private let scrim = CALayer()
     private let addressLabel = NSTextField(labelWithString: "")
     private static let topButtonSize: CGFloat = 26
-    private let closeButton = PictureInPictureButton(symbol: "xmark", pointSize: 12, diameter: topButtonSize, tip: "Close")
-    private let backButton = PictureInPictureButton(symbol: "pip.exit", pointSize: 13, diameter: topButtonSize, tip: "Back to Tab")
+    private let closeButton = PictureInPictureButton(symbol: "xmark", pointSize: 12, diameter: topButtonSize, tip: BrowserLocalization.text("Close"))
+    private let backButton = PictureInPictureButton(symbol: "pip.exit", pointSize: 13, diameter: topButtonSize, tip: BrowserLocalization.text("Back to Tab"))
     // Arc's `minus` with "Minimize" (Arc 1.173 binary).
-    private let minimizeButton = PictureInPictureButton(symbol: "minus", pointSize: 12, diameter: topButtonSize, tip: "Minimize")
+    private let minimizeButton = PictureInPictureButton(symbol: "minus", pointSize: 12, diameter: topButtonSize, tip: BrowserLocalization.text("Minimize"))
     // Sized in layout() from PictureInPictureLayout.centreControls.
-    private let playButton = PictureInPictureButton(symbol: "play.fill", pointSize: 28, diameter: 52, tip: "Play")
-    private let skipBackButton = PictureInPictureButton(symbol: "gobackward.15", pointSize: 28, diameter: 46, tip: "Skip back 15 seconds")
-    private let skipAheadButton = PictureInPictureButton(symbol: "goforward.15", pointSize: 28, diameter: 46, tip: "Skip ahead 15 seconds")
+    private let playButton = PictureInPictureButton(symbol: "play.fill", pointSize: 28, diameter: 52, tip: BrowserLocalization.text("Play"))
+    private let skipBackButton = PictureInPictureButton(symbol: "gobackward.15", pointSize: 28, diameter: 46, tip: BrowserLocalization.text("Skip back 15 seconds"))
+    private let skipAheadButton = PictureInPictureButton(symbol: "goforward.15", pointSize: 28, diameter: 46, tip: BrowserLocalization.text("Skip ahead 15 seconds"))
     private var buttons: [PictureInPictureButton] { [backButton, minimizeButton, closeButton, playButton, skipBackButton, skipAheadButton] }
     private var hideTimer: Timer?
     private var shown = false
@@ -237,7 +237,7 @@ final class PictureInPictureScrubberView: NSView {
             layer?.addSublayer(l)
         }
         setAccessibilityRole(.slider)
-        setAccessibilityLabel("Time")
+        setAccessibilityLabel(BrowserLocalization.text("Time"))
     }
 
     required init?(coder: NSCoder) { fatalError() }

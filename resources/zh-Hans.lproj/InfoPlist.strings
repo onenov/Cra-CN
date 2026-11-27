@@ -1,0 +1,8 @@
+"CFBundleDisplayName" = "Cra";
+"CFBundleName" = "Cra";
+"NSAppDataUsageDescription" = "Cra 需要读取你选择的浏览器，以导入空间、标签页、书签、密码和登录状态，并识别其扩展所连接的 1Password 等桌面应用。数据仅在这台 Mac 上处理。";
+"NSBluetoothAlwaysUsageDescription" = "你访问的网站可以请求连接蓝牙设备。使用通行密钥登录时，也可以通过蓝牙连接附近的手机。";
+"NSCameraUsageDescription" = "你访问的网站可以请求使用摄像头。";
+"NSLocalNetworkUsageDescription" = "视频通话等网页功能需要连接本地网络中的设备，例如同一无线局域网中的通话对象或路由器的设置页面。";
+"NSLocationUsageDescription" = "你访问的网站可以请求获取你的位置。";
+"NSMicrophoneUsageDescription" = "你访问的网站可以请求使用麦克风。";

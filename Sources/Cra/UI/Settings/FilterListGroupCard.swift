@@ -8,11 +8,11 @@ struct FilterListGroupCard<Rows: View>: View {
     @ViewBuilder let rows: () -> Rows
 
     var body: some View {
-        let summary = "\(selected) of \(total) selected"
+        let summary = BrowserLocalization.format("%1$@ of %2$@ selected", String(selected), String(total))
         SettingsFeatureCard {
             Button { isExpanded.toggle() } label: {
                 SettingsCardRow {
-                    Text(title).fontWeight(.medium)
+                    Text(BrowserLocalization.text(title)).fontWeight(.medium)
                 } trailing: {
                     Text(summary).foregroundStyle(.secondary).monospacedDigit()
                     Image(systemName: isExpanded ? "chevron.down" : "chevron.forward")
@@ -21,8 +21,8 @@ struct FilterListGroupCard<Rows: View>: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(title)
-            .accessibilityValue(isExpanded ? "Expanded, " + summary : "Collapsed, " + summary)
+            .accessibilityLabel(BrowserLocalization.text(title))
+            .accessibilityValue(BrowserLocalization.format(isExpanded ? "Expanded, %1$@" : "Collapsed, %1$@", summary))
             if isExpanded { rows() }
         }
     }

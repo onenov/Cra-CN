@@ -143,10 +143,10 @@ extension AppLinks {
         public let alwaysAllow: String?
     }
 
-    public static func ask(app: String, initiator: String?, rememberable: Bool, pageHost: String?) -> Ask {
-        let who = initiator.map(displayOrigin) ?? pageHost ?? "This site"
-        let always = initiator.flatMap { rememberable ? "Always allow \(displayOrigin($0)) to open links of this type in the associated app" : nil }
-        return Ask(title: "Open \(app)?", message: "\(who) wants to open this application.", alwaysAllow: always)
+    public static func ask(app: String, initiator: String?, rememberable: Bool, pageHost: String?, localize: (String) -> String = { $0 }) -> Ask {
+        let who = initiator.map(displayOrigin) ?? pageHost ?? localize("This site")
+        let always = initiator.flatMap { rememberable ? String(format: localize("Always allow %1$@ to open links of this type in the associated app"), displayOrigin($0)) : nil }
+        return Ask(title: String(format: localize("Open %1$@?"), app), message: String(format: localize("%1$@ wants to open this application."), who), alwaysAllow: always)
     }
 
     /// An origin ("https://example.com", "chrome-extension://<id>") as Chrome shows it in that dialog

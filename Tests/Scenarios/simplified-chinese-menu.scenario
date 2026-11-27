@@ -1,0 +1,23 @@
+# Read the actual native menus using their existing automation names.
+arg -AppleLanguages
+arg (zh-Hans)
+seed settings.json {"hasSeenImportPrompt": true, "toolbarDefaultMigrated": true, "showToolbar": false}
+cra://debug?menuRows=File
+expect-log menu rows File: 新建标签页…\|新建窗口
+cra://debug?menuRows=Spaces
+expect-log menu rows Spaces: 新建空间…
+
+# Read two real tab context menus, including the Option-key alternate.
+cra://open?url=${PAGE}?n=pin
+expect-log loaded 127\.0\.0\.1 \(HTTP 200\)
+cra://action/pinTab
+cra://open?url=${PAGE}?n=a
+cra://open?url=${PAGE}?n=b
+cra://open?url=${PAGE}?n=c
+wait 1
+
+# Listed: the pinned tab, then Today's c (open), b, a.
+cra://debug?tabMenu=1&label=pinned-zh
+expect-log tab menu pinned-zh: .*静音.*投放….*创建副本
+cra://debug?tabMenu=2&label=open-zh
+expect-log tab menu open-zh: .*归档下方的标签页.*归档上方的标签页

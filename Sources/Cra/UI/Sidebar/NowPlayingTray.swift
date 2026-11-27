@@ -369,19 +369,19 @@ final class NowPlayingCardView: NSView {
         }
         // Arc's own glyph, `pip` at 12 pt (Arc 1.173 binary); Cra's two overlapping squares didn't
         // read as Picture in Picture (#434).
-        pip = button("pip", 12, "Open Picture in Picture", .pictureInPicture)
-        close = button("xmark", 14, "Close Mini Player", .dismiss)
-        previous = button("backward.end.fill", 13.5, "Previous Track", .previous)
-        playPause = button("pause.fill", 13.5, "Pause", .togglePlayback)
-        next = button("forward.end.fill", 13.5, "Next Track", .next)
-        volume = button("speaker.wave.3.fill", 14, "Adjust Tab Volume", .toggleMute)
+        pip = button("pip", 12, BrowserLocalization.text("Open Picture in Picture"), .pictureInPicture)
+        close = button("xmark", 14, BrowserLocalization.text("Close Mini Player"), .dismiss)
+        previous = button("backward.end.fill", 13.5, BrowserLocalization.text("Previous Track"), .previous)
+        playPause = button("pause.fill", 13.5, BrowserLocalization.text("Pause"), .togglePlayback)
+        next = button("forward.end.fill", 13.5, BrowserLocalization.text("Next Track"), .next)
+        volume = button("speaker.wave.3.fill", 14, BrowserLocalization.text("Adjust Tab Volume"), .toggleMute)
         super.init(frame: .zero)
         wantsLayer = true
         layer?.cornerRadius = NowPlayingMetrics.corner
         layer?.cornerCurve = .continuous
         layer?.masksToBounds = true
         icon.onClick = { perform(.show) }
-        _ = ArcTooltipAnchorView.attach(to: icon, help: "Back to Tab")
+        _ = ArcTooltipAnchorView.attach(to: icon, help: BrowserLocalization.text("Back to Tab"))
         // Arc: clicking the title row (titleRowClicked) goes back to the tab.
         titleRow.addGestureRecognizer(NSClickGestureRecognizer(target: self, action: #selector(titleClicked)))
         slider.isHidden = true
@@ -411,7 +411,7 @@ final class NowPlayingCardView: NSView {
 
     /// Previous/next without a media session handler are dimmed, with no hover and no tooltip.
     private func refreshTrackButtons() {
-        for (b, on, help) in [(previous, model?.hasPrevious ?? false, "Previous Track"), (next, model?.hasNext ?? false, "Next Track")] {
+        for (b, on, help) in [(previous, model?.hasPrevious ?? false, BrowserLocalization.text("Previous Track")), (next, model?.hasNext ?? false, BrowserLocalization.text("Next Track"))] {
             b.colors = colors.buttonColors
             b.enabled = on
             b.tint = on ? colors.foreground : colors.disabled
@@ -426,12 +426,12 @@ final class NowPlayingCardView: NSView {
         title.stringValue = m.title
         icon.image = m.icon
         if old?.playing != m.playing {
-            playPause.setSymbol(m.playing ? "pause.fill" : "play.fill", iconSize: 13.5, help: m.playing ? "Pause" : "Play")
+            playPause.setSymbol(m.playing ? "pause.fill" : "play.fill", iconSize: 13.5, help: m.playing ? BrowserLocalization.text("Pause") : BrowserLocalization.text("Play"))
         }
         // Arc: three waves, one wave below half volume, none at zero; a muted tab shows the slash.
         if old.map({ $0.muted != m.muted || $0.volume != m.volume }) ?? true {
             let symbol = m.muted ? "speaker.slash.fill" : m.volume <= 0 ? "speaker.fill" : m.volume < 0.5 ? "speaker.wave.1.fill" : "speaker.wave.3.fill"
-            volume.setSymbol(symbol, iconSize: 14, help: "Adjust Tab Volume")
+            volume.setSymbol(symbol, iconSize: 14, help: BrowserLocalization.text("Adjust Tab Volume"))
         }
         if !slider.isTracking { slider.value = m.volume }
         pip.isHidden = !m.hasVideo

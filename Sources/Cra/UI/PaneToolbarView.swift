@@ -108,7 +108,7 @@ final class PaneToolbarView: NSView {
         devTrailingDivider.wantsLayer = true
         stripes.isHidden = true
         addSubview(stripes)
-        placeholderLabel.stringValue = "Search or Enter URL…"
+        placeholderLabel.stringValue = BrowserLocalization.text("Search or Enter URL…")
         urlButton.action = { [weak self] in self?.editURL() }
         urlButton.onCopy = { [weak self] in self?.copyURL() }
         urlButton.menuProvider = { [weak self] in self?.addressMenu() }
@@ -390,16 +390,16 @@ final class PaneToolbarView: NSView {
             switch item {
             case .toggleSidebar:
                 // At the bar's right end with the sidebar on the right, a right-hand box like its neighbours (#464).
-                return glyph("toggle", m.sidebarSide.toggleSymbol, help: m.sidebarVisible ? "Hide Sidebar (⌘S)" : "Show Sidebar (⌘S)",
+                return glyph("toggle", m.sidebarSide.toggleSymbol, help: m.sidebarVisible ? BrowserLocalization.text("Hide Sidebar (⌘S)") : BrowserLocalization.text("Show Sidebar (⌘S)"),
                              width: m.sidebarSide == .right ? rightBox : 37, iconSize: 15.5) { $0.actions.toggleSidebar() }
             case .back(let enabled):
-                return glyph("back", "arrow.left", help: wide ? "" : "Go Back (⌘[)", enabled: enabled, width: 37, iconSize: 15,
+                return glyph("back", "arrow.left", help: wide ? "" : BrowserLocalization.text("Go Back (⌘[)"), enabled: enabled, width: 37, iconSize: 15,
                              history: wide ? nil : .back) { if !wide { $0.navigate("goBack") } }
             case .forward(let enabled):
-                return glyph("forward", "arrow.right", help: wide ? "" : "Go Forward (⌘])", enabled: enabled, width: 37, iconSize: 15,
+                return glyph("forward", "arrow.right", help: wide ? "" : BrowserLocalization.text("Go Forward (⌘])"), enabled: enabled, width: 37, iconSize: 15,
                              history: wide ? nil : .forward) { if !wide { $0.navigate("goForward") } }
             case .reload(let loading, let enabled):
-                let b = glyph("reload", loading ? "xmark" : "arrow.clockwise", help: enabled ? "Refresh (⌘R)" : "", enabled: enabled, width: 37,
+                let b = glyph("reload", loading ? "xmark" : "arrow.clockwise", help: enabled ? BrowserLocalization.text("Refresh (⌘R)") : "", enabled: enabled, width: 37,
                               iconSize: 15, animated: enabled) { if !wide { $0.navigate("reload") } }
                 // A right-click (or ⌃-click) shows the reload menu: Force Refresh, Clear Cookies, Clear Cache and the
                 // developer items. Its commands act on the focused page, so a split pane's bar focuses its own
@@ -411,15 +411,15 @@ final class PaneToolbarView: NSView {
                 } : nil
                 return b
             case .copyURL:
-                return glyph("copy", "link", help: "Copy URL (⇧⌘C)", width: 28) { $0.actions.performAction("copyURL") }
+                return glyph("copy", "link", help: BrowserLocalization.text("Copy URL (⇧⌘C)"), width: 28) { $0.actions.performAction("copyURL") }
             case .divider:
                 return devDivider
             case .console:
-                return glyph("console", "terminal", help: "Toggle Console (⌥⌘J)", width: 28) { $0.actions.performAction("jsConsole") }
+                return glyph("console", "terminal", help: BrowserLocalization.text("Toggle Console (⌥⌘J)"), width: 28) { $0.actions.performAction("jsConsole") }
             case .network:
-                return glyph("network", "globe", help: "Toggle Network Panel", width: 28) { $0.actions.performAction("networkPanel") }
+                return glyph("network", "globe", help: BrowserLocalization.text("Toggle Network Panel"), width: 28) { $0.actions.performAction("networkPanel") }
             case .inspect:
-                return glyph("inspect", "scope", help: "Inspect Element (⌥⌘C)", width: 28) { $0.actions.performAction("inspectElement") }
+                return glyph("inspect", "scope", help: BrowserLocalization.text("Inspect Element (⌥⌘C)"), width: 28) { $0.actions.performAction("inspectElement") }
             case .pinnedExtension(let id):
                 let e = m.pinned.first { $0.id == id }
                 let b = button("ext:" + id) { ToolbarGlyphButton() }
@@ -452,21 +452,21 @@ final class PaneToolbarView: NSView {
                 // Arc: `character.bubble`, filled on a translated page, "Translation Options" (#310).
                 let tab = m.tabID
                 return glyph("translate", m.translation?.translated == true ? "character.bubble.fill" : "character.bubble",
-                             help: "Translation Options", width: rightBox, iconSize: 16) { bar in
+                             help: BrowserLocalization.text("Translation Options"), width: rightBox, iconSize: 16) { bar in
                     guard let tab else { return }
                     bar.actions.showTranslate(tab, bar.buttonFrameOnScreen("translate"))
                 }
             case .extensions:
-                return glyph("extensions", "slider.horizontal.2.square", help: "Extensions", width: rightBox, iconSize: 16) {
+                return glyph("extensions", "slider.horizontal.2.square", help: BrowserLocalization.text("Extensions"), width: rightBox, iconSize: 16) {
                     if let pane = $0.paneTabID { $0.actions.paneExtensionsMenu(pane) } else { $0.actions.showExtensionsMenu() }
                 }
             case .addSplit:
-                return glyph("split", "square.split.2x1", help: "Add Split View (⌃⇧=)", width: rightBox, iconSize: 16) { $0.actions.performAction("addSplitView") }
+                return glyph("split", "square.split.2x1", help: BrowserLocalization.text("Add Split View (⌃⇧=)"), width: rightBox, iconSize: 16) { $0.actions.performAction("addSplitView") }
             case .splitOptions:
-                return glyph("splitOptions", "rectangle.split.2x1", help: "Split View Options", width: rightBox) { $0.showSplitMenu(from: $0.buttons["splitOptions"]) }
+                return glyph("splitOptions", "rectangle.split.2x1", help: BrowserLocalization.text("Split View Options"), width: rightBox) { $0.showSplitMenu(from: $0.buttons["splitOptions"]) }
             case .closePane:
                 let id = paneTabID
-                return glyph("close", "xmark", help: "Close this Split Pane (⌃⇧-)", width: rightBox, iconSize: 14, tint: m.closeTint) {
+                return glyph("close", "xmark", help: BrowserLocalization.text("Close this Split Pane (⌃⇧-)"), width: rightBox, iconSize: 14, tint: m.closeTint) {
                     if let id { $0.actions.closePane(id) }
                 }
             }
@@ -673,25 +673,25 @@ final class PaneToolbarView: NSView {
         guard model.kind == .normal || model.kind == .developer else { return nil }
         let menu = NSMenu()
         let focus = { [weak self] in if let id = self?.paneTabID { self?.actions.focusPane(id) } }
-        menu.addItem(ToolbarMenuAction.item("Copy URL", shortcut: "copyURL", { [weak self] in self?.copyURL() }))
-        menu.addItem(ToolbarMenuAction.item("Capture…", shortcut: "capturePage", { [weak self] in focus(); self?.actions.performAction("capturePage") }))
-        menu.addItem(ToolbarMenuAction.item("Capture Full Page", shortcut: "captureFullPage", { [weak self] in focus(); self?.actions.performAction("captureFullPage") }))
+        menu.addItem(ToolbarMenuAction.item(BrowserLocalization.text("Copy URL"), shortcut: "copyURL", { [weak self] in self?.copyURL() }))
+        menu.addItem(ToolbarMenuAction.item(BrowserLocalization.text("Capture…"), shortcut: "capturePage", { [weak self] in focus(); self?.actions.performAction("capturePage") }))
+        menu.addItem(ToolbarMenuAction.item(BrowserLocalization.text("Capture Full Page"), shortcut: "captureFullPage", { [weak self] in focus(); self?.actions.performAction("captureFullPage") }))
         menu.addItem(.separator())
-        menu.addItem(ToolbarMenuAction.item("Manage Extensions…", { [weak self] in self?.actions.performAction("manageExtensions") }))
+        menu.addItem(ToolbarMenuAction.item(BrowserLocalization.text("Manage Extensions…"), { [weak self] in self?.actions.performAction("manageExtensions") }))
         menu.addItem(.separator())
         if model.kind == .normal {
             let full = store.settings.toolbarShowsFullURL
-            menu.addItem(ToolbarMenuAction.item(full ? "Hide Full URL" : "Show Full URL", { [weak self] in
+            menu.addItem(ToolbarMenuAction.item(full ? BrowserLocalization.text("Hide Full URL") : BrowserLocalization.text("Show Full URL"), { [weak self] in
                 self?.store.settings.toolbarShowsFullURL.toggle()
             }))
         }
         // The page's own toolbar, not a split pane's or the developer bar: those never hide.
         if ui.splitPaneIDs.count <= 1, model.kind == .normal {
-            let hides = ToolbarMenuAction.item("Automatically Hide Toolbar", { [weak self] in self?.store.settings.autoHideToolbar.toggle() })
+            let hides = ToolbarMenuAction.item(BrowserLocalization.text("Automatically Hide Toolbar"), { [weak self] in self?.store.settings.autoHideToolbar.toggle() })
             hides.state = store.settings.autoHideToolbar ? .on : .off
             menu.addItem(hides)
         }
-        menu.addItem(ToolbarMenuAction.item("Hide Toolbar", shortcut: "toggleToolbar", { [weak self] in self?.store.settings.showToolbar = false }))
+        menu.addItem(ToolbarMenuAction.item(BrowserLocalization.text("Hide Toolbar"), shortcut: "toggleToolbar", { [weak self] in self?.store.settings.showToolbar = false }))
         return menu
     }
 
@@ -701,12 +701,12 @@ final class PaneToolbarView: NSView {
         actions.focusPane(id)
         let menu = NSMenu()
         let items: [(String, String, () -> Void)?] = [
-            ("Separate Tab from Split", "separateFromSplit", { [weak self] in self?.actions.separatePane(id) }),
-            ("Flip Split View Orientation", "flipSplitOrientation", { [weak self] in self?.actions.performAction("flipSplitOrientation") }),
+            (BrowserLocalization.text("Separate Tab from Split"), "separateFromSplit", { [weak self] in self?.actions.separatePane(id) }),
+            (BrowserLocalization.text("Flip Split View Orientation"), "flipSplitOrientation", { [weak self] in self?.actions.performAction("flipSplitOrientation") }),
             nil,
-            ("Copy Link", "copyURL", { [weak self] in self?.actions.performAction("copyURL") }),
+            (BrowserLocalization.text("Copy Link"), "copyURL", { [weak self] in self?.actions.performAction("copyURL") }),
             nil,
-            ("Close this Split Pane", "closeSplitPane", { [weak self] in self?.actions.closePane(id) }),
+            (BrowserLocalization.text("Close this Split Pane"), "closeSplitPane", { [weak self] in self?.actions.closePane(id) }),
         ]
         for entry in items {
             guard let (title, shortcut, run) = entry else { menu.addItem(.separator()); continue }
@@ -996,7 +996,7 @@ final class ToolbarURLButton: NSView, NSTextFieldDelegate {
         addSubview(content)
         tip.followsCursor = true
         addSubview(tip)
-        (copyTip.text, copyTip.keys) = ArcTooltipLabel.split("Copy URL (⇧⌘C)")
+        (copyTip.text, copyTip.keys) = ArcTooltipLabel.split(BrowserLocalization.text("Copy URL (⇧⌘C)"))
         addSubview(copyTip)
         for v in [icon, label] as [NSView] { v.setAccessibilityElement(false) }
     }
@@ -1033,7 +1033,7 @@ final class ToolbarURLButton: NSView, NSTextFieldDelegate {
     }
     override func accessibilityCustomActions() -> [NSAccessibilityCustomAction]? {
         guard showsCopy, field == nil else { return nil }
-        return [NSAccessibilityCustomAction(name: "Copy URL") { [weak self] in
+        return [NSAccessibilityCustomAction(name: BrowserLocalization.text("Copy URL")) { [weak self] in
             self?.copyFromGlyph()
             return true
         }]
