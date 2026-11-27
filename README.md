@@ -178,3 +178,9 @@ iPhone 版需要安装 iOS 平台支持的 Xcode 26。运行 `scripts/ios.sh bui
 ## 许可证
 
 Cra 采用 [MIT 许可证](LICENSE)。Arc 是 The Browser Company 的商标。Cra 是独立项目，与该公司无隶属关系。
+
+### macOS 自建更新源
+
+正式版从 `https://browser-update.orevx.com/cra/` 下的 Sparkle 清单检查更新。Apple 芯片和 Intel 各有「新版」与「稳定版」两个清单。用 `scripts/release.sh` 生成分发文件，签名私钥通过 `CRA_SPARKLE_KEY_FILE` 指定，CI 也可使用 `SPARKLE_PRIVATE_KEY`。
+
+默认沿用自建源当前的稳定版。某架构首次发布时，其稳定版清单为空，本次版本同时进入两个渠道。先把 ZIP、DMG、架构对应的 appcast 和 web-features 检查结果归档到站点的 `downloads/cra/<版本>/`，再更新 `cra/` 下的四个清单。以后可设置 `CRA_SITE_ROOT` 指向站点根目录，用 `scripts/promote.sh <版本> --dry-run` 预览稳定版清单，去掉 `--dry-run` 即可写入。

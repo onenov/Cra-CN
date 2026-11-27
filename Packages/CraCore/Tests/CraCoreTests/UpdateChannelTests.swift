@@ -4,8 +4,8 @@ import Testing
 
 /// Stable and New update channels (GitHub #476): which feed each reads, and what Settings learns from it.
 struct UpdateChannelTests {
-    private let feed = "https://github.com/VictorKildahl/cra/releases/latest/download/appcast.xml"
-    private let intel = "https://github.com/VictorKildahl/cra/releases/latest/download/appcast-intel.xml"
+    private let feed = "https://browser-update.orevx.com/cra/appcast.xml"
+    private let intel = "https://browser-update.orevx.com/cra/appcast-intel.xml"
 
     @Test func newReadsTheBuildsOwnFeed() {
         #expect(UpdateChannel.new.feedURL(from: feed) == feed)
@@ -14,9 +14,9 @@ struct UpdateChannelTests {
 
     @Test func stableReadsTheStableFeedBesideIt() {
         #expect(UpdateChannel.stable.feedURL(from: feed)
-            == "https://github.com/VictorKildahl/cra/releases/latest/download/appcast-stable.xml")
+            == "https://browser-update.orevx.com/cra/appcast-stable.xml")
         #expect(UpdateChannel.stable.feedURL(from: intel)
-            == "https://github.com/VictorKildahl/cra/releases/latest/download/appcast-stable-intel.xml")
+            == "https://browser-update.orevx.com/cra/appcast-stable-intel.xml")
         // A test's local feed (CRA_UPDATE_FEED) too.
         #expect(UpdateChannel.stable.feedURL(from: "http://127.0.0.1:8889/appcast.xml") == "http://127.0.0.1:8889/appcast-stable.xml")
     }
@@ -41,13 +41,13 @@ struct UpdateChannelTests {
                   <sparkle:shortVersionString>0.1.46</sparkle:shortVersionString>
                   <sparkle:minimumUpdateVersion>202611161309</sparkle:minimumUpdateVersion>
                   <description><![CDATA[<h3>Notes</h3>]]></description>
-                  <enclosure url="https://github.com/VictorKildahl/cra/releases/download/v0.1.46/Cra.zip" type="application/octet-stream" sparkle:edSignature="x" length="1"/>
+                  <enclosure url="https://browser-update.orevx.com/downloads/cra/0.1.46/Cra.zip" type="application/octet-stream" sparkle:edSignature="x" length="1"/>
                 </item>
                 <item>
                   <title>Cra 0.1.43</title>
                   <sparkle:version>202611131845</sparkle:version>
                   <sparkle:shortVersionString>0.1.43</sparkle:shortVersionString>
-                  <enclosure url="https://github.com/VictorKildahl/cra/releases/download/v0.1.43/Cra-Intel.zip" type="application/octet-stream" sparkle:edSignature="y" length="2"/>
+                  <enclosure url="https://browser-update.orevx.com/downloads/cra/0.1.43/Cra-Intel.zip" type="application/octet-stream" sparkle:edSignature="y" length="2"/>
                 </item>
               </channel>
             </rss>
@@ -55,7 +55,7 @@ struct UpdateChannelTests {
         let releases = AppcastRelease.parse(Data(xml.utf8))
         #expect(releases.map(\.version) == ["0.1.46", "0.1.43"])
         #expect(releases.map(\.build) == ["202611171200", "202611131845"])
-        #expect(releases[1].diskImageURL == "https://github.com/VictorKildahl/cra/releases/download/v0.1.43/Cra-Intel.dmg")
+        #expect(releases[1].diskImageURL == "https://browser-update.orevx.com/downloads/cra/0.1.43/Cra-Intel.dmg")
     }
 
     @Test func aBrokenFeedHasNoReleases() {

@@ -15,7 +15,7 @@
 	<key>CFBundleExecutable</key>
 	<string>Cra</string>
 	<key>CFBundleIdentifier</key>
-	<string>dk.kildahl.cra</string>
+	<string>browser.cra.orevx</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
@@ -50,9 +50,9 @@
 	<!-- Software updates: Sparkle with Arc's settings (8-hour checks, background downloads).
 	     scripts/build.sh drops SUFeedURL outside release builds. -->
 	<key>SUFeedURL</key>
-	<string>https://github.com/VictorKildahl/cra/releases/latest/download/appcast.xml</string>
+	<string>https://browser-update.orevx.com/cra/appcast.xml</string>
 	<key>SUPublicEDKey</key>
-	<string>/ZvLn/gEyw0MSGRKJif47YTqQPI1WhxGYbF/nOBHu7E=</string>
+	<string>UAu4KkTPsxd/8gtwhA0eXLUKP+Spxv3a1hUJK4dDeCE=</string>
 	<key>SUEnableAutomaticChecks</key>
 	<true/>
 	<key>SUAutomaticallyUpdate</key>
